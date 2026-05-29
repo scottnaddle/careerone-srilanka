@@ -71,7 +71,7 @@ class MyPageController extends Controller
         }
         $user->open_to_work = $status;
         $user->save();
-        return redirect()->route('trainee.my-page.my-page')->with('success', 'SAVED!');
+        return redirect()->route('trainee.my-page.my-page')->with('success', __('system.form.saved'));
     }
 
     public function togglePublicPortfolio(Request $request)
@@ -83,7 +83,7 @@ class MyPageController extends Controller
         }
         $user->public_portfolio = $status;
         $user->save();
-        return redirect()->route('trainee.my-page.my-page')->with('success', 'SAVED!');
+        return redirect()->route('trainee.my-page.my-page')->with('success', __('system.form.saved'));
     }
     public function deActiveAccount()
     {
@@ -92,24 +92,6 @@ class MyPageController extends Controller
 
             $user->active = false;
             $user->save();
-//            $user->disabled = 1;
-//            $this->traineeCasSyncService->updateUser($user);//No need update disabled on CAS, because CAS can not handle the request
-//            TraineeInstitute::where('trainee_id', $user->id)->delete();
-//            TraineeNVQ::where('trainee_id', $user->id)->delete();
-//            TraineeSector::where('trainee_id', $user->id)->delete();
-//            TraineeRegCourse::where('trainee_id', $user->id)->delete();
-//            TraineeApply::where('trainee_id', $user->id)->delete();
-//            CareerTestTraineeResult::where('trainee_id', $user->id)->delete();
-//            JobBookmark::where('trainee_id', $user->id)->delete();
-//            CompanyBookmark::where('trainee_id', $user->id)->delete();
-//            KeepTrainee::where('trainee_id', $user->id)->delete();
-//            OJTMatch::where('trainee_id', $user->id)->delete();
-//            OjtBookmark::where('trainee_id', $user->id)->delete();
-//            Portfolio::where('trainee_id', $user->id)->delete();
-//            QNAAnswer::where('answer_by', $user->id)->where('system', 'trainee')->delete();
-//            QNA::where('created_by', $user->id)->where('system', 'trainee')->delete();
-//            TraineeMatch::where('trainee_id', $user->id)->delete();
-//            TraineeTrainingHistory::where('trainee_id', $user->id)->delete();
 
             if (isset(Auth::guard('trainee')->user()->id)) {
                 DeviceToken::where('user_id', Auth::guard('trainee')->user()->id)
@@ -123,10 +105,6 @@ class MyPageController extends Controller
             if (\phpCAS::isAuthenticated()) {
                 \phpCAS::logoutWithRedirectService(env('CAS_CLIENT_SERVICE'));
             }
-//
-
-//            $this->traineeCasSyncService->deleteUser($user->nic);
-//            $user->delete();
 
             return redirect()->route('homepage');
         }
@@ -184,7 +162,7 @@ class MyPageController extends Controller
         //Update on CAS
         $this->traineeCasSyncService->updateUser($user);
 
-        return redirect()->route('trainee.my-page.personal-information')->with('success', 'SAVED!');
+        return redirect()->route('trainee.my-page.personal-information')->with('success', __('system.form.saved'));
     }
 
     public function getMyInformation()

@@ -97,6 +97,7 @@ return [
         'confirm_password' => 'Confirm password',
         'forgot_password' => 'Forgot Password?',
         'no_file_selected' => 'No file selected',
+        'saved' => 'Saved successfully.',
         'telephone' => 'Telephone',
         'mobile' => 'Mobile',
         'first_name' =>'First name',

@@ -119,7 +119,7 @@ class MyPageController extends Controller
     
         return redirect()
             ->route('company.my-page.company-information', ['id' => $company->id])
-            ->with('success', 'SAVED!');
+            ->with('success', __('system.form.saved'));
     }
     
 
@@ -192,7 +192,7 @@ class MyPageController extends Controller
         if ($user->email != $request->email) {
             return redirect()->route('verification.isnotverified', ['u_type' => 'company', 'token' => base64_encode($user->email)]);
         }
-        return redirect()->route('company.my-page.personal-information')->with('success', 'SAVED!');
+        return redirect()->route('company.my-page.personal-information')->with('success', __('system.form.saved'));
     }
 
     public function deActiveAccount()
