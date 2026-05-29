@@ -50,11 +50,14 @@ class TraineeRegisterController extends Controller
     public function postRegister(RegisterRequest $request)
     {
         $isManual = $request->has('manual') && $request->manual == 1;
-        $verificationMethod = $request->verification_type;
+        $verificationMethod = $request->verification_type ?? Constant::email;
         $data = $request->except(['_token', 'verification_type', 'accept_terms']);
         $password = bcrypt($request->password);
 
-        if ($isManual) {
+        // Progressive signup: only email + password provided
+        if (empty($request->nic) && !$isManual) {
+            $userData = $this->buildProgressiveUserData($data, $password);
+        } elseif ($isManual) {
             $data['full_name'] = $data['first_name'] . ' ' . $data['last_name'];
             $userData = $this->buildManualUserData($data, $password);
         } else {
@@ -72,12 +75,16 @@ class TraineeRegisterController extends Controller
 
         $user = TraineeUser::create($userData);
 
-        // Sync with external systems
-        $data['disabled'] = 0;
-        $this->traineeCasSyncService->signUp($data);
+        // Sync with external systems (skip for progressive signup)
+        if (empty($request->nic) && !$isManual) {
+            // Progressive signup — no external sync needed
+        } else {
+            $data['disabled'] = 0;
+            $this->traineeCasSyncService->signUp($data);
 
-        if (!$isManual) {
-            $this->traineeSyncService->syncTraineeTrainingInformation($user);
+            if (!$isManual) {
+                $this->traineeSyncService->syncTraineeTrainingInformation($user);
+            }
         }
 
         // Send verification
@@ -155,6 +162,19 @@ class TraineeRegisterController extends Controller
         };
     }
 
+
+    private function buildProgressiveUserData($data, $password)
+    {
+        return [
+            'username' => $data['email'],
+            'email' => $data['email'],
+            'password' => $password,
+            'full_name' => $data['email'], // temporary, user will update later
+            'open_to_work' => 1,
+            'public_portfolio' => 1,
+            'profile_incomplete' => true,
+        ];
+    }
 
     public function checkNIC(Request $request)
     {

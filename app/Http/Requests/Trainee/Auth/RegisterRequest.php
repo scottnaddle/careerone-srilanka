@@ -6,66 +6,42 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            'nic' => ['string', 'regex:/^(?:\d{9}[VXvx]|\d{12})$/', 'unique:trainee_users,nic'],
-            'password' => 'required',
+            'nic' => ['nullable', 'string', 'regex:/^(?:\d{9}[VXvx]|\d{12})$/', 'unique:trainee_users,nic'],
+            'password' => ['required', 'string', 'min:8', 'max:16', 'regex:/[A-Z]/', 'regex:/[0-9]/', 'regex:/[!@#$%^&*(),.?":{}|<>]/'],
             'repassword' => 'required|same:password',
-//            'full_name' => 'required|min:2|max:100',
-//            'first_name' => 'required|min:2|max:20',
-//            'last_name' => 'required|min:2|max:20',
-            'email' => ['required', 'unique:trainee_users,email', 'min:2', 'max:100'],
-//            'telephone' => 'required|regex:/^\+94\d{9}$/|unique:trainee_users,telephone',
-            'mobile' => ['required','unique:trainee_users,mobile'],
-//            'district_id' => 'required',
-//            'institute_id' => 'required',
-//            'nvq_id' => 'required',
-//            'occupation_id' => 'required',
-            'verification_type' => 'required',
+            'full_name' => 'nullable|min:2|max:100',
+            'first_name' => 'nullable|min:2|max:20',
+            'last_name' => 'nullable|min:2|max:20',
+            'email' => ['required', 'email', 'unique:trainee_users,email', 'min:2', 'max:100'],
+            'mobile' => ['nullable', 'unique:trainee_users,mobile'],
+            'verification_type' => 'nullable|string',
             'agree_terms' => 'accepted',
         ];
     }
 
-    /**
-     * Get the error messages that return from the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function messages()
     {
         return [
-            'nic.required' => trans('validation.nic_required'),
             'nic.unique' => trans('validation.nic_unique'),
             'password.required' => 'Password is required!',
-            'password.regex' => 'Password must contains text, at least 1 special character and 1 number, min 8 characters',
-            'password.min' => 'Password must contains at least 8 characters!',
-            'password.max' => 'Password cannot be longer than 32 characters',
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.max' => 'Password cannot be longer than 16 characters.',
+            'password.regex' => 'Password must include 1 uppercase, 1 number, and 1 special character.',
             'repassword.required' => 'Please confirm the password!',
             'repassword.same' => 'Password does not match!',
-            'full_name.required' => 'Full name is required!',
-//            'first_name.required' => 'First name is required!',
-//            'last_name.required' => 'Last name is required!',
             'email.required' => 'Email is required!',
-            'email.unique' => 'Email existed!',
-            'mobile.required' => 'Telephone is required!',
-            'mobile.regex' => 'Telephone is invalid!',
-            'mobile.unique' => 'Telephone existed!',
-            'verification_type.required' => 'Please select a verification type',
-            'agree_terms.accepted' => 'Please agree with our terms to continue using system!',
+            'email.unique' => 'This email is already registered.',
+            'email.email' => 'Please enter a valid email address.',
+            'mobile.unique' => 'This phone number is already registered.',
+            'agree_terms.accepted' => 'Please agree to the terms to continue.',
         ];
     }
 }
