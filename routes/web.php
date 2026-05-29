@@ -181,7 +181,9 @@ Route::group(['prefix' => 'sector', 'as' => 'sector.'], function () {
     Route::get('/manufactoring', [HomepageController::class, 'getManufactoringSector'])->name('manufactoring');
     Route::get('/construction', [HomepageController::class, 'getConstructionSector'])->name('construction');
 });
-Route::get('/deploy/run', [\App\Http\Controllers\DeployController::class, 'run']);
+Route::middleware('auth:admin')->group(function () {
+    Route::get('/deploy/run', [\App\Http\Controllers\DeployController::class, 'run']);
+});
 Route::middleware('auth:trainee')->group(function () {
     Route::get('/dispatch-portfolios-job', [\App\Http\Controllers\Trainee\PortfolioController::class, 'generatePortfolios']);
 });

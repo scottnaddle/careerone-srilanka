@@ -59,6 +59,8 @@ class OJTController extends Controller
             // Xử lý work_experience_limitation
             $data['work_experience_limitation'] = $request->has('work_experience_limitation') ? true : false;
             if ($data['work_experience_limitation']) {
+                // Keep the provided values
+            } else {
                 $data['min_work_experience'] = null;
                 $data['max_work_experience'] = null;
             }
@@ -123,16 +125,14 @@ class OJTController extends Controller
             $data['system'] = activeGuard();
             if (!isset($data['age_limitation'])) {
                 $data['age_limitation'] = false;
-            }else {
                 $data['min_age'] = null;
                 $data['max_age'] = null;
             }
 
             if (!isset($data['work_experience_limitation'])) {
                 $data['work_experience_limitation'] = false;
-            }else {
-                $data['min_work_experience'] = null;;
-                $data['max_work_experience'] = null;;
+                $data['min_work_experience'] = null;
+                $data['max_work_experience'] = null;
             }
 
             $oJT->update($data);
