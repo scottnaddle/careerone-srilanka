@@ -55,7 +55,7 @@
             </div>
         </div>
 
-        <form id="wizard-form" action="{{ route('company.wizard.store') }}" method="POST" enctype="multipart/form-data" autocomplete="off">
+        <form id="wizard-form" action="{{ route('company.auth.wizard.store') }}" method="POST" enctype="multipart/form-data" autocomplete="off">
             @csrf
 
             {{-- Step 1: Company Information --}}

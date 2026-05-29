@@ -57,9 +57,9 @@ Route::group(['prefix' => 'company', 'as' => 'company.'], function () {
         // Wizard signup (new)
         Route::get('/signup', [WizardController::class, 'signup'])->name('register');
         Route::post('/signup', [WizardController::class, 'store'])->name('wizard.store');
-        // Legacy signup redirect
+        // Legacy signup redirect (old form)
         Route::get('/signup-legacy', [CompanyRegisterController::class, 'register'])->name('register.legacy');
-        Route::post('/signup', [CompanyRegisterController::class, 'postRegister'])->name('postRegister');
+        Route::post('/signup-legacy', [CompanyRegisterController::class, 'postRegister'])->name('postRegister');
         Route::get('forget-password', [ForgotPasswordController::class, 'showForgetPasswordForm'])->name('forgotPassword');
         Route::post('forget-password', [ForgotPasswordController::class, 'submitForgetPasswordForm'])->name('postForgotPassword');
         Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('resetPassword');

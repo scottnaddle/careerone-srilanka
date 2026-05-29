@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\MagicLinkController;
+use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\EmploymentController;
 use App\Http\Controllers\InstituteController;

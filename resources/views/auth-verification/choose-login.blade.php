@@ -25,18 +25,11 @@
                 @endif
                 <p class="text-sm dark:text-white">{{trans('auth.choose_login')}}</p>
                 <div class="grid grid-cols-2 gap-6">
-{{--                    <div class="flex flex-col items-center px-6 py-3 gap-5 rounded-2xl shadow-custom-light dark:shadow-custom-dark hover:bg-blue-100 dark:hover:bg-gray-700">--}}
-{{--                        <a href="{{route('trainee.auth.login')}}" class="p-6 bg-[#f8faff] rounded-full">--}}
-{{--                            <img src="{{asset('images/trainee.svg')}}" class="w-20 h-20" alt="">--}}
-{{--                        </a>--}}
-{{--                        <a href="{{route('trainee.auth.login')}}" class="text-sm md:text-xl lg:text-2xl font-semibold hover:text-primary">{{trans('system.trainee')}}</a>--}}
-{{--                    </div>--}}
                     <div class="flex flex-col items-center px-6 py-3 gap-5 rounded-2xl shadow-custom-light dark:shadow-custom-dark hover:bg-blue-100 dark:hover:bg-gray-700 dark:bg-gray-800">
-                        <a href="/trainee/cas/login" class="p-6 bg-[#f8faff] rounded-full">
+                        <a href="{{route('trainee.auth.login')}}" class="p-6 bg-[#f8faff] rounded-full">
                             <img src="{{asset('images/trainee.webp')}}" class="w-20 h-20" alt="">
                         </a>
-                        <a href="/trainee/cas/login" class="text-sm dark:text-white md:text-xl lg:text-2xl font-semibold hover:text-primary break-words text-center max-w-[200px]">{{trans('system.trainee')}}</a>
-{{--                        <a href="{{route('trainee.auth.login')}}" class="text-sm md:text-xl lg:text-2xl font-semibold hover:text-primary">{{trans('system.trainee')}}</a>--}}
+                        <a href="{{route('trainee.auth.login')}}" class="text-sm dark:text-white md:text-xl lg:text-2xl font-semibold hover:text-primary break-words text-center max-w-[200px]">{{trans('system.trainee')}}</a>
                     </div>
                     <div class="flex flex-col items-center px-6 py-3 gap-5 rounded-2xl shadow-custom-light dark:shadow-custom-dark hover:bg-blue-100 dark:hover:bg-gray-700 dark:bg-gray-800">
                         <a href="{{route('cgo.auth.login')}}" class="p-6 bg-[#f8faff] rounded-full">
