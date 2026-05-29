@@ -1,0 +1,22 @@
+<?php
+return [
+    'Edit' => 'திருத்து',
+    'Basic Information' => 'அடிப்படை தகவல்',
+    'About me' => 'என்னைப் பற்றி',
+    'TVEC Education' => 'தொழிற்கல்வி மற்றும் பயிற்சி குழு கல்வி',
+    'Industry sector' => 'தொழில் துறை',
+    'Course name' => 'பாடப் பெயர்',
+    'NVQ Qualification' => 'தேசிய தகுதிப் பட்டயம்',
+    'Education' => 'கல்வி',
+    'Field of Study' => 'படிப்புத் துறை',
+    'Skills' => 'திறன்கள்',
+    'Description' => 'விளக்கம்',
+    'OJT Experience' => 'பணியிடப் பயிற்சி அனுபவம்',
+    'Organisation' => 'அமைப்பு',
+    'Experience' => 'பணி அனுபவம்',
+    'Language' => 'மொழி',
+    'Supporting Documents' => 'துணை ஆவணங்கள்',
+    'Issued by' => 'வழங்கியது',
+    'Issue Date' => 'வெளியீட்டு தேதி',
+    'Valid until' => 'செல்லுபடியாகும் until'
+];

@@ -1,0 +1,83 @@
+<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication Language Lines
+    |--------------------------------------------------------------------------
+    |
+    | The following language lines are used during authentication for various
+    | messages that we need to display to the user. You are free to modify
+    | these language lines according to your application's requirements.
+    |
+    */
+
+    'failed' => 'These credentials do not match our records.',
+    'password' => 'The provided password is incorrect.',
+    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+    'verification' => [
+        'verify_message' => 'Your verification code is :code. Please enter this code to complete your registration. If you did not request this, please ignore this message.',
+    ],
+    'sign_in' => 'Sign in',
+    'sign_up' => 'Sign up',
+    'sign_out' => 'Sign out',
+    'cgo_sign_up' => 'CGO Sign up',
+    'cgo_sign_in' => 'CGO Sign in',
+    'company_sign_up' => 'Company / Other organisation User Sign up',
+    'company_sign_in' => 'Company User Sign in',
+    'trainee_sign_in' => 'Trainee Sign in',
+    'trainee_sign_up' => 'Trainee Sign up',
+    'welcome_back' => 'Welcome back!',
+    'sign_in_to_continue' => 'Sign in to continue',
+    'verify_your_account' => 'Verify your account',
+    'dont_have_account' => 'Don\'t have account?',
+    'enter_code_message' => 'Enter your code has been sent to you',
+    'resend_code' => 'Resend code',
+    'active' => 'Active',
+    'not_active' => 'Your account is not be activated. Please contact Admin to active your account!',
+    'choose_verification_method' => 'Choose Verification Method',
+    'resend_code_success_message' => 'Resend verification code successfully!',
+    'resend_code_fail_message' => 'Error resending verification code.',
+    'choose_login' => 'Click on the Card below to select the user type for login.',
+    'reset_password_message' => 'You can reset password from bellow link:',
+    'reset_password_title' => 'Forget Password Email',
+    'company_register'=>'Organisation sign up',
+    'Business Registration Number'=>'Business Registration Number',
+    'Company name'=>'Organisation name',
+    'Enter the exact company name mentioned in the business registration certificate'=>'Enter the exact organisation name mentioned in the business registration certificate',
+    'Office Type'=>'Office Type',
+    'Headquarter'=>'Headquarter',
+    'Date Of Establishment'=>'Date Of Establishment',
+    'The number of workers'=>'The number of employees',
+    'Company information'=>'Type of organisation',
+    'E-mail'=>'E-mail',
+    'District'=>'District',
+    'Address'=>'Address',
+    'Attached file (Business License)'=>'Attached file (Business Registration certificate)',
+    'Sign up'=>"Sign up",
+    'Type the company name'=>'Type the organisation name',
+    'Please select one'=>'Please select one',
+    'Type Name of Company and click Check'=>'Type Name of organisation and click check',
+    'choose_login_title' => 'Choose login',
+    'password_feeback' => 'Password must be 8-16 characters with 1 uppercase, 1 number, and 1 special character',
+    'homepage' => 'Homepage',
+    'duplicate_company_message' => 'We found an existing company with the same information that you provided. Please check this information below:',
+    'continue_register_other_company' => 'Continue Register Other Company',
+    'continue_register_account' => 'Continue Register Account',
+    'Retype your password' => 'Retype your password',
+    'Ministry name' => 'Ministry name',
+    'Ministry of Education, Higher Education and Vocational Education'=> 'eg: Ministry of Education, Higher Education and Vocational Education',
+    'Name of organisation under the Ministry (if applicable)' => 'Name of organisation under the Ministry (if applicable)',
+    'Tertiary and Vocational Education Commission (TVEC)' => 'eg: Tertiary and Vocational Education Commission (TVEC)',
+    'Environment conservation' => 'eg: Environment conservation',
+    'Field of operations' => 'Field of operations',
+    'Registration number (if applicable)' => 'Registration number (if applicable)',
+'Password must be 8-16 characters with 1 uppercase, 1 number, and 1 special character' => 'Password must be 8-16 characters with 1 uppercase, 1 number, and 1 special character',
+    'E-mail (official email for recruitment)' => 'E-mail (official email for recruitment)',
+    'E-mail (your organisation’s email)' => 'E-mail (your organisation’s email)',
+    'Type the registration number if applicable' => 'Type the registration number if applicable',
+    'Attached file (Certificate)' => 'Attached file (Certificate)',
+    'Organisation Registration' => 'Organisation Registration',
+    'Organisation Sign in' => 'Organisation Sign in',
+];
