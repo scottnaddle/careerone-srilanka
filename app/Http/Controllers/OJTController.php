@@ -21,11 +21,11 @@ use App\Jobs\SendOJTRegistrationNotificationJob;
 
 class OJTController extends Controller
 {
-    protected $notificationManager;
-    public function __construct( NotificationManager $notificationManager)
+    public function __construct(private NotificationManager $notificationManager)
     {
-        $this->notificationManager = $notificationManager;
+        $this->middleware('company.auth');
     }
+
     /**
      * Store a newly created resource in storage.
      */

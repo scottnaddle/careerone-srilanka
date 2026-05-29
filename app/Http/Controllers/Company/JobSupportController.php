@@ -48,7 +48,7 @@ class JobSupportController extends Controller
      */
     public function __construct(JobVacancyService $jobVacancyService, NotificationManager $notificationManager, TraineeJobService $traineeJobService, ProvincesDistrictsService $provincesDistrictsService)
     {
-        $this->middleware('company.auth')->except(['downloadFile', 'getCVOfTrainee']);
+        $this->middleware('company.auth')->except(['downloadFile']);
         $this->jobVacancyService = $jobVacancyService;
         $this->traineeJobService = $traineeJobService;
         $this->provincesDistrictsService = $provincesDistrictsService;
@@ -521,7 +521,7 @@ class JobSupportController extends Controller
     public function ojtDetail($slug)
     {
         $ojt = OJT::where('slug', $slug)->first();
-        $companyList = Company::whereNotNull('verified_by')->whereNotNull('verified_by')->where('active',true)->get();
+        $companyList = Company::whereNotNull('verified_by')->whereNotNull('verified_at')->where('active',true)->get();
         return view('company.job-support.ojt-list.ojt-details')->with(['ojt' => $ojt, 'companyList' => $companyList]);
     }
 

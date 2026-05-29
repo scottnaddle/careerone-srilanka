@@ -121,12 +121,10 @@ Route::group(['prefix' => 'company', 'as' => 'company.'], function () {
             Route::get('/ojt-registration', [JobSupportController::class, 'ojtRegistration'])->name('registration');
             Route::get('/ojt-detail/{slug}', [JobSupportController::class, 'ojtDetail'])->name('detail');
             Route::post('/ojt-registration', [OJTController::class, 'store'])->name('postRegistration');
-            Route::get('/list-matched/{slug}', [JobSupportController::class, 'ojtListMatched'])->name('list-matched');
-            Route::get('/trainee-match/{slug}', [JobSupportController::class, 'ojtTraineeMatch'])->name('trainee-match');
+            Route::get('/delete/{id}', [OJTController::class, 'destroy'])->name('delete');
             Route::get('/trainee-information/{slug}/{trainee}', [OJTMatchController::class, 'ojtTraineeInformation'])->name('trainee-information');
             Route::post('/trainee-match', [OJTMatchController::class, 'store'])->name('match-trainee');
             Route::get('/ojt-detail/download/{id}', [OJTAttachmentController::class, 'download'])->name('ojt-detail.download');
-            Route::get('/delete/{id}', [OJTController::class, 'destroy'])->name('delete');
             Route::get('/edit/{slug}', [JobSupportController::class, 'ojtEdit'])->name('edit');
             Route::get('/attachment/delete/{id}/{ojt_id}', [OJTAttachmentController::class, 'destroy'])->name('attachment.delete');
             Route::post('/update/{slug}', [OJTController::class, 'update'])->name('update');
