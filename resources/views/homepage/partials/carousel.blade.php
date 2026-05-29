@@ -8,7 +8,7 @@
                     <link rel="preload" as="image" href="{{$banner->bannerImage->original_url ?? ''}}">
                 @endpush
                 <div class="hidden duration-4000 ease-in-out" @if($key == 0) data-carousel-item="active" @else data-carousel-item @endif>
-                    <img src="{{$banner->bannerImage->original_url ?? ''}}" @if($key ==0) loading="eager" @else loading="lazy" @endif class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-full" alt="...">
+                    <img src="{{$banner->bannerImage->original_url ?? ''}}" @if($key ==0) loading="eager" @else loading="lazy" @endif class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-full" alt="{{ $banner->title ?? 'CareerOne Banner ' . ($key + 1) }}">
                     <div class="absolute md:top-[130px] md:left-16 flex flex-col gap-4 w-1/2">
                         {{--                <p class="text-black md:text-5xl font-medium">Welcome to </p>--}}
                         <p class="text-primary md:text-5xl font-bold">{!! $banner->title !!}</p>

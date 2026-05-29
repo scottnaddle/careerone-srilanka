@@ -30,9 +30,9 @@
         </a>
 
         <div>
-            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white leading-9">
+            <h1 class="text-2xl font-semibold text-gray-900 dark:text-white leading-9">
                 {{ $title ?? trans('auth.welcome_back') }}
-            </h2>
+            </h1>
             <p class="text-base font-normal text-gray-400 dark:text-white leading-6">{{ trans('auth.sign_in_to_continue') }}</p>
         </div>
 

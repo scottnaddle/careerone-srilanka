@@ -20,7 +20,7 @@
                     <p class="font-semibold dark:text-white">Category: {{ $newsLetter->newsletterCategory->name ?? 'No category' }}</p>
                     <p class="dark:text-white">{{$newsLetter->title}}</p>
                     @if ($newsLetter->thumbnail)
-                        <img src="{{ asset('storage/' . $newsLetter->thumbnail) }}" alt="Thumbnail" class="rounded-xl  click-zoom" style="max-width: 300px;">
+                        <img src="{{ asset('storage/' . $newsLetter->thumbnail) }}" alt="{{ $newsLetter->title ?? 'Newsletter thumbnail' }}" class="rounded-xl  click-zoom" style="max-width: 300px;">
                     @endif
                     @if ($newsLetter->attachment)
                         <p class="dark:text-white"><a href="{{ asset($newsLetter->attachment) }}" target="_blank">Attachment: <span class="underline text-primary">{{basename($newsLetter->attachment)}}</span></a></p>

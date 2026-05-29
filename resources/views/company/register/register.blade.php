@@ -1,4 +1,4 @@
-@extends('company.auth.layouts.master')
+@extends('auth.layouts.master')
 
 @section('title', 'Register new company')
 <link href="{{ asset('css/select2/select2.css') }}" rel="stylesheet" />

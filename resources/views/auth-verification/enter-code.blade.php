@@ -1,4 +1,4 @@
-@extends('cgo.auth.layouts.master')
+@extends('auth.layouts.master')
 
 @section('title', 'Verify Account')
 

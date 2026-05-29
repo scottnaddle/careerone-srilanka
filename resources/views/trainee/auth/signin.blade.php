@@ -1,4 +1,4 @@
-@extends('trainee.auth.layouts.master')
+@extends('auth.layouts.master')
 
 @section('title', 'Sign In')
 

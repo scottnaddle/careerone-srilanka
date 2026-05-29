@@ -7,7 +7,7 @@
             @forelse($sectors as $key => $sector)
                 <div class=" flex flex-col gap-6 shadow-custom-light dark:shadow-custom-dark p-4 rounded-xl bg-white border-1 border-[#F8F8F8] dark:bg-[#1E1E1E]">
                     <a href="{{$sector['url']}}" class="flex justify-center">
-                        <img src="{{$sector['thumbnail']}}" class="object-cover rounded-xl h-48" @if($key == 0) loading="eager" @else loading="lazy" @endif alt="Thumbnail">
+                        <img src="{{$sector['thumbnail']}}" class="object-cover rounded-xl h-48" @if($key == 0) loading="eager" @else loading="lazy" @endif alt="{{ $sector['name'] ?? 'Sector thumbnail' }}">
                     </a>
                     <div class="flex flex-col gap-2" data-tooltip-target="tooltip-{{$key}}" data-tooltip-style="light">
                         <a href="{{$sector['url']}}" class="text-primary dark:text-white text-xl font-semibold">{{\Str::limit($sector['name'], 20)}}</a>
@@ -36,7 +36,7 @@
                     @forelse($sectors as $key => $sector)
                         <li class="glide__slide h-full">
                             <div class="flex flex-col gap-3  p-2 rounded-xl bg-white dark:bg-[#1E1E1E] border border-[#F8F8F8] dark:border-0">
-                                <a href="{{$sector['url']}}" class="flex justify-center"><img @if($key == 0) loading="eager" @else loading="lazy" @endif src="{{$sector['thumbnail_mobile']}}" class="object-cover rounded-xl h-36 w-full" alt="Thumbnail"></a>
+                                <a href="{{$sector['url']}}" class="flex justify-center"><img @if($key == 0) loading="eager" @else loading="lazy" @endif src="{{$sector['thumbnail_mobile']}}" class="object-cover rounded-xl h-36 w-full" alt="{{ $sector['name'] ?? 'Sector thumbnail' }}"></a>
                                 <div class="flex flex-col gap-2" data-tooltip-target="tooltip-{{$key}}" data-tooltip-style="light">
                                     <a href="{{$sector['url']}}" class="text-primary dark:text-white font-semibold">{{\Str::limit($sector['name'],20)}}</a>
                                     {{--                                <p class="text-sm text-[#91919A] dark:text-white h-9">{{\Str::limit($sector['short_description'],30)}} </p>--}}

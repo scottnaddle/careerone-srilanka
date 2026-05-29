@@ -1,4 +1,4 @@
-@extends('cgo.auth.layouts.master')
+@extends('auth.layouts.master')
 
 @section('title', 'Sign Up')
 <link href="{{ asset('css/select2/select2.css') }}" rel="stylesheet" />
