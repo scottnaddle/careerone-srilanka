@@ -193,6 +193,7 @@ return [
         'open_to_work_message' => 'I would like to get a recommendation for the recruitment.',
         'deactive_msg1' => 'Are you sure deactive your account?',
         'deactive_msg2' => 'After you deactive your account, you can not login to our system!',
+        'synced_from_nvq' => 'District and institute information is synced from the NVQ system and cannot be edited here.',
         'my_guidance' => 'My guidance',
         'job_match' => 'Job Match',
         'applied_job' => 'Job(s) Applied',
