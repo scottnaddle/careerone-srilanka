@@ -158,7 +158,7 @@ class PortfolioController extends Controller
 //    }
     public function create()
     {
-        // Kiểm tra portfolio đã tồn tại
+        // Check if portfolio already exists
         if (Portfolio::where('trainee_id', Auth::guard('trainee')->id())->exists()) {
             return redirect()->route('trainee.career-guidance.portfolios.show');
         }
@@ -168,15 +168,15 @@ class PortfolioController extends Controller
             abort(403, 'Unauthorized access');
         }
 
-        // 1. Lấy thông tin trainee
+        // 1. Get trainee information
         $traineeInformations = $current_user;
         $traineeTrainingInformations = TraineeTrainingHistory::where('trainee_id', $current_user->id)->first();
 
-        // Khởi tạo mảng giá trị mặc định
+        // Initialize default values
         $tvecEducations = [];
         $nvqEducations = [];
 
-        // Xử lý TVEC educations
+        // Process TVEC educations
         if ($traineeTrainingInformations && !empty($traineeTrainingInformations->content)) {
             try {
                 $trainingContent = json_decode($traineeTrainingInformations->content);
@@ -198,7 +198,7 @@ class PortfolioController extends Controller
             }
         }
 
-        // Xử lý NVQ educations
+        // Process NVQ educations
         if ($traineeTrainingInformations && !empty($traineeTrainingInformations->nvq_content)) {
             try {
                 $nvqContent = json_decode($traineeTrainingInformations->nvq_content);
@@ -245,7 +245,7 @@ class PortfolioController extends Controller
     }
     public function edit()
     {
-        // Kiểm tra portfolio đã tồn tại
+        // Check if portfolio already exists
         if ($portfolio = Portfolio::where('trainee_id', Auth::guard('trainee')->id())->first()) {
 
             $portfolioData = $portfolio->data;
