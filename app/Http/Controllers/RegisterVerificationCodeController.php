@@ -89,7 +89,7 @@ class RegisterVerificationCodeController extends Controller
                     if ($data['u_type'] == 'trainee') {
                         $user->disabled = 0;
                         $this->traineeCasSyncService->updateUser($user);
-                        return redirect()->route('trainee.cas.get-login')->with('message', 'Your account activated successfully');
+                        return redirect()->route('trainee.auth.login')->with('message', 'Your account activated successfully');
                     }
                     return redirect()->route($data['u_type'].'.auth.login')->with('message', 'Your account activated successfully');
                 } else {

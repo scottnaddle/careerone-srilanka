@@ -36,7 +36,7 @@ class FrontpageMenu extends Component
         switch (activeGuard()) {
             case '':
                 $this->items = [
-                    ['label' => 'Home', 'link' => '/'],
+                    ['label' => trans('system.menu.home'), 'link' => '/'],
                     [
                         'label' => trans('system.menu.about_us'),
                         'children' => [
@@ -83,7 +83,7 @@ class FrontpageMenu extends Component
                 break;
             case 'cgo':
                 $this->items = [
-                    ['label' => 'Home', 'link' => '/'],
+                    ['label' => trans('system.menu.home'), 'link' => '/'],
                     [
                         'label' => trans('system.menu.about_us'),
                         'children' => [
@@ -147,7 +147,7 @@ class FrontpageMenu extends Component
                 break;
             case 'company':
                 $this->items = [
-                    ['label' => 'Home', 'link' => '/'],
+                    ['label' => trans('system.menu.home'), 'link' => '/'],
                     [
                         'label' => trans('system.menu.about_us'),
                         'children' => [
@@ -193,7 +193,7 @@ class FrontpageMenu extends Component
                 break;
             case 'trainee':
                 $this->items = [
-                    ['label' => 'Home', 'link' => '/'],
+                    ['label' => trans('system.menu.home'), 'link' => '/'],
                     [
                         'label' => trans('system.menu.about_us'),
                         'children' => [

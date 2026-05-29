@@ -51,8 +51,10 @@ Route::group(['prefix' => 'attempt-to-test', 'as' => 'testnow.'], function () {
 
 Route::post('images/upload', [UploadController::class, 'store'])->name('upload.images');
 
-Route::get('/admins', function () {
-    return view('admin/dashboard');
+Route::middleware('auth:admin')->group(function () {
+    Route::get('/admins', function () {
+        return view('admin/dashboard');
+    });
 });
 Route::get('/choose-login', function () {
     if (Auth::guard('admin')->check()) {

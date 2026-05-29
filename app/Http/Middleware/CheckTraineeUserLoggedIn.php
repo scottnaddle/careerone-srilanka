@@ -17,8 +17,7 @@ class CheckTraineeUserLoggedIn
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::guard('trainee')->check()) {
-//            return redirect()->route('trainee.auth.login');
-            return redirect()->route('trainee.cas.get-login');
+            return redirect()->route('trainee.auth.login');
         } else {
             $user = Auth::guard('trainee')->user();
             if (!$user->email_verified_at) {

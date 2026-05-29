@@ -25,6 +25,11 @@ return [
         'download_user_manual' => 'Download user manual',
         'career_guidance' => [
             'root' => 'Career guidance',
+            'counseling' => 'Counseling',
+            'counseling_my_schedule' => 'My schedule',
+            'counseling_list' => 'Counseling list',
+            'counseling_waiting' => 'Waiting list for counseling',
+            'career_guide' => 'Career Guide',
             'employment' => [
                 'root' => 'Employment',
                 'employment_policy' => 'Related policies',

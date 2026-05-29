@@ -66,7 +66,7 @@ class ForgotPasswordController extends Controller
 
         Mail::to($email)->send(new SendResetPasswordLinkForTrainee($token));
 
-        return redirect()->route('trainee.cas.get-login')->with('message', 'We have emailed your password reset link!');
+        return redirect()->route('trainee.auth.login')->with('message', 'We have emailed your password reset link!');
     }
     /**
      * Write code on Method
@@ -107,6 +107,6 @@ class ForgotPasswordController extends Controller
         }
         DB::table('password_resets')->where(['email' => $request->email])->delete();
 
-        return redirect()->route('trainee.cas.get-login')->with('message', 'Your password has been changed!');
+        return redirect()->route('trainee.auth.login')->with('message', 'Your password has been changed!');
     }
 }
