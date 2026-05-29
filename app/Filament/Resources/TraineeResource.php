@@ -266,7 +266,7 @@ class TraineeResource extends Resource
                     ->query(function (Builder $query, array $data) {
                         $instituteIds = [];
 
-                        // Lọc theo provin
+                        // Filter by province
                         if (!empty($data['provin'])) {
                             $instituteIds = [];
                             $districtIds = District::where('prov_id', $data['provin'])->pluck('id')->toArray();
@@ -274,14 +274,14 @@ class TraineeResource extends Resource
                             $instituteIds = array_merge($instituteIds, $provinInstituteIds);
                         }
 
-                        // Lọc theo district
+                        // Filter by district
                         if (!empty($data['district'])) {
                             $instituteIds = [];
                             $districtInstituteIds = Institute::where('dist_id', $data['district'])->pluck('id')->toArray();
                             $instituteIds = array_merge($instituteIds, $districtInstituteIds);
                         }
 
-                        // Lọc theo divisional
+                        // Filter by divisional
                         if (!empty($data['divisional'])) {
                             $instituteIds = [];
                             $divisionalInstituteIds = Institute::where('ds_id', $data['divisional']);
@@ -294,7 +294,7 @@ class TraineeResource extends Resource
                             $instituteIds = array_merge($instituteIds, $divisionalInstituteIds->pluck('id')->toArray());
                         }
 
-                        // Lọc theo institute_select
+                        // Filter by institute
                         if (!empty($data['institute_select'])) {
                             $instituteIds[] = $data['institute_select'];
                         }

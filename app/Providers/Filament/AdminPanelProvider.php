@@ -173,17 +173,15 @@ class AdminPanelProvider extends PanelProvider
             })->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_BEFORE,
                 fn (): string => Blade::render('@livewire(\'Accessibility\')'),
-            ) ->sidebarCollapsibleOnDesktop()
+            )->sidebarCollapsibleOnDesktop()
             ->userMenuItems([
-                'profile' => MenuItem::make()->label('My page'),
+                'profile' => MenuItem::make()->label('Edit Profile'),
                 MenuItem::make()
                 ->label(__('admin/dashboard.download_user_manual'))
                     ->icon('heroicon-o-arrow-down')
                     ->url('/admin/download-user-manual')
                     ->openUrlInNewTab(),
-            ])
-            ->darkMode(false)
-            ->globalSearch(false);
+            ]);
 
 
     }

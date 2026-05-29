@@ -63,39 +63,6 @@ class CompanyResource extends Resource
                     ->columnSpan('full')
                     ->options(fn () => collect(getCodeList('office_type'))->pluck('code_name', 'code_id')->toArray()),
 
-//                    Select::make('headquarter_id')
-//                    ->label('Headquarter')
-//                    ->columnSpan('full')
-//                    ->options(fn (callable $get) =>
-//                        Company::query()
-//                            ->whereNotNull('verified_at')
-//                            ->whereNotNull('verified_by')
-//                            ->where('active', true)
-//                            ->orderBy('name', 'asc')
-//                            ->when($get('id'), fn ($query, $id) => $query->where('id', '!=', $id))
-//                            ->pluck('name', 'id')
-//                    )
-//
-//
-//                    ->default(auth()->user()->company_id ?? null),
-
-//                TextInput::make('number_workers')
-//                    ->label('Number of Workers')
-//                    ->columnSpan('full')
-//                    ->numeric()
-//                    ->required(),
-//
-//                    Select::make('company_information')
-//                    ->label('Company Information')
-//                    ->columnSpan('full')
-//                    ->options(collect(getCodeList('company_information'))
-//                        ->mapWithKeys(fn ($item) => [$item['code_id'] => $item['code_name']])
-//                        ->toArray()
-//                    )
-//
-//                    ->required(),
-
-
                 Select::make('district_id')
                     ->label('District')
                     ->relationship('district', 'name')
@@ -108,10 +75,6 @@ class CompanyResource extends Resource
                     ->label('Address')
                     ->columnSpan('full')
                     ->required(),
-//                    TextInput::make('website')
-//                    ->label('Website')
-//                    ->columnSpan('full')
-//                    ->required(),
                 Placeholder::make('attachment_details')
                     ->label('Attachment Details')
                     ->content(function ($record) {
@@ -382,7 +345,7 @@ class CompanyResource extends Resource
 
     protected static function generateTemplate()
     {
-        // Bỏ dấu * trực tiếp tại Header để tránh lỗi nhận diện Key từ Laravel-Excel
+        // Remove asterisks from headers to avoid Excel key recognition issues
         $headers = [
             'company_name',
             'business_registration_number',
@@ -491,7 +454,7 @@ class CompanyResource extends Resource
             $districtValidation->setPromptTitle('Select District');
             $districtValidation->setPrompt('Select a  valid.');
 
-            // Giới hạn ký tự chuỗi validation để tránh lỗi Excel crash khi danh sách quận huyện quá dài (>255 ký tự)
+            // Limit validation string length to avoid Excel crash when district list is too long (>255 chars)
             $formulaString = '"' . implode(',', array_slice($districts, 0, 20)) . '"';
             $districtValidation->setFormula1($formulaString);
 

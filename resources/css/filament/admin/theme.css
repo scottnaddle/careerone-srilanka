@@ -5,6 +5,7 @@
 @import "/resources/css/font.css";
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 @config 'tailwind.config.js';
+
 .fi-simple-layout {
     background-image: url('/images/bg-auth.webp');
     background-size: cover;
@@ -14,18 +15,10 @@
     background-color: #fff;
     padding-top: 2rem;
     padding-bottom: 2rem;
-    /*padding: 2rem 3rem;*/
-
-}
-.fi-simple-header {
-    align-items: start;
 }
 
 .fi-fo-field-wrp-label > span {
     font-size: 1rem;
-}
-button#filament-language-switcher {
-    display: none !important;
 }
 
 body {
@@ -43,49 +36,11 @@ body {
 }
 
 section:has(button.action-btn-bottom) {
-    position : relative;
+    position: relative;
 }
+
 .fi-form-actions > .fi-ac {
     display: flex;
     flex-direction: row-reverse;
     justify-content: end;
 }
-/*.bg-custom-600 {*/
-/*    background-color: #4984F6 !important;*/
-/*}*/
-/*.text-custom-600 {*/
-/*    color: #4984F6 !important;*/
-/*}*/
-
-/*@media (max-width: 1200px) {*/
-/*    .fi-sidebar {*/
-/*        transform: translateX(-100%) !important;*/
-/*        position: sticky;*/
-/*    }*/
-
-/*    .fi-sidebar-open .fi-sidebar {*/
-/*        transform: translateX(0) !important;*/
-/*    }*/
-
-/*    .fi-main {*/
-/*        padding-left: 0 !important;*/
-/*    }*/
-
-/*    !* Ensure the sidebar toggle button is always visible *!*/
-/*    .fi-topbar-open-sidebar-btn {*/
-/*        display: flex !important;*/
-/*        position: fixed;*/
-/*        top: 1rem;*/
-/*        left: 1rem;*/
-/*        z-index: 50;*/
-/*        background-color: white; !* Adjust color if needed *!*/
-/*        padding: 0.5rem;*/
-/*        border-radius: 0.375rem;*/
-/*        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);*/
-/*    }*/
-
-/*    !* Adjust for dark mode *!*/
-/*    .dark .fi-sidebar-toggle-button {*/
-/*        background-color: #1f2937; !* Tailwind gray-800 *!*/
-/*    }*/
-/*}*/
