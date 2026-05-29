@@ -25,6 +25,7 @@
         "kreait/firebase-php": "^7.14",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
+        "laravel/socialite": "^5.27",
         "laravel/tinker": "^2.8",
         "maatwebsite/excel": "^3.1",
         "malzariey/filament-daterangepicker-filter": "^3.0",

@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="max-w-2xl mx-auto w-screen py-24 flex flex-col h-full justify-start">
-        @include('auth.partials.signin-form', [
+        @include('auth.partials.signin-form', ['userType' => 'cgo'], [
             'route' => 'cgo.auth.postLogin',
             'logo' => 'images/logo/careerone-logo.svg',
             'logoDark' => 'images/logo/careerone-logo-dark.svg',

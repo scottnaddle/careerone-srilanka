@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="max-w-2xl mx-auto w-screen py-24 flex flex-col h-full justify-start">
-        @include('auth.partials.signin-form', [
+        @include('auth.partials.signin-form', ['userType' => 'trainee'], [
             'route' => 'trainee.auth.postLogin',
             'logo' => '/images/TVET.svg',
             'logoDark' => null,

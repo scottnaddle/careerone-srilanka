@@ -96,6 +96,8 @@ return [
     'login_with_magic_link' => 'Sign in without password',
     'i_am_a' => 'I am a',
     'back_to_login' => 'Back to login',
+    'continue_with_google' => 'Continue with Google',
+    'or_continue_with_email' => 'or continue with email',
     'password_incorrect' => 'The current password is incorrect.',
     'password_requirements' => 'Password must be 8-16 characters with 1 uppercase, 1 number, and 1 special character.',
     'email_changed_verify' => 'Your email has been updated. Please check your new email for the verification link.',

@@ -271,3 +271,7 @@ Route::get('/test-sms-simple', function () {
 Route::get('/magic-link', [MagicLinkController::class, 'showForm'])->name('magic-link.form');
 Route::post('/magic-link', [MagicLinkController::class, 'send'])->name('magic-link.send');
 Route::get('/magic-link/verify', [MagicLinkController::class, 'verify'])->name('magic-link.verify');
+
+// Social Login (Google)
+Route::get('/auth/google/redirect', [SocialLoginController::class, 'redirect'])->name('social.redirect');
+Route::get('/auth/google/callback', [SocialLoginController::class, 'callback'])->name('social.callback');
