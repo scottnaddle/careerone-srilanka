@@ -332,4 +332,17 @@ return [
     'job_matched' => 'Job Matched',
     'ojt_matched' => 'OJT Matched',
 
+
+    // Wizard signup
+    'step_company' => 'Company Info',
+    'step_recruiter' => 'Your Info',
+    'step_confirm' => 'Confirm',
+    'section_company' => 'Company Information',
+    'section_recruiter' => 'Contact Person',
+    'number_of_workers' => 'Number of workers',
+    'company_email' => 'Company email',
+    'business_license' => 'Business registration certificate',
+
+    'address' => 'Address',
+    'office_type' => 'Office type',
 ];
