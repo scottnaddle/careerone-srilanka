@@ -29,6 +29,9 @@ class CheckCgoUserLoggedIn
                 Auth::guard('cgo')->logout();
                 return response()->view('auth-verification.reactive-account-form', compact('token', 'u_type'));
             }
+            if (is_null($user->verify_at)) {
+                return response()->view('admin.auth.account_must_verify');
+            }
         }
         return $next($request);
     }

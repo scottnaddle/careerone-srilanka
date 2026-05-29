@@ -4,9 +4,7 @@ use App\Http\Controllers\Api\TraineeMatchController;
 use App\Http\Controllers\CGO\CgoLoginController;
 use App\Http\Controllers\CGO\CgoRegisterController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\CGO\FaqController;
 use App\Http\Controllers\CGO\ForgotPasswordController;
-use App\Http\Controllers\CGO\NoticeController;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\CGO\CareerTestController;
 use App\Http\Controllers\CGO\MyPageController;
@@ -46,17 +44,17 @@ Route::group(['prefix' => 'cgo', 'as' => 'cgo.'], function () {
         Route::group(['prefix' => 'content-management', 'as' => 'content-management.', 'middleware' => ['cgo.auth']], function () {
             Route::group(['prefix' => 'videos', 'as' => 'videos.'], function () {
                 Route::get('/', [ContentManagementController::class, 'getVideos'])->name('list');
-                Route::post('post', [ContentManagementController::class, 'postVideos'])->name('post')->withoutMiddleware('cgo.auth');
+                Route::post('post', [ContentManagementController::class, 'postVideos'])->name('post');
                 Route::get('delete/{slug}', [ContentManagementController::class, 'deleteVideo'])->name('delete');
-                Route::get('show/{slug}', [ContentManagementController::class, 'getVideos'])->name('show')->withoutMiddleware('cgo.auth');
+                Route::get('show/{slug}', [ContentManagementController::class, 'getVideos'])->name('show');
             });
 
             Route::group(['prefix' => 'documents', 'as' => 'documents.'], function () {
                 Route::get('/', [ContentManagementController::class, 'getDocuments'])->name('list');
                 Route::post('post', [ContentManagementController::class, 'postDocument'])->name('post');
                 Route::get('delete/{slug}', [ContentManagementController::class, 'deleteDocument'])->name('delete');
-                Route::get('show/{id}', [ContentManagementController::class, 'getDocuments'])->name('show')->withoutMiddleware('cgo.auth');
-                Route::get('download/{id}', [ContentManagementController::class, 'downloadDocument'])->name('download')->withoutMiddleware('cgo.auth');
+                Route::get('show/{id}', [ContentManagementController::class, 'getDocuments'])->name('show');
+                Route::get('download/{id}', [ContentManagementController::class, 'downloadDocument'])->name('download');
             });
             Route::group(['prefix' => 'peer-review', 'as' => 'peer-review.'], function () {
                 Route::get('/', [ContentManagementController::class, 'getPeerReviewList'])->name('list');
@@ -69,7 +67,7 @@ Route::group(['prefix' => 'cgo', 'as' => 'cgo.'], function () {
             Route::group(['prefix' => 'resource', 'as' => 'resource.'], function () {
                 Route::get('/', [\App\Http\Controllers\CGO\ResourceController::class, 'getResourceList'])->name('list');
                 Route::get('/{id}', [\App\Http\Controllers\CGO\ResourceController::class, 'getContentDetails'])->name('details');
-                Route::get('download/{id}', [\App\Http\Controllers\CGO\ResourceController::class, 'downloadDocument'])->name('download')->withoutMiddleware('cgo.auth');
+                Route::get('download/{id}', [\App\Http\Controllers\CGO\ResourceController::class, 'downloadDocument'])->name('download');
             });
         });
     });

@@ -65,8 +65,8 @@ class CounselingController extends Controller
         if ($counseling->status == getCodeIdByStringEn('counselling_status', 'confirm')) {
             $CGOList = CgoUser::where('institute_id', Auth::guard('cgo')->user()->institute_id)->where('id', '!=', Auth::guard('cgo')->id())->get();
         }
-        $objectCounselingList=    $counseling->cgoCounselingAssignHistory ;
-        $assigneeToId=$objectCounselingList[0]->assignee_to;
+        $objectCounselingList = $counseling->cgoCounselingAssignHistory;
+        $assigneeToId = $objectCounselingList->isNotEmpty() ? $objectCounselingList->first()->assignee_to : null;
         $currentUserId = Auth::guard('cgo')->user()->id;
         $rejectCount = DB::table('user_actions')
         ->where('cgo_user_id', $currentUserId)
@@ -210,9 +210,9 @@ class CounselingController extends Controller
             //Update assign
             $assignHistory = CgoCounselingAssignHistory::where('counseling_id', $counseling->id)->first();
             if ($assignHistory) {
-                if ($assignHistory->assignee_from == '') {
-                    $from = [];
-                }
+                $from = !empty($assignHistory->assignee_from)
+                    ? (is_array($assignHistory->assignee_from) ? $assignHistory->assignee_from : [$assignHistory->assignee_from])
+                    : [];
                 array_push($from, $assignHistory->assignee_to);
                 $assignHistory->assignee_from = $from;
                 $assignHistory->assignee_to = $request->cgo_id;

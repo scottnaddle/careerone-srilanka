@@ -192,7 +192,7 @@ class MyPageController extends Controller
 
             if (isset(Auth::guard('cgo')->user()->id)) {
                 DeviceToken::where('user_id', Auth::guard('cgo')->user()->id)
-                    ->where('system', 'trainee')
+                    ->where('system', 'cgo')
                     ->delete();
             }
             Auth::guard('cgo')->logout();
