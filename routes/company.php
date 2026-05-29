@@ -10,6 +10,7 @@ use App\Http\Controllers\OJTMatchController;
 use App\Http\Controllers\Company\RegisterNewCompany;
 use App\Http\Controllers\Company\MyPageController;
 use App\Http\Controllers\Company\ChangePasswordController;
+use App\Http\Controllers\Company\WizardController;
 use App\Http\Controllers\Company\NoticeController;
 use App\Http\Controllers\Company\FaqController;
 use App\Http\Controllers\OJTAttachmentController;
@@ -28,6 +29,7 @@ use App\Http\Controllers\OJTController;
 
 Route::group(['prefix' => 'company', 'as' => 'company.'], function () {
     Route::get('/search/{keyword}', [RegisterNewCompany::class, 'getSearch'])->name('search');
+    Route::get('/wizard-search', [WizardController::class, 'searchCompanies'])->name('wizard.search');
 
     Route::group(['prefix' => 'my-page', 'as' => 'my-page.'], function () {
         Route::get('/', [MyPageController::class, 'index'])->name('my-page');
@@ -52,7 +54,11 @@ Route::group(['prefix' => 'company', 'as' => 'company.'], function () {
     Route::group(['prefix' => 'auth', 'as' => 'auth.'], function () {
         Route::get('/signin', [CompanyLoginController::class, 'login'])->name('login');
         Route::post('/signin', [CompanyLoginController::class, 'postLogin'])->name('postLogin');
-        Route::get('/signup', [CompanyRegisterController::class, 'register'])->name('register');
+        // Wizard signup (new)
+        Route::get('/signup', [WizardController::class, 'signup'])->name('register');
+        Route::post('/signup', [WizardController::class, 'store'])->name('wizard.store');
+        // Legacy signup redirect
+        Route::get('/signup-legacy', [CompanyRegisterController::class, 'register'])->name('register.legacy');
         Route::post('/signup', [CompanyRegisterController::class, 'postRegister'])->name('postRegister');
         Route::get('forget-password', [ForgotPasswordController::class, 'showForgetPasswordForm'])->name('forgotPassword');
         Route::post('forget-password', [ForgotPasswordController::class, 'submitForgetPasswordForm'])->name('postForgotPassword');
