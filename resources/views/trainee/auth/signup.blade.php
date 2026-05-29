@@ -42,6 +42,11 @@
                     <img src="{{asset('/images/careerone-logo.png')}}" class="h-8 md:h-12 block dark:hidden" alt="Careerone Logo" />
                     <img src="{{asset('/images/careerone-logo-dark.png')}}" class="h-8 md:h-12 hidden dark:block" alt="Careerone Logo" />
                 </a>
+                @if (session()->get('message'))
+                    <div class="bg-green-100 text-green-800 text-base font-medium px-4 py-3 rounded dark:bg-[#1E1E1E] dark:text-green-400 border border-green-400">
+                        {!! session()->get('message') !!}
+                    </div>
+                @endif
                 @if (session()->get('error'))
                     <span
                         class="bg-green-100 text-green-800 text-base font-medium px-2.5 py-3 rounded dark:bg-[#1E1E1E] dark:text-green-400 border border-green-400">{!! session()->get('error') !!}</span>

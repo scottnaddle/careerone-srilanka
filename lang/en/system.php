@@ -137,6 +137,7 @@ return [
         'no_record' => 'No record!',
         'company_registered' => 'Your company has been registered. Please complete your account details below.',
         'company_exists' => 'This company is already registered. Please contact the administrator if you need access.',
+        'verification_sent' => 'A verification code has been sent. Please check your inbox.',
     ],
     'filter' => [
         'all' => 'All',
