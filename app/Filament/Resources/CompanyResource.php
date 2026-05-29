@@ -180,8 +180,8 @@ class CompanyResource extends Resource
                     ->form([
                         Forms\Components\Select::make('approval')
                             ->options([
-                                '1' => 'Approved',
-                                '2' => 'Pending Approval',
+                                '1' => 'Verified',
+                                '2' => 'Pending',
                                 '3' => 'Rejected'
                             ])
                             ->preload()
@@ -318,6 +318,7 @@ class CompanyResource extends Resource
             ->paginated([10, 25, 50, 100])
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
+            ->preserveScroll()
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

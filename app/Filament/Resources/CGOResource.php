@@ -150,6 +150,7 @@ class CGOResource extends Resource
             ])
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
+            ->preserveScroll()
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     // Tables\Actions\DeleteBulkAction::make(),
