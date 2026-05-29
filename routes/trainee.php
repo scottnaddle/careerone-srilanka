@@ -159,7 +159,6 @@ Route::group(['prefix' => 'trainee', 'as' => 'trainee.'], function () {
 
         Route::group(['prefix' => 'portfolio', 'as' => 'portfolio.'], function () {
             Route::get('/my-portfolio', [PortfolioController::class, 'getMyPortfolios'])->name('get-portfolio');
-            Route::get('/new', [PortfolioController::class, 'createPortfolio'])->name('create-portfolio');
             Route::post('/save-portfolio', [PortfolioController::class, 'savePortfolio']);
             Route::get('/load-portfolio/{id}', [PortfolioController::class, 'loadPortfolio']);
             Route::get('/delete-portfolio', [PortfolioController::class, 'deletePortfolio']);
@@ -173,7 +172,6 @@ Route::group(['prefix' => 'trainee', 'as' => 'trainee.'], function () {
             Route::post('/upload-resume', [PortfolioController::class, 'postUploadResume'])->name('upload-resume');
             Route::get('/delete-resume', [PortfolioController::class, 'deleteResume']);
             Route::get('/preview-resume', [PortfolioController::class, 'previewResume'])->name('preview-resume');
-            Route::get('/edit-resume', [PortfolioController::class, 'editResume'])->name('edit-resume');
         });
     });
 

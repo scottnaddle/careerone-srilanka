@@ -371,14 +371,17 @@ class PortfolioController extends Controller
     }
 
     public function previewPortfolio(Request $request) {
-
         $id = $request->pid;
         $portfolio = Portfolio::where('id', $id)->first();
         if ($portfolio) {
+            // Check if trainee allows public portfolio sharing
+            $trainee = TraineeUser::find($portfolio->trainee_id);
+            if ($trainee && !$trainee->public_portfolio) {
+                return back()->withErrors('This portfolio is not publicly available.');
+            }
             $portfolioDatas = $portfolio->data;
             return view('portfolio.preview', compact('portfolioDatas', 'portfolio'));
-
-        }else{
+        } else {
             return back()->withErrors("Can not find the portfolio.");
         }
     }
@@ -546,87 +549,20 @@ class PortfolioController extends Controller
 
     public function generatePortfolios()
     {
-        $nic = [
-            '200325411257',
-            '200324900226',
-            '200076501371',
-            '200473400050',
-            '200282802767',
-            '200123003080',
-            '200008702976',
-            '200154503414',
-            '947021265V',
-            '200479400015',
-            '200119700813',
-            '200380611796',
-            '200124100269',
-            '200214903428',
-            '200412103898',
-            '200508203305',
-            '200312312501',
-            '200355211630',
-            '200512900343',
-            '200720102068',
-            '200480703757',
-            '200303102541',
-            '200183001321',
-            '200460604424',
-            '200372811091',
-            '200517701414',
-            '200534701760',
-            '200473104912',
-            '200476904197',
-            '200268300562',
-            '200508603439',
-            '200566301572',
-            '200301902341',
-            '200551101990',
-            '200321000649',
-            '200161703075',
-            '200258603602',
-            '987960671V',
-            '200220703996',
-            '200207503108',
-            '200316512403',
-            '988301906V',
-            '200122500342',
-            '200382700341',
-            '199721503710',
-            '200179602030',
-            '200160303532',
-            '200430000786',
-            '200268100898',
-            '996751740V',
-            '200420601781',
-            '200120401271',
-            '200433400692',
-            '200301100051',
-            '200058300848',
-            '200283602418',
-            '200432803311',
-            '200469402014',
-            '200470503523',
-            '200400111887',
-            '200377100330',
-            '200314013560',
-            '200271600412',
-            '200310212094',
-            '200114001444',
-            '200419704430',
-            '991940367V',
-            '917674418V',
-            '199927210452',
-            '200126003539',
-            '200009102986',
-            '200403100490',
-            '200015202596',
-            '200112100010',
-        ];
-        // Dispatch job để xử lý trong hàng đợi
+        // Get all active trainee NICs from database
+        $nic = TraineeUser::where('active', true)->pluck('nic')->toArray();
+
+        if (empty($nic)) {
+            return response()->json([
+                'message' => 'No active trainees found.',
+            ], 404);
+        }
+
+        // Dispatch job to process in queue
         CreatePortfoliosJob::dispatch($nic);
 
         return response()->json([
-            'message' => 'Portfolio generation job has been dispatched!'
+            'message' => 'Portfolio generation job has been dispatched for ' . count($nic) . ' trainees.',
         ]);
     }
 }

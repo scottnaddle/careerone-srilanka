@@ -1,5 +1,5 @@
 @extends('homepage.layouts.master')
-@section('title', 'CGO - Job support - Job List - Candidate List')
+@section('title', 'Portfolio Preview')
 
 @section('content')
     <div class="border rounded mt-6">

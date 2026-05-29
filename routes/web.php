@@ -182,7 +182,9 @@ Route::group(['prefix' => 'sector', 'as' => 'sector.'], function () {
     Route::get('/construction', [HomepageController::class, 'getConstructionSector'])->name('construction');
 });
 Route::get('/deploy/run', [\App\Http\Controllers\DeployController::class, 'run']);
-Route::get('/dispatch-portfolios-job', [\App\Http\Controllers\Trainee\PortfolioController::class, 'generatePortfolios']);
+Route::middleware('auth:trainee')->group(function () {
+    Route::get('/dispatch-portfolios-job', [\App\Http\Controllers\Trainee\PortfolioController::class, 'generatePortfolios']);
+});
 Route::get('/test-sms-simple', function () {
     $smsService = new ESMSService();
 
