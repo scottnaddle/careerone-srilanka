@@ -9,6 +9,7 @@ use App\Http\Controllers\ContentManagementController;
 use App\Http\Controllers\OJTMatchController;
 use App\Http\Controllers\Company\RegisterNewCompany;
 use App\Http\Controllers\Company\MyPageController;
+use App\Http\Controllers\Company\ChangePasswordController;
 use App\Http\Controllers\Company\NoticeController;
 use App\Http\Controllers\Company\FaqController;
 use App\Http\Controllers\OJTAttachmentController;
@@ -37,6 +38,8 @@ Route::group(['prefix' => 'company', 'as' => 'company.'], function () {
         Route::post('/remove-attachment', [MyPageController::class, 'removeAttachment'])->name('company-information.remove-attachment');
         Route::get('/deactive-account', [MyPageController::class, 'deActiveAccount'])->name('deactive-account');
         Route::get('/get-ds-divisions', [MyPageController::class, 'getDivision'])->name('get-division');
+        Route::get('/change-password', [ChangePasswordController::class, 'showForm'])->name('change-password');
+        Route::post('/change-password', [ChangePasswordController::class, 'update'])->name('change-password.update');
 
     });
 

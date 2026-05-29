@@ -178,6 +178,12 @@ class MyPageController extends Controller
         if ($user->email != $request->email) {
             $user->email_verified_at = null;
             $user->email = $request->email;
+            $user->save();
+            // Send verification email to new address
+            $token = base64_encode($user->email);
+            $user->sendEmailVerify($token);
+            return redirect()->route('verification.isnotverified', ['u_type' => 'company', 'token' => $token])
+                ->with('message', __('auth.email_changed_verify'));
         }
         if ($request->file('avatar')) {
             $storage_path = storage_path('app/public/'.activeGuard().'/avatar/'.$user->id.'/');
@@ -189,9 +195,6 @@ class MyPageController extends Controller
             $user->profile_image = 'storage/'.activeGuard().'/avatar/'.$user->id.'/'.$fullName;
         }
         $user->save();
-        if ($user->email != $request->email) {
-            return redirect()->route('verification.isnotverified', ['u_type' => 'company', 'token' => base64_encode($user->email)]);
-        }
         return redirect()->route('company.my-page.personal-information')->with('success', __('system.form.saved'));
     }
 

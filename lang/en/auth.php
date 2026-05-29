@@ -80,4 +80,12 @@ return [
     'Attached file (Certificate)' => 'Attached file (Certificate)',
     'Organisation Registration' => 'Organisation Registration',
     'Organisation Sign in' => 'Organisation Sign in',
+    'change_password' => 'Change Password',
+    'current_password' => 'Current Password',
+    'new_password' => 'New Password',
+    'confirm_new_password' => 'Confirm New Password',
+    'password_changed' => 'Your password has been changed successfully.',
+    'password_incorrect' => 'The current password is incorrect.',
+    'password_requirements' => 'Password must be 8-16 characters with 1 uppercase, 1 number, and 1 special character.',
+    'email_changed_verify' => 'Your email has been updated. Please check your new email for the verification link.',
 ];

@@ -7,6 +7,7 @@ use App\Http\Controllers\Trainee\ForgotPasswordController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContentManagementController;
 use App\Http\Controllers\Trainee\MyPageController;
+use App\Http\Controllers\Trainee\ChangePasswordController;
 use App\Http\Controllers\Trainee\NoticeController;
 use App\Http\Controllers\Trainee\FaqController;
 use App\Http\Controllers\Trainee\CareerTestController;
@@ -54,6 +55,8 @@ Route::group(['prefix' => 'trainee', 'as' => 'trainee.'], function () {
         Route::get('/deactive-account', [MyPageController::class, 'deActiveAccount'])->name('deactive-account');
         Route::get('/get-my-information', [MyPageController::class, 'getMyInformation'])->name('get-my-information');
         Route::post('/personal-information', [MyPageController::class, 'postPersonalInformation'])->name('personal-information.post');
+        Route::get('/change-password', [ChangePasswordController::class, 'showForm'])->name('change-password');
+        Route::post('/change-password', [ChangePasswordController::class, 'update'])->name('change-password.update');
     });
 
     Route::group(['prefix' => 'career-guidance', 'as' => 'career-guidance.'], function () {

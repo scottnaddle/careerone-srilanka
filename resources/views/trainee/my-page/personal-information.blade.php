@@ -109,8 +109,9 @@
                                 <input type="tel" id="phone" class=" border border-[#EDEDED] text-[#464559] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-[#1E1E1E] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ $user->telephone }}" name="telephone" oninput="this.value = this.value.replace(/[^0-9+]/g, '')" />
                             </div>
 
-                            {{--                        <div>--}}
-                            {{--                            <label for="district" class="block mb-2 text-sm font-medium text-[#706F81] dark:text-white">District <span class="text-red-700">*</span></label>--}}
+                            <p class="text-sm text-gray-500 dark:text-gray-400 italic mb-4">
+                                ⓘ {{ __('trainee.my_page.synced_from_nvq') }}
+                            </p>
                             {{--                            <select id="district" class="border border-[#EDEDED] text-[#464559] text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-[#1E1E1E] dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  name="district" required>--}}
                             {{--                                <option value="">Choose a District</option>--}}
                             {{--                                @forelse($districts as $district)--}}
