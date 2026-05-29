@@ -193,11 +193,7 @@
                     <input type="password" name="password" id="password" required
                         class="bg-gray-50 border border-gray-300 p-3 h-10 rounded-xl w-full dark:bg-[#1E1E1E] dark:border-white dark:text-white"
                         oninput="updateStrength()">
-                    {{-- Strength Meter --}}
-                    <div class="mt-2">
-                        <div class="h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                            <div id="strength-bar" class="h-full rounded-full transition-all duration-300" style="width:0;background:#ef4444"></div>
-                        </div>
+                    {{-- Strength Rules --}}
                         <ul class="mt-1 space-y-0.5 text-xs" id="rules">
                             <li data-rule="length"><span class="inline-block w-4">○</span> 8-16 characters</li>
                             <li data-rule="upper"><span class="inline-block w-4">○</span> One uppercase</li>
@@ -450,10 +446,6 @@
             special: /[!@#$%^&*(),.?":{}|<>]/.test(pwd),
         };
         const passed = Object.values(rules).filter(Boolean).length;
-        const bar = document.getElementById('strength-bar');
-        const pct = (passed / 4) * 100;
-        bar.style.width = pct + '%';
-        bar.style.background = passed <= 1 ? '#ef4444' : passed <= 2 ? '#f59e0b' : passed <= 3 ? '#84cc16' : '#22c55e';
         document.querySelectorAll('#rules li').forEach(li => {
             const icon = li.querySelector('span');
             icon.textContent = pwd.length === 0 ? '○' : rules[li.dataset.rule] ? '✓' : '○';

@@ -4,9 +4,6 @@
 
 @push('css')
 <style>
-    .strength-bar { transition: width 0.3s ease, background-color 0.3s ease; }
-    .rule-passed { color: #16a34a; }
-    .rule-failed { color: #9ca3af; }
     .rule-icon { display: inline-block; width: 16px; text-align: center; }
 </style>
 @endpush
@@ -78,12 +75,8 @@
                         </button>
                     </div>
 
-                    {{-- Strength Meter --}}
-                    <div class="mt-2">
-                        <div class="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                            <div id="strength-bar" class="strength-bar h-full rounded-full" style="width: 0%; background-color: #ef4444;"></div>
-                        </div>
-                        <ul class="mt-2 space-y-0.5 text-xs" id="rules">
+                    {{-- Strength Rules --}}
+                    <ul class="mt-2 space-y-0.5 text-xs" id="rules">
                             <li data-rule="length"><span class="rule-icon">○</span> 8-16 characters</li>
                             <li data-rule="upper"><span class="rule-icon">○</span> One uppercase letter</li>
                             <li data-rule="number"><span class="rule-icon">○</span> One number</li>
@@ -161,29 +154,20 @@
             special: /[!@#$%^&*(),.?":{}|<>]/.test(pwd),
         };
         const passed = Object.values(rules).filter(Boolean).length;
-        const bar = document.getElementById('strength-bar');
         
-        // Update bar
-        const percent = (passed / 4) * 100;
-        bar.style.width = percent + '%';
-        if (passed <= 1) bar.style.backgroundColor = '#ef4444';
-        else if (passed <= 2) bar.style.backgroundColor = '#f59e0b';
-        else if (passed <= 3) bar.style.backgroundColor = '#84cc16';
-        else bar.style.backgroundColor = '#22c55e';
-
         // Update rule icons
         document.querySelectorAll('#rules li').forEach(li => {
             const rule = li.dataset.rule;
             const icon = li.querySelector('.rule-icon');
             if (pwd.length === 0) {
                 icon.textContent = '○';
-                li.className = 'rule-failed';
+                li.style.color = '#9ca3af';
             } else if (rules[rule]) {
                 icon.textContent = '✓';
-                li.className = 'rule-passed';
+                li.style.color = '#16a34a';
             } else {
                 icon.textContent = '○';
-                li.className = 'rule-failed';
+                li.style.color = '#9ca3af';
             }
         });
     }
