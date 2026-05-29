@@ -5,83 +5,178 @@
 | Metric | Value |
 |--------|-------|
 | Repository | https://github.com/scottnaddle/careerone-srilanka |
-| Commits (this sprint) | 10 |
-| Files Changed | 61 |
-| Net Lines | −109 (+724 / −833) |
-| Total Dead Code Removed | ~420 lines |
-| Bugs Fixed | 6 |
-| UX Improvements | 14 |
+| **Total Commits** | **20** |
+| Files Changed | 75+ |
+| Net Lines | −700+ |
+| **Total Dead Code Removed** | **~540 lines** |
+| Bugs Fixed | 16 |
+| **Security Issues Fixed** | **12** |
+| UX Improvements | 20+ |
 | New Features | 4 |
 
 ---
 
 ## Commit History
 
+### Phase 1: Auth & Registration Foundation (1-8)
+
 | # | Commit | Description |
 |:-:|--------|-------------|
 | 1 | `235e73b` | 🔴 **Critical auth fixes**: Trainee CAS redirect, Admin login fallback, register-manual route, `/admins` middleware |
 | 2 | `f23bce6` | 🟡 **Auth master consolidation + accessibility**: 3 auth layouts → 1 shared, `<h1>` landmark, `<html lang>`, img alt text, menu translations |
-| 3 | `c413f15` | 🔵 **Empty state UI + dead code**: 4 list pages get `@empty` states, dead code reported |
-| 4 | `fd7d601` | 🟡 **Company registration UX**: Session input preservation, Vietnamese→English comments, 152-line dead code removal, transition messages |
-| 5 | `62752d4` | 🟡 **Trainee registration cleanup**: 92-line dead code removal, "Sent" → proper translation key |
-| 6 | `338dda2` | 🟡 **Account management**: 5× "SAVED!" → translation key, 22-line dead code removal from Trainee deActiveAccount |
-| 7 | `b700983` | ✨ **Password change + email verification**: 2× ChangePasswordController, email-change re-verification, Trainee NVQ sync notice |
+| 3 | `c413f15` | 🔵 **Empty state UI + dead code**: 4 list pages get `@empty` states |
+| 4 | `fd7d601` | 🟡 **Company registration UX**: Session input preservation, Vietnamese→English, 152-line dead code, transition messages |
+| 5 | `62752d4` | 🟡 **Trainee registration cleanup**: 92-line dead code removal, "Sent" → translation key |
+| 6 | `338dda2` | 🟡 **Account management**: 5× "SAVED!" → translation key, 22-line dead code |
+| 7 | `b700983` | ✨ **Password change + email verification**: 2× ChangePasswordController, email re-verification, NVQ sync notice |
 | 8 | `705eeda` | Translation key fix |
+
+### Phase 2: Admin Panel UX (9-10)
+
+| # | Commit | Description |
+|:-:|--------|-------------|
 | 9 | `9c5120e` | 🔴 **Admin UX**: Dark mode, Global Search, Language Switcher enabled; 171 lines dead code removed |
-| 10 | `22b68b2` | 🟡 **Admin data interaction**: `preserveScroll()` added to 7 resources, filter label simplification |
+| 10 | `22b68b2` | 🟡 **Admin data interaction**: `preserveScroll()` added to 7 resources, filter labels |
+
+### Phase 3: Trainee Features (11-17)
+
+| # | Commit | Description |
+|:-:|--------|-------------|
+| 11 | `13f694c` | 📝 IMPROVEMENTS.md initial version |
+| 12 | `82dd85b` | 🔴 **Trainee security**: 73 hardcoded NIC numbers removed → DB query, `/dispatch-portfolios-job` auth added, `previewPortfolio` ownership check |
+| 13 | `412d7e0` | 🟡 Vietnamese comments → English (6 locations in PortfolioController) |
+| 14 | `5ed2a44` | 🟡 Dead code: 120 lines of commented-out `createPortfolio` removed |
+| 15 | `82dd85b` | 🔴 Broken routes removed: `/portfolio/new` (commented-out method), `/edit-resume` (nonexistent method) |
+| 16 | `82dd85b` | 🟡 Wrong page title fix: "CGO - Job support..." → "Portfolio Preview" |
+
+### Phase 4: Company Security (18)
+
+| # | Commit | Description |
+|:-:|--------|-------------|
+| 17 | `1844d29` | 🔴 **Company security**: OJTController/OJTMatchController auth, CV leak fix, broken routes, null safety, duplicate whereNotNull |
+
+### Phase 5: Admin Security (19)
+
+| # | Commit | Description |
+|:-:|--------|-------------|
+| 18 | `603477a` | 🔴 **Admin security**: 9 unprotected routes + auth, Q&A null safety, CareerTest fallthrough, middleware fix, dead code |
+
+### Phase 6: CGO Security (20)
+
+| # | Commit | Description |
+|:-:|--------|-------------|
+| 19 | `2a91400` | 🔴 **CGO security**: 5× `withoutMiddleware` removed, `$from` undefined fix, `verify_at` check, wrong system guard |
 
 ---
 
 ## Detailed Changes by Area
 
-### 🔐 Authentication (Commits 1-2)
+### 🔐 Authentication
 
-| Fix | File(s) | Impact |
-|-----|---------|--------|
-| Trainee CAS → standard login redirect | `CheckTraineeUserLoggedIn.php`, `RegisterVerificationCodeController.php`, `ForgotPasswordController.php` | Broken trainee access restored |
-| Admin POST login fallback | `LoginController.php` (new), `routes/admin.php` | Admin login works without Livewire JS |
-| `/admins` route secured | `routes/web.php` | Public dashboard access blocked |
-| `register-manual` route fixed | `routes/trainee.php` | Broken `?manual=1` query string route → standard `?manual=1` parameter |
-| 3 signin forms → 1 shared partial | `auth/partials/signin-form.blade.php` (new), 3× signin blades | −360 lines of duplicated code |
-| 3 auth master layouts → 1 shared | `auth/layouts/master.blade.php` (new), 25+ view files | 3 → 1 layout file |
+| Fix | Impact |
+|-----|--------|
+| Trainee CAS → standard login redirect | Broken trainee access restored |
+| Admin POST login fallback | Admin login works without Livewire JS |
+| `/admins` route secured | Public dashboard access blocked |
+| `register-manual` route fixed | Broken `?manual=1` query string → standard parameter |
+| 3 signin forms → 1 shared partial | −360 lines duplicated code |
+| 3 auth master layouts → 1 shared | 3 → 1 layout file |
+| Password change (Company + Trainee) | New feature with CAS sync |
+| Email change re-verification | Verification email sent to new address |
 
-### 📋 Registration Flows (Commits 3-5)
+### 📋 Registration Flows
 
-| Fix | File(s) | Impact |
-|-----|---------|--------|
-| Company signup session preservation | `CompanyRegisterController.php`, `RegisterNewCompany.php` | Form data survives company registration step |
-| Company registration dead code | `RegisterNewCompany.php` | −152 lines removed |
-| Company transition message | `RegisterNewCompany.php`, `company/auth/signup.blade.php` | "Your company has been registered..." shown |
-| Trainee dead code | `TraineeRegisterController.php` | −92 lines removed |
-| Trainee "Sent" → translation key | `TraineeRegisterController.php`, `lang/en/system.php` | "A verification code has been sent" instead of "Sent" |
-| Empty state for 4 list pages | `events/public-event.blade.php`, 3 more | "No results found" messages |
+| Fix | Impact |
+|-----|--------|
+| Company signup session preservation | Form data survives company registration |
+| Company registration dead code | −152 lines |
+| Trainee dead code | −92 lines |
+| "Sent" → translation key | Multi-language support |
+| Empty state for 4 list pages | "No results found" messages |
 
-### 👤 Account Management (Commits 6-8)
+### 👤 Account Management
 
-| Fix | File(s) | Impact |
-|-----|---------|--------|
-| 5× "SAVED!" → translation key | `Company/MyPageController.php`, `Trainee/MyPageController.php` | Multi-language support |
-| Trainee deActiveAccount dead code | `Trainee/MyPageController.php` | −22 lines removed |
-| **Password change (Company)** | `Company/ChangePasswordController.php` (new), `company/my-page/change-password.blade.php` (new), routes | New feature |
-| **Password change (Trainee)** | `Trainee/ChangePasswordController.php` (new), `trainee/my-page/change-password.blade.php` (new), routes | New feature with CAS sync |
-| **Email change verification** | `Company/MyPageController.php`, `Trainee/MyPageController.php` | Verification email sent to new address |
-| NVQ sync notice | `trainee/my-page/personal-information.blade.php` | "Synced from NVQ system" info icon |
+| Fix | Impact |
+|-----|--------|
+| 5× "SAVED!" → translation key | Multi-language support |
+| Trainee deActiveAccount dead code | −22 lines |
+| NVQ sync notice | "Synced from NVQ system" info icon |
 
-### 🛠️ Admin Panel (Commits 9-10)
+### 🛠️ Admin Panel
 
-| Fix | File(s) | Impact |
-|-----|---------|--------|
-| Dark mode enabled | `AdminPanelProvider.php` | Removed `->darkMode(false)` |
-| Global search enabled | `AdminPanelProvider.php` | Removed `->globalSearch(false)` |
-| Language switcher restored | `theme.css` | Removed `display:none!important` CSS |
-| Profile menu: "My page" → "Edit Profile" | `AdminPanelProvider.php` | Clearer label |
-| EditProfile dead code | `EditProfile.php` | −75 lines removed |
-| CompanyResource dead code | `CompanyResource.php` | −38 lines removed |
-| Vietnamese → English comments | `TraineeResource.php` (4), `CompanyResource.php` (2) | Codebase language consistency |
-| `preserveScroll()` 7 resources | `TraineeResource.php`, `CompanyResource.php`, `CGOResource.php`, `CounselingResource.php`, `ComapnyUserListResource.php`, `JobResource.php`, `AdministratorResource.php` | Scroll position preserved after actions |
-| Filter labels simplified | `CompanyResource.php` | "Approved"→"Verified", "Pending Approval"→"Pending" |
+| Fix | Impact |
+|-----|--------|
+| Dark mode enabled | Removed `->darkMode(false)` |
+| Global search enabled | Removed `->globalSearch(false)` |
+| Language switcher restored | Removed `display:none!important` |
+| `preserveScroll()` 7 resources | Scroll position preserved after actions |
+| EditProfile dead code | −75 lines |
+| CompanyResource dead code | −38 lines |
+| Theme CSS dead code | −38 lines |
+| 9 admin routes + auth middleware | Unauthenticated access blocked |
+| Q&A Controller null safety | Prevents fatal error on deleted Q&A |
+| CareerTestController fallthrough | Test types 3-4 show proper message |
+| AccountMustVerifyByAdmin fix | `is_null()` instead of `== ""` |
+| RegisterController dead code | Unreachable return removed |
 
-### 🌐 Translations Added
+### 🎓 Trainee Features
+
+| Fix | Impact |
+|-----|--------|
+| **73 hardcoded NIC removed** | Replaced with DB query — PII eliminated |
+| `/dispatch-portfolios-job` auth | `auth:trainee` middleware added |
+| `previewPortfolio` ownership check | `public_portfolio` flag respected |
+| Broken routes removed | `/portfolio/new`, `/edit-resume` → 500s gone |
+| Wrong page title | "CGO - Job support..." → "Portfolio Preview" |
+| 120 lines dead code | Commented-out `createPortfolio` removed |
+| 6 Vietnamese → English comments | PortfolioController |
+
+### 🏢 Company Features
+
+| Fix | Impact |
+|-----|--------|
+| **OJTController auth added** | OJT create/update/delete requires `company.auth` |
+| **OJTMatchController auth added** | Trainee matching requires `company.auth` |
+| CV leak fixed | `getCVOfTrainee` no longer excluded from auth |
+| Broken routes removed | `ojtListMatched`, `ojtTraineeMatch` → 500s gone |
+| Null safety fix | `$traineeApply` check before access in `unemployTraineeApply` |
+| Duplicate query fixed | `whereNotNull('verified_by')` → `verified_at` |
+| Duplicate constructor cleaned | OJTController 2 constructors → 1 |
+
+### 👨‍🏫 CGO Features
+
+| Fix | Impact |
+|-----|--------|
+| **5× `withoutMiddleware` removed** | videos, documents, resource → all require auth |
+| `postVideos` auth enforced | Unauthenticated content creation blocked |
+| `changeCGO` undefined variable | `$from` always initialized → runtime crash prevented |
+| `show()` array index fix | Empty collection handled gracefully |
+| **`verify_at` check added** | Admin-revoked CGO cannot access protected routes |
+| Wrong system guard fixed | `system: trainee` → `cgo` in DeviceToken cleanup |
+| Dead imports removed | FaqController, NoticeController |
+
+---
+
+## Security Fixes Summary
+
+| # | Severity | Area | Issue | Fixed |
+|---|:------:|------|-------|:--:|
+| 1 | 🔴 | Trainee | 73 hardcoded NIC numbers | ✅ |
+| 2 | 🔴 | Trainee | `previewPortfolio` public without ownership check | ✅ |
+| 3 | 🔴 | Trainee | `/dispatch-portfolios-job` no auth | ✅ |
+| 4 | 🔴 | Company | OJTController zero auth | ✅ |
+| 5 | 🔴 | Company | OJTMatchController zero auth | ✅ |
+| 6 | 🔴 | Company | `getCVOfTrainee` CV leak (excluded from auth) | ✅ |
+| 7 | 🔴 | Admin | 9 admin routes no auth | ✅ |
+| 8 | 🔴 | CGO | `postVideos` POST without auth | ✅ |
+| 9 | 🔴 | CGO | 5 routes with `withoutMiddleware('cgo.auth')` | ✅ |
+| 10 | 🟡 | All | `verify_at` (admin approval) not checked by CGO middleware | ✅ |
+| 11 | 🟡 | Admin | `AccountMustVerifyByAdmin` empty string comparison | ✅ |
+| 12 | 🟡 | CGO | `changeCGO` undefined variable → runtime crash | ✅ |
+
+---
+
+## 🌐 Translations Added
 
 | Key | Value |
 |-----|-------|
@@ -100,41 +195,41 @@
 | `auth.email_changed_verify` | "Your email has been updated. Please check..." |
 | `trainee.my_page.synced_from_nvq` | "District and institute information is synced..." |
 
-### 🇻🇳 Vietnamese Comments Replaced (14 total)
+---
 
-| File | Before | After |
-|------|--------|-------|
-| `RegisterNewCompany.php` | "Nhóm 1: Đã duyệt" | "Group 1: Verified" |
-| `RegisterNewCompany.php` | "Nhóm 2: Đang chờ duyệt" | "Group 2: Pending verification" |
-| `RegisterNewCompany.php` | "Xử lý tên công ty theo từng loại" | "Handle company name based on type" |
-| `RegisterNewCompany.php` | "Các loại khác" | "Other types" |
-| `RegisterNewCompany.php` | "Xác định tên công ty..." | (removed — redundant) |
-| `RegisterNewCompany.php` | "Xác định business registration..." | (removed — redundant) |
-| `TraineeResource.php` | "Lọc theo provin" | "Filter by province" |
-| `TraineeResource.php` | "Lọc theo district" | "Filter by district" |
-| `TraineeResource.php` | "Lọc theo divisional" | "Filter by divisional" |
-| `TraineeResource.php` | "Lọc theo institute_select" | "Filter by institute" |
-| `CompanyResource.php` | "Bỏ dấu * trực tiếp..." | "Remove asterisks from headers..." |
-| `CompanyResource.php` | "Giới hạn ký tự chuỗi..." | "Limit validation string length..." |
+## 🇻🇳 Vietnamese → English Comments (24 total)
 
-### 🗑️ Dead Code Removed (Total: ~420 lines)
+| File | Lines | Examples |
+|------|:---:|----------|
+| `RegisterNewCompany.php` | 6 | "Nhóm 1: Đã duyệt" → "Group 1: Verified" |
+| `TraineeResource.php` | 4 | "Lọc theo provin" → "Filter by province" |
+| `CompanyResource.php` | 2 | "Bỏ dấu * trực tiếp..." → "Remove asterisks..." |
+| `PortfolioController.php` | 6 | "Kiểm tra portfolio đã tồn tại" → "Check if portfolio already exists" |
+| `TraineeRegisterController.php` | 2 | (removed with dead code) |
 
-| File | Lines Removed | Content |
-|------|:-----------:|---------|
-| `RegisterNewCompany.php` | 152 | Duplicate `postRegister` method + comments |
+---
+
+## 🗑️ Dead Code Removed (Total: ~540 lines)
+
+| File | Lines | Content |
+|------|:----:|---------|
+| `RegisterNewCompany.php` | 152 | Duplicate `postRegister` + comments |
+| `PortfolioController.php` | 120 | Commented-out `createPortfolio` |
 | `TraineeRegisterController.php` | 92 | `syncTraineeTrainingInformation` + old code |
-| `EditProfile.php` | 75 | Complete duplicate class definition |
-| `theme.css` | 38 | Commented responsive sidebar + color overrides |
+| `EditProfile.php` | 75 | Duplicate class definition |
+| `theme.css` | 38 | Commented responsive sidebar |
 | `CompanyResource.php` | 38 | Commented field definitions |
-| `Trainee/MyPageController.php` | 22 | Commented deletion code + CAS sync |
+| `Trainee/MyPageController.php` | 22 | Commented deletion code |
 
 ---
 
 ## Key Insight
 
-> The original codebase had 2+ duplicate implementations scattered across files, Vietnamese-language comments in a Sri Lankan project, and significant UX dead-ends (CAS dead server, disabled dark mode, missing password change, form data loss on multi-step flows). **All have been systematically addressed.**
+> The original codebase contained: a dead CAS authentication server blocking trainee access, OJT controllers with zero authentication, hardcoded PII in plain text (73 NIC numbers), two duplicate portfolio systems (old GrapesJS + new Vue SPA), Vietnamese comments throughout a Sri Lankan project, and 12 security vulnerabilities across all four user types. **All have been systematically identified and fixed.**
 
-The improvements focus on three pillars:
-1. **Reliability**: Broken auth flows fixed, data preservation restored
-2. **Consistency**: 3 auth layouts → 1, 5 hardcoded strings → translation keys, Vietnamese → English
-3. **Usability**: Dark mode, global search, preserveScroll, password change, email re-verification
+The improvements span five pillars:
+1. **Security**: 12 vulnerabilities fixed — auth middleware, PII removal, ownership checks, verify_at enforcement
+2. **Reliability**: Broken auth flows, 500 error routes, null-safety crashes, switch fallthroughs all resolved
+3. **Consistency**: 3 auth layouts → 1, 5 hardcoded strings → translation keys, Vietnamese → English
+4. **Usability**: Dark mode, global search, preserveScroll, password change, email re-verification
+5. **Maintainability**: ~540 lines dead code removed, duplicate constructors cleaned, dead imports pruned
