@@ -97,6 +97,9 @@
 
                 {{-- Confirm Password --}}
                 <div>
+                    <label for="repassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+                        {{ __('system.form.confirm_password') }}
+                    </label>
                     <div class="relative">
                         <input type="password" name="repassword" id="repassword" required
                             placeholder="{{ __('system.form.confirm_password') }}"
@@ -121,7 +124,7 @@
                     <input type="checkbox" name="agree_terms" id="agree_terms" value="1" required
                         class="mt-1 h-4 w-4 text-[#4984F6] focus:ring-[#4984F6] border-gray-300 rounded">
                     <label for="agree_terms" class="text-sm text-gray-600 dark:text-gray-400">
-                        {{ __('system.form.accept_term_message', ['file' => asset('files/T&C for Trainee.pdf')]) }}
+                        {!! __('system.form.accept_term_message', ['file' => asset('files/T&C for Trainee.pdf')]) !!}
                     </label>
                 </div>
                 @error('agree_terms')
@@ -130,7 +133,7 @@
 
                 {{-- Submit --}}
                 <button type="submit"
-                    class="w-full h-12 bg-[#4984F6] hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-lg">
+                    class="w-full h-12 bg-[#4984F6] hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-lg flex items-center justify-center">
                     {{ __('auth.sign_up') }}
                 </button>
 
