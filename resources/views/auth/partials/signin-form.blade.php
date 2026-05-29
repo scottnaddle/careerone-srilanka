@@ -95,6 +95,13 @@
                 class="w-full text-white bg-[#4984F6] hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-xl px-5 py-3 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 {{ $submitMb }}">{{ trans('auth.sign_in') }}
             </button>
 
+            <div class="text-center mt-3">
+                <a href="{{ route('magic-link.form') }}"
+                    class="text-sm text-gray-500 hover:text-[#4984F6] dark:text-gray-400 dark:hover:text-blue-400 underline underline-offset-4 transition-colors">
+                    {{ __('auth.login_with_magic_link') }}
+                </a>
+            </div>
+
             <div class="text-sm font-medium text-center text-gray-500 dark:text-gray-300 mt-4">
                 {{ trans('auth.dont_have_account') }} <a href="{{ route($registerRoute) }}"
                     class="text-primary hover:underline dark:text-blue-500">{{ trans('auth.sign_up') }}</a>

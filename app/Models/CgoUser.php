@@ -17,6 +17,7 @@ use Filament\Models\Contracts\HasName;
 
 class CgoUser extends Authenticatable implements HasName
 {
+    use \App\Models\Traits\HasMagicLink;
     use HasApiTokens, HasFactory, Notifiable, HasGenerateCode;
     protected $fillable = ['nic', 'first_name', 'last_name', 'email', 'password', 'telephone', 'profile_image', 'district_id', 'institute_id', 'verify_at', 'verify_by', 'email_verified_at', 'attached_file','reason', 'active'];
 

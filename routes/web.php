@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\MagicLinkController;
 use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\EmploymentController;
 use App\Http\Controllers\InstituteController;
@@ -265,3 +266,8 @@ Route::get('/test-sms-simple', function () {
         echo "❌ Lỗi hệ thống: " . $e->getMessage();
     }
 });
+
+// Magic Link Login
+Route::get('/magic-link', [MagicLinkController::class, 'showForm'])->name('magic-link.form');
+Route::post('/magic-link', [MagicLinkController::class, 'send'])->name('magic-link.send');
+Route::get('/magic-link/verify', [MagicLinkController::class, 'verify'])->name('magic-link.verify');

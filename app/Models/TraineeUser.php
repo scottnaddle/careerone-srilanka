@@ -17,6 +17,7 @@ use Filament\Models\Contracts\HasName;
 
 class TraineeUser extends Authenticatable implements HasName
 {
+    use \App\Models\Traits\HasMagicLink;
     use HasApiTokens, HasFactory, Notifiable, HasGenerateCode;
 
     protected $table = 'trainee_users';
