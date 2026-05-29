@@ -27,7 +27,7 @@ class TraineeResource extends Resource
 {
     protected static ?string $model = TraineeUser::class;
 
-    protected static ?string $navigationLabel = 'Trainee ';
+    protected static ?string $navigationLabel = 'Trainee';
     protected static ?string $navigationGroup = 'Trainee';
     protected static ?int $navigationSort = 1;
     public static $totalRecords;

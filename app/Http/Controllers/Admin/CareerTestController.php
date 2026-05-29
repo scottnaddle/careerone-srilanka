@@ -27,9 +27,10 @@ class CareerTestController extends Controller
                 case 2:
                     return view('homepage.career-test.results.career-key-test-result', compact('result'));
                 case 3:
-                    break;
                 case 4:
-                    break;
+                    return \Redirect::back()->withErrors(['msg' => 'This test type result view is not yet available.']);
+                default:
+                    return \Redirect::back()->withErrors(['msg' => 'Unknown test type.']);
             }
 
         }

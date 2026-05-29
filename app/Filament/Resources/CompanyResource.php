@@ -30,7 +30,7 @@ class CompanyResource extends Resource
 {
     protected static ?string $model = Company::class;
 
-    protected static ?string $navigationLabel = 'Company ';
+    protected static ?string $navigationLabel = 'Company';
     protected static ?string $navigationGroup = 'Company';
     protected static ?int $navigationSort = 1;
     public static $totalCompany;

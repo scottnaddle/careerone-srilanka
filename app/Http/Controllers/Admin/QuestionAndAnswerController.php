@@ -31,6 +31,9 @@ class QuestionAndAnswerController extends Controller
     {
         // dd($id);
         $qNA = QNA::where('id', $id)->first();
+        if (!$qNA) {
+            return response()->json(['success' => false, 'message' => 'Q&A not found'], 404);
+        }
         foreach ($qNA->replies as $reply) {
             foreach ($reply->children as $childReply) {
                 $childReply->delete();

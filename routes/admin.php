@@ -36,22 +36,24 @@ Route::controller(LoginController::class)->group(function(){
     });
 });
 
-Route::group(['prefix' => 'career-test', 'as' => 'career-test.'], function(){
-    Route::get('/view-result/{id}', [CareerTestController::class, 'viewResult'])->name('view-result');
-    Route::get('/download-result/{id}', [CareerTestController::class, 'downloadResult'])->name('download-result');
-});
+Route::middleware('auth:admin')->group(function(){
+    Route::group(['prefix' => 'career-test', 'as' => 'career-test.'], function(){
+        Route::get('/view-result/{id}', [CareerTestController::class, 'viewResult'])->name('view-result');
+        Route::get('/download-result/{id}', [CareerTestController::class, 'downloadResult'])->name('download-result');
+    });
 
-Route::group(['prefix' => 'admin-api', 'as' => 'admin-api.'], function(){
-    Route::post('/show-district/{id}', [SearchAdminController::class, 'showDistrict'])->name('show-district');
-    Route::post('/show-division/{id}', [SearchAdminController::class, 'showDivision'])->name('show-division');
-    Route::post('/show-institute/{id}', [SearchAdminController::class, 'showInstitute'])->name('show-institute');
-});
+    Route::group(['prefix' => 'admin-api', 'as' => 'admin-api.'], function(){
+        Route::post('/show-district/{id}', [SearchAdminController::class, 'showDistrict'])->name('show-district');
+        Route::post('/show-division/{id}', [SearchAdminController::class, 'showDivision'])->name('show-division');
+        Route::post('/show-institute/{id}', [SearchAdminController::class, 'showInstitute'])->name('show-institute');
+    });
 
-Route::group(['prefix' => 'qnas', 'as' => 'qnas.'], function() {
-    Route::delete('/delete-reply/{qNAAnswer}', [QuestionAndAnswerController::class, 'destroyReply'])->name('delete-reply');
-    Route::put('/update/{qNA}', [QuestionAndAnswerController::class, 'update'])->name('update');
-    Route::get('/delete-qna/{id}', [QuestionAndAnswerController::class, 'destroy'])->name('delete');
-    Route::get('/attachment/delete/{id}/{qna_id}', [QuestionAndAnswerController::class, 'destroyAttachment'])->name('attachment.delete');
+    Route::group(['prefix' => 'qnas', 'as' => 'qnas.'], function() {
+        Route::delete('/delete-reply/{qNAAnswer}', [QuestionAndAnswerController::class, 'destroyReply'])->name('delete-reply');
+        Route::put('/update/{qNA}', [QuestionAndAnswerController::class, 'update'])->name('update');
+        Route::get('/delete-qna/{id}', [QuestionAndAnswerController::class, 'destroy'])->name('delete');
+        Route::get('/attachment/delete/{id}/{qna_id}', [QuestionAndAnswerController::class, 'destroyAttachment'])->name('attachment.delete');
+    });
 });
 
 Route::get('/download-user-manual', function () {
