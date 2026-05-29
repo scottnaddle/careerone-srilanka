@@ -17,6 +17,9 @@ class CompanyRegisterController extends Controller
 {
     public function register()
     {
+        // Save current input to session for restoration after company registration
+        session(['company_signup_input' => old()]);
+
         $recommendedCgo = CgoUser::where('active', true)
             ->get()
             ->map(function ($cgo) {

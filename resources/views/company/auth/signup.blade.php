@@ -34,7 +34,12 @@
                     <span
                         class="bg-green-100 text-green-800 text-base font-medium px-2.5 py-3 rounded dark:bg-[#1E1E1E] dark:text-green-400 border border-green-400">{!! session()->get('error') !!}</span>
                 @endif
-                @if(session()->has('success'))
+                @if (session()->get('message'))
+                    <div class="bg-green-100 text-green-800 text-base font-medium px-4 py-3 rounded dark:bg-[#1E1E1E] dark:text-green-400 border border-green-400">
+                        {!! session()->get('message') !!}
+                    </div>
+                @endif
+                @if (session()->has('success'))
                     <div class="alert alert-success text-green-600 dark:text-white font-semibold bg-green-200 px-4 py-2 rounded-xl">
                         {{ session()->get('success') }}
                     </div>

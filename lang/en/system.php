@@ -96,6 +96,7 @@ return [
         'password' => 'Password',
         'confirm_password' => 'Confirm password',
         'forgot_password' => 'Forgot Password?',
+        'no_file_selected' => 'No file selected',
         'telephone' => 'Telephone',
         'mobile' => 'Mobile',
         'first_name' =>'First name',
@@ -134,6 +135,8 @@ return [
         'no_results' => 'No results found.',
         'no_items' => 'No items yet.',
         'no_record' => 'No record!',
+        'company_registered' => 'Your company has been registered. Please complete your account details below.',
+        'company_exists' => 'This company is already registered. Please contact the administrator if you need access.',
     ],
     'filter' => [
         'all' => 'All',
