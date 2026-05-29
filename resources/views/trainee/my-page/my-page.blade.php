@@ -4,6 +4,31 @@
 @section('content')
     <div class="flex flex-col gap-6 pb-9">
         <p class="font-semibold text-xl md:text-2xl text-[#464559] dark:text-white mt-6">{{trans('system.my_page.title')}}</p>
+
+        {{-- Profile Completion Banner --}}
+        @if(empty($user->full_name) || $user->full_name === $user->email || empty($user->nic))
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6">
+            <div class="flex items-start gap-4">
+                <div class="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-300">{{ __('trainee.my_page.complete_profile_title') }}</h3>
+                    <p class="text-sm text-blue-700 dark:text-blue-400 mt-1">{{ __('trainee.my_page.complete_profile_desc') }}</p>
+                    <a href="{{ route('trainee.my-page.personal-information') }}"
+                        class="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-colors">
+                        {{ __('trainee.my_page.complete_profile_cta') }}
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <div class="grid  grid-cols-1 lg:grid-cols-2 gap-6 row">
             <div class="flex flex-col p-5 gap-6 bg-white dark:bg-[#1E1E1E] rounded-xl flex-1 shadow-custom-light dark:shadow-custom-dark">
                 <div class="flex justify-between">
