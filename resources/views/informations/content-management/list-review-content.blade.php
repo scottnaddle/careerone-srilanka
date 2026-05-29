@@ -30,7 +30,7 @@
                     </thead>
                     <tbody>
                         <!-- Row -->
-                        @foreach ($contentNotApprovsal as $val)
+                        @forelse ($contentNotApprovsal as $val)
                             <tr
                                 class="bg-white dark:bg-[#1E1E1E] border-b border-[#F8F8F8] dark:border-gray-700 text-center hover:bg-blue-100 dark:hover:bg-gray-700">
                                 <td scope="row" class="px-4 py-6 font-semibold text-sm  w-1/6 text-left">
@@ -59,7 +59,16 @@
 
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="5">
+                                    <div class="flex flex-col gap-4 justify-center items-center p-4">
+                                        <img src="{{ asset('/images/empty-box.png') }}" class="opacity-50 h-32" alt="Empty">
+                                        <p class="dark:text-white">{{ __('system.messages.no_results') }}</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforelse
 
 
                         <!-- Add more rows below as needed -->

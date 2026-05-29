@@ -130,6 +130,11 @@ return [
         'copied' => 'Copied',
         'success' => 'Success',
     ],
+    'messages' => [
+        'no_results' => 'No results found.',
+        'no_items' => 'No items yet.',
+        'no_record' => 'No record!',
+    ],
     'filter' => [
         'all' => 'All',
         'recently' => 'Recent',

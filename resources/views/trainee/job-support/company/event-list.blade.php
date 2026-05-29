@@ -143,6 +143,10 @@
                         </div>
                     </div>
                 @empty
+                    <div class="col-span-full flex flex-col gap-4 justify-center items-center p-8">
+                        <img src="{{ asset('/images/empty-box.png') }}" class="opacity-50 h-32" alt="Empty">
+                        <p class="dark:text-white">{{ __('system.messages.no_items') }}</p>
+                    </div>
                 @endforelse
             </div>
             <div class="mt-3">
