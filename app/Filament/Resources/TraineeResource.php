@@ -269,35 +269,54 @@ class TraineeResource extends Resource
 
                         // Filter by province
                         if (!empty($data['provin'])) {
-                            $instituteIds = [];
                             $districtIds = District::where('prov_id', $data['provin'])->pluck('id')->toArray();
                             $provinInstituteIds = Institute::whereIn('dist_id', $districtIds)->pluck('id')->toArray();
-                            $instituteIds = array_merge($instituteIds, $provinInstituteIds);
+                            $instituteIds = $provinInstituteIds;
                         }
 
-                        // Filter by district
+                        // Filter by district (narrows down from province if set)
                         if (!empty($data['district'])) {
-                            $instituteIds = [];
                             $districtInstituteIds = Institute::where('dist_id', $data['district'])->pluck('id')->toArray();
-                            $instituteIds = array_merge($instituteIds, $districtInstituteIds);
+                            $instituteIds = !empty($instituteIds)
+                                ? array_intersect($instituteIds, $districtInstituteIds)
+                                : $districtInstituteIds;
                         }
 
-                        // Filter by divisional
+                        // Filter by divisional (narrows down from district if set)
                         if (!empty($data['divisional'])) {
-                            $instituteIds = [];
-                            $divisionalInstituteIds = Institute::where('ds_id', $data['divisional']);
+                            $divisionalQuery = Institute::where('ds_id', $data['divisional']);
                             if (!empty($data['active_status'])) {
-                                $divisionalInstituteIds->where('active_status', $data['active_status']);
+                                $divisionalQuery->where('active_status', $data['active_status']);
                             }
                             if (!empty($data['owner_ship'])) {
-                                $divisionalInstituteIds->where('ownership', $data['owner_ship']);
+                                $divisionalQuery->where('ownership', $data['owner_ship']);
                             }
-                            $instituteIds = array_merge($instituteIds, $divisionalInstituteIds->pluck('id')->toArray());
+                            $divisionalInstituteIds = $divisionalQuery->pluck('id')->toArray();
+                            $instituteIds = !empty($instituteIds)
+                                ? array_intersect($instituteIds, $divisionalInstituteIds)
+                                : $divisionalInstituteIds;
                         }
 
-                        // Filter by institute
+                        // Apply ownership and active_status independently (not tied to divisional)
+                        if (empty($data['divisional']) && (!empty($data['owner_ship']) || !empty($data['active_status']))) {
+                            $statusQuery = Institute::query();
+                            if (!empty($data['owner_ship'])) {
+                                $statusQuery->where('ownership', $data['owner_ship']);
+                            }
+                            if (!empty($data['active_status'])) {
+                                $statusQuery->where('active_status', $data['active_status']);
+                            }
+                            $statusInstituteIds = $statusQuery->pluck('id')->toArray();
+                            $instituteIds = !empty($instituteIds)
+                                ? array_intersect($instituteIds, $statusInstituteIds)
+                                : $statusInstituteIds;
+                        }
+
+                        // Filter by specific institute
                         if (!empty($data['institute_select'])) {
-                            $instituteIds[] = $data['institute_select'];
+                            $instituteIds = !empty($instituteIds)
+                                ? array_intersect($instituteIds, [$data['institute_select']])
+                                : [$data['institute_select']];
                         }
 
                         $instituteIds = array_unique($instituteIds);
