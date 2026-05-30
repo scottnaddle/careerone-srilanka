@@ -12,6 +12,7 @@ use App\Models\CgoUser;
 use App\Models\Institute;
 use App\Models\Job;
 use App\Models\OJT;
+use App\Models\OjtTraineeApply;
 use App\Models\Portfolio;
 use App\Models\TraineeUser;
 use Filament\Pages\Page;
@@ -73,6 +74,13 @@ class PdmDashboard extends Page
                 'sub' => 'Verified CGOs',
                 'icon' => 'heroicon-o-user-group',
                 'color' => 'rose',
+            ],
+            [
+                'label' => 'CGO OJT Match',
+                'value' => OjtTraineeApply::where('apply_type', 'ojt_match')->count(),
+                'sub' => 'Trainee recommendations by CGO',
+                'icon' => 'heroicon-o-hand-raised',
+                'color' => 'orange',
             ],
             [
                 'label' => 'Content / Deliverables',
