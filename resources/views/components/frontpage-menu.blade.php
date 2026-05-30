@@ -69,20 +69,10 @@
                                     @foreach ($item['children'] as $child)
                                         <li class="relative">
                                             @if (isset($child['children']) && count($child['children']) > 0)
-                                                <button id="submenu{{ $loop->parent->index }}-{{ $loop->index }}" data-dd-sub="submenu{{ $loop->parent->index }}-{{ $loop->index }}"
-                                                    
-                                                    
-                                                    class="flex items-center justify-between w-full px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 font-medium">
-                                                    {{ $child['label'] }}
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                                                </button>
-                                                <div id="submenu{{ $loop->parent->index }}-{{ $loop->index }}" class="dd-menu absolute z-50 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700" style="left:100%; top:-0.5rem">
-                                                    <ul class="py-2 text-sm">
-                                                        @foreach ($child['children'] as $grandchild)
-                                                            <li class="relative"><a href="{{ $grandchild['link'] }}" class="block px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 font-medium">{{ $grandchild['label'] }}</a></li>
-                                                        @endforeach
-                                                    </ul>
-                                                </div>
+                                                <div class="px-4 py-2 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">{{ $child['label'] }}</div>
+                                                @foreach ($child['children'] as $grandchild)
+                                                    <li><a href="{{ $grandchild['link'] }}" class="block pl-6 pr-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 text-sm">{{ $grandchild['label'] }}</a></li>
+                                                @endforeach
                                             @else
                                                 <a href="{{ $child['link'] }}" class="block px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 font-medium">{{ $child['label'] }}</a>
                                             @endif
@@ -178,14 +168,7 @@ document.addEventListener('click', function(e) {
         if (!wasOpen) target.classList.add('open');
         return;
     }
-    const subBtn = e.target.closest('[data-dd-sub]');
-    if (subBtn) {
-        e.stopPropagation();
-        const target = document.getElementById(subBtn.dataset.ddSub);
-        if (!target) return;
-        target.classList.toggle('open');
-        return;
-    }
+    // Click outside — close all
     document.querySelectorAll('.dd-menu.open').forEach(function(m) { m.classList.remove('open'); });
 });
 var mb = document.getElementById('mobile-menu-btn');
