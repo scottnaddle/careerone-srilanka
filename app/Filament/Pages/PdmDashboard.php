@@ -72,8 +72,8 @@ class PdmDashboard extends Page
             [
                 'label' => 'Content Videos',
                 'value' => Content::where('content_type', 'video')
-                    ->where('status', StatusEnumsManagement::APPROVED->value)->count(),
-                'sub' => 'Approved videos',
+                    ->where('status', StatusEnumsManagement::APPROVED_BY_ADMIN->value)->count(),
+                'sub' => 'Approved by TVEC',
                 'icon' => 'heroicon-o-video-camera',
                 'color' => 'orange',
                 'link' => '/admin/content/videos',
@@ -81,8 +81,8 @@ class PdmDashboard extends Page
             [
                 'label' => 'Content Documents',
                 'value' => Content::where('content_type', '!=', 'video')
-                    ->where('status', StatusEnumsManagement::APPROVED->value)->count(),
-                'sub' => 'Approved documents',
+                    ->where('status', StatusEnumsManagement::APPROVED_BY_ADMIN->value)->count(),
+                'sub' => 'Approved by TVEC',
                 'icon' => 'heroicon-o-document',
                 'color' => 'indigo',
                 'link' => '/admin/content/documents',
