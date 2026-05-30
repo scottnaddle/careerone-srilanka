@@ -1,15 +1,15 @@
 <div id="header-web" class="hidden md:block">
 <style>
 .dd-menu {
-    opacity: 0;
-    transform: translateY(-6px);
-    transition: opacity 0.15s ease, transform 0.15s ease;
-    pointer-events: none;
+    display: none;
 }
 .dd-menu.open {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
+    display: block;
+    animation: ddFadeIn 0.15s ease;
+}
+@keyframes ddFadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 </style>
 
