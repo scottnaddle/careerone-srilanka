@@ -6,6 +6,7 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
 use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\EmergencyUserReset;
+use App\Filament\Pages\PdmDashboard;
 use App\Filament\Resources\JobResource;
 use App\Http\Middleware\AccountMustVerifyByAdmin;
 use App\Http\Middleware\LocalizationMiddleware;
@@ -72,6 +73,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->pages([
                 EmergencyUserReset::class,
+                PdmDashboard::class,
             ])
             ->middleware([
                 EncryptCookies::class,
