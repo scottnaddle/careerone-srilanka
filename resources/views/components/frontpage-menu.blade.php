@@ -1,7 +1,15 @@
 <div id="header-web" class="hidden md:block">
     {{-- Utility bar: thin strip with accessibility, language, sign in --}}
     <div class="bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
-        <div class="max-w-7xl mx-auto flex items-center justify-end gap-4 px-4 sm:px-6 lg:px-8 h-9 text-xs">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 h-9 text-xs">
+            {{-- Institution logos --}}
+            <div class="flex items-center gap-4">
+                <img src="{{asset('/images/NIElogo.webp')}}" class="h-5" alt="NIE Logo" loading="lazy">
+                <img src="{{asset('/images/TVEClogo.png')}}" class="h-5" alt="TVEC Logo" loading="lazy">
+            </div>
+
+            {{-- Utility actions --}}
+            <div class="flex items-center gap-4">
             @include('homepage.partials.accessibility.accessibility-pc')
 
             @if(activeGuard() != '' && Auth::guard(activeGuard())->check())
