@@ -22,7 +22,7 @@
                     </div>
                     <span class="text-xs font-medium text-gray-400 dark:text-gray-500 leading-tight">{{ $stat['label'] }}</span>
                 </div>
-                <div class="text-2xl font-bold text-gray-900 dark:text-white group-hover:text-{{ $stat['color'] }}-600 transition-colors">{{ number_format($stat['value']) }}</div>
+                <div class="text-2xl font-bold text-gray-900 dark:text-white group-hover:text-{{ $stat['color'] }}-600 transition-colors">{{ is_numeric($stat['value']) ? number_format($stat['value']) : $stat['value'] }}</div>
                 <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">{{ $stat['sub'] }}</p>
             </a>
         @endforeach
