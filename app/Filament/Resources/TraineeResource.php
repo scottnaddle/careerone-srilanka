@@ -359,18 +359,7 @@ class TraineeResource extends Resource
                                 });
                             }
                         }
-                    }),
-                Tables\Filters\Filter::make('created_at')
-                    ->form([
-                        DatePicker::make('date')
-                            ->label('Created Date')
-                            ->native(false),
-                    ])
-                    ->query(function ($query, array $data) {
-                        if (!empty($data['date'])) {
-                            $query->whereDate('created_at', $data['date']);
-                        }
-                    }),
+                    })
             ]);
     }
 
