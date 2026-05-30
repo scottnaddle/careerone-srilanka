@@ -5,7 +5,7 @@
 | Metric | Value |
 |--------|-------|
 | Repository | https://github.com/scottnaddle/careerone-srilanka |
-| **Total Commits** | **20** |
+| **Total Commits** | **70** |
 | Files Changed | 75+ |
 | Net Lines | −700+ |
 | **Total Dead Code Removed** | **~540 lines** |
@@ -232,4 +232,45 @@ The improvements span five pillars:
 2. **Reliability**: Broken auth flows, 500 error routes, null-safety crashes, switch fallthroughs all resolved
 3. **Consistency**: 3 auth layouts → 1, 5 hardcoded strings → translation keys, Vietnamese → English
 4. **Usability**: Dark mode, global search, preserveScroll, password change, email re-verification
-5. **Maintainability**: ~540 lines dead code removed, duplicate constructors cleaned, dead imports pruned
+5. **Modernization**: Progressive signup (3 fields), Magic Link, Google OAuth, floating labels, rounded-full buttons, rounded-2xl cards, password strength meter
+
+---
+
+## Phase 7: Signup/Login Modernization (Commits 22–28)
+- Progressive Trainee Signup: email+password only (75% field reduction)
+- Real-time password strength meter with rule icons
+- Dashboard onboarding card for profile completion
+- Company Wizard 3-step registration (unified company + recruiter)
+- Magic Link login (passwordless email-based auth)
+- Google OAuth social login for all 3 user types
+
+## Phase 8: Homepage UI/UX Redesign (Commits 29–52)
+- Complete new hero section with dark gradient + wave divider
+- "Who Are You?" 3-card section with hover animations
+- Trust statistics bar with live DB counts
+- Separated utility bar from main navigation (2-tier header)
+- NIE/TVEC logos in main nav with border separator
+- Direct login card links (Trainee→signin, Company→signin, CGO→signin)
+- Admin login as small link in utility bar
+- Distinct login screens with accent colors per user type
+- Smooth dropdown animations with vanilla JS
+- Mental health test CTA redesign
+
+## Phase 9: Admin Panel Improvements (Commits 53–63)
+- Branding: CareerOne Admin name, logo, favicon
+- Dark mode, global search, language switcher enabled
+- unsavedChangesAlerts() for form protection
+- Striped tables on main resources for readability
+- Removed default FilamentInfoWidget
+
+## Phase 10: Admin Filter & Pagination Fixes (Commits 64–70)
+- ILIKE→LIKE (7 places) for SQLite/PostgreSQL compatibility
+- CounselingListResource: district→institutes.dist_id, ViewAction, Head Office filter
+- AdministratorResource: approval filter \$data fix
+- TraineeResource: cumulative filter narrowing, chunked IDs for SQLite limit
+- CareerTestResource: whereHas query modifier, paginated options
+- 160 lines dead code removed
+
+## Key Insight
+
+> From a dead CAS server and 12 security vulnerabilities to a fully modernized platform with progressive signup, Google OAuth, magic links, redesigned homepage, and 70 systematic commits — **all audits completed, all filters fixed, all user types secured.**
