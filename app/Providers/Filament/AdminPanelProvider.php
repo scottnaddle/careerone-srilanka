@@ -173,13 +173,15 @@ class AdminPanelProvider extends PanelProvider
                         })->filter()->toArray()
                     );
                 }
-                // PDM Dashboard — always visible
-                $builder->item(
-                    NavigationItem::make('PDM')
-                        ->url('/admin/pdm-dashboard')
-                        ->icon('heroicon-o-chart-bar')
-                        ->isActiveWhen(fn(): bool => str_starts_with(request()->getPathInfo(), '/admin/pdm-dashboard'))
-                );
+                // PDM Dashboard — append to navigation
+                $pdmItem = NavigationItem::make('PDM')
+                    ->url('/admin/pdm-dashboard')
+                    ->icon('heroicon-o-chart-bar')
+                    ->isActiveWhen(fn(): bool => str_starts_with(request()->getPathInfo(), '/admin/pdm-dashboard'));
+                $builder->items(array_merge(
+                    collect($builder->getItems())->toArray(),
+                    [$pdmItem]
+                ));
                 return $builder;
             })->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_BEFORE,
