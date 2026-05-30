@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\StatusEnumsManagement;
 use App\Models\CareerTest;
 use App\Models\CareerTestTraineeResult;
 use App\Models\Company;
@@ -57,7 +58,7 @@ class PdmDashboard extends Page
             ],
             [
                 'label' => 'Content / Deliverables',
-                'value' => Content::where('status', 'approved')->count(),
+                'value' => Content::where('status', StatusEnumsManagement::APPROVED->value)->count(),
                 'icon' => 'heroicon-o-folder',
                 'color' => 'indigo',
             ],
