@@ -11,7 +11,7 @@
 @endpush
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center py-12 px-4">
+<div class="min-h-screen flex items-start justify-center py-12 px-4">
     <div class="max-w-md w-full">
         <div class="text-center mb-6">
             <a href="/" class="inline-block">
