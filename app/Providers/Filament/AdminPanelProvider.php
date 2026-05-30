@@ -50,6 +50,10 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandName('CareerOne Admin')
+            ->brandLogo(asset('images/careerone-logo.webp'))
+            ->brandLogoHeight('2rem')
+            ->favicon(asset('favicon.ico'))
             ->colors([
                 'primary' => Color::hex('#4984F6'),
             ])
@@ -64,7 +68,6 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
             ])
             ->pages([
                 EmergencyUserReset::class,
@@ -88,9 +91,7 @@ class AdminPanelProvider extends PanelProvider
             ->login(Login::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
 //            ->font('Poppins')
-            ->brandLogo(asset('images/careerone-logo.png'))
             ->homeUrl(url('/admin/overview'))
-            ->brandLogoHeight('2rem')
             ->passwordReset(RequestPasswordReset::class)
             ->authPasswordBroker('admin_users')
             ->middleware(['account_must_verified_by_admin'])
