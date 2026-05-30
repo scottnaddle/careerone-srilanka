@@ -39,7 +39,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('trainee.auth.postRegister') }}" method="POST" class="space-y-5" autocomplete="off">
+            <form action="{{ route('trainee.auth.postRegister') }}" method="POST" class="space-y-4" autocomplete="off">
                 @csrf
 
                 {{-- Email --}}
@@ -76,7 +76,7 @@
                     </div>
 
                     {{-- Strength Rules --}}
-                    <ul class="mt-2 space-y-0.5 text-xs" id="rules">
+                    <ul class="mt-1 space-y-0.5 text-xs" id="rules">
                             <li data-rule="length"><span class="rule-icon">○</span> 8-16 characters</li>
                             <li data-rule="upper"><span class="rule-icon">○</span> One uppercase letter</li>
                             <li data-rule="number"><span class="rule-icon">○</span> One number</li>
