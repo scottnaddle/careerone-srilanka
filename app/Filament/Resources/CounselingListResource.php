@@ -26,7 +26,6 @@ class CounselingListResource extends Resource
         );
         $customQuery = $searchService->searchCounseling([
             'search' => request()->query('search', null),
-            'district' => request()->query('district', null),
         ]);
 
         return $table
@@ -84,7 +83,31 @@ class CounselingListResource extends Resource
                 Tables\Filters\SelectFilter::make('district')
                     ->label('District')
                     ->options(District::pluck('name', 'id')->toArray())
-                    ->searchable(),
+                    ->searchable()
+                    ->query(function ($query, $data) {
+                        if (!empty($data['value'])) {
+                            $query->where('institutes.dist_id', $data['value']);
+                        }
+                    }),
+                Tables\Filters\SelectFilter::make('head_office')
+                    ->label(__('admin/cgo_performance.institute_head_office'))
+                    ->options(
+                        \App\Models\TvetType::query()
+                            ->orderBy('head_office_name')
+                            ->get()
+                            ->mapWithKeys(fn ($item) => [
+                                $item->head_office_code => $item->head_office_name . ' (' . $item->head_office_code . ')'
+                            ])
+                            ->toArray()
+                    )
+                    ->searchable()
+                    ->query(function ($query, $data) {
+                        if (!empty($data['value'])) {
+                            $query->whereHas('institute.tvetType', function ($q) use ($data) {
+                                $q->where('head_office_code', $data['value']);
+                            });
+                        }
+                    }),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
