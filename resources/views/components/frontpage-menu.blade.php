@@ -164,10 +164,9 @@
     </div>
 </div>
 
-@push('js')
 <script>
-// Vanilla dropdown — click to toggle, click outside to close
 (function() {
+// Vanilla dropdown — click to toggle, click outside to close
 document.addEventListener('click', function(e) {
     const btn = e.target.closest('[data-dd-toggle]');
     if (btn) {
@@ -175,7 +174,7 @@ document.addEventListener('click', function(e) {
         const target = document.getElementById(btn.dataset.ddToggle);
         if (!target) return;
         const wasOpen = target.classList.contains('open');
-        document.querySelectorAll('.dd-menu.open').forEach(m => m.classList.remove('open'));
+        document.querySelectorAll('.dd-menu.open').forEach(function(m) { m.classList.remove('open'); });
         if (!wasOpen) target.classList.add('open');
         return;
     }
@@ -187,13 +186,11 @@ document.addEventListener('click', function(e) {
         target.classList.toggle('open');
         return;
     }
-    // Click outside — only close menus, don't stop link navigation
-    document.querySelectorAll('.dd-menu.open').forEach(m => m.classList.remove('open'));
+    document.querySelectorAll('.dd-menu.open').forEach(function(m) { m.classList.remove('open'); });
 });
-
-document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+var mb = document.getElementById('mobile-menu-btn');
+if (mb) mb.addEventListener('click', function() {
     document.getElementById('mobile-menu').classList.toggle('hidden');
 });
 })();
 </script>
-@endpush
