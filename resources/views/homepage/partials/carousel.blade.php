@@ -45,7 +45,7 @@
         </div>
         <div class="w-full relative flex justify-center z-40">
             @if(activeGuard() == '')
-                <div class="absolute -top-24 flex flex-col rounded-xl bg-white dark:bg-[#1E1E1E] w-[50%]  py-8 shadow-custom-light dark:shadow-custom-dark">
+                <div class="absolute -top-24 flex flex-col rounded-2xl bg-white dark:bg-[#1E1E1E] w-[50%]  py-8 shadow-custom-light dark:shadow-custom-dark">
                     <p class="text-xl text-black dark:text-white font-semibold text-center pb-4">{{ __('general.User Manual') }}</p>
                     <div class="grid grid-cols-3">
                         <div class="flex flex-col gap-2.5 items-center">
@@ -64,7 +64,7 @@
 
                 </div>
             @elseif(activeGuard() == 'trainee')
-                <div class="absolute -top-24 flex flex-col rounded-xl bg-white dark:bg-[#1E1E1E] w-[50%] py-8 shadow-custom-light dark:shadow-custom-dark">
+                <div class="absolute -top-24 flex flex-col rounded-2xl bg-white dark:bg-[#1E1E1E] w-[50%] py-8 shadow-custom-light dark:shadow-custom-dark">
                     <p class="text-xl text-black dark:text-white font-semibold text-center pb-4">{{ __('general.Favourited Service') }}</p>
                     <div class="grid grid-cols-3">
                         <!-- Guidance -->
@@ -113,7 +113,7 @@
                 </div>
 
             @elseif(activeGuard() == 'cgo')
-                <div class="absolute -top-24 flex flex-col rounded-xl bg-white dark:bg-[#1E1E1E] w-[50%] py-8 shadow-custom-light dark:shadow-custom-dark">
+                <div class="absolute -top-24 flex flex-col rounded-2xl bg-white dark:bg-[#1E1E1E] w-[50%] py-8 shadow-custom-light dark:shadow-custom-dark">
                     <p class="text-xl text-black dark:text-white font-semibold text-center pb-4">{{ __('general.Favourited Service') }}</p>
                     <div class="grid grid-cols-3">
                         <!-- Guidance -->
@@ -162,7 +162,7 @@
                 </div>
 
             @elseif(activeGuard() == 'company')
-                <div class="absolute -top-24 flex flex-col rounded-xl bg-white dark:bg-[#1E1E1E] w-[50%] py-8 shadow-custom-light dark:shadow-custom-dark">
+                <div class="absolute -top-24 flex flex-col rounded-2xl bg-white dark:bg-[#1E1E1E] w-[50%] py-8 shadow-custom-light dark:shadow-custom-dark">
                     <p class="text-xl text-black dark:text-white font-semibold text-center pb-4">
                         {{ __('general.Favourited Service') }}
                     </p>
@@ -282,7 +282,7 @@
         @if(activeGuard() == '')
             <div class="w-full z-40 pt-6">
                 <p class="text-lg font-semibold dark:text-white">{{ __('general.User Manual') }}</p>
-                <div class="flex rounded-xl bg-white dark:bg-[#1E1E1E] justify-around gap-4 mt-4 py-4 justify-between items-center">
+                <div class="flex rounded-2xl bg-white dark:bg-[#1E1E1E] justify-around gap-4 mt-4 py-4 justify-between items-center">
                     <div class="flex flex-col gap-2.5 items-center">
                         <a href="/guideline#trainee"><img src="{{asset('images/1.webp')}}" alt="" class="w-28 object-cover p-6 rounded-full border-1 border-[#F3F8FF] bg-[#EAF3FF]"></a>
                         <a href="/guideline#trainee"><span class="text-sm text-[#464559] font-semibold dark:text-white">{{ __('general.Trainee') }}</span></a>
@@ -300,7 +300,7 @@
         @elseif(activeGuard() == 'trainee')
             <div class="w-full z-40 py-6">
                 <p class="text-lg font-semibold dark:text-white text-center">{{ __('general.Favourited Service') }}</p>
-                <div class="flex rounded-xl bg-white dark:bg-[#1E1E1E] justify-around gap-4 mt-4 py-4 justify-between items-center">
+                <div class="flex rounded-2xl bg-white dark:bg-[#1E1E1E] justify-around gap-4 mt-4 py-4 justify-between items-center">
                     <div class="grid grid-cols-3">
                         <!-- Guidance -->
                         <div class="flex flex-col gap-2.5 items-center">
@@ -350,7 +350,7 @@
         @elseif(activeGuard() == 'cgo')
             <div class="w-full z-40 py-6">
                 <p class="text-lg font-semibold dark:text-white">{{ __('general.Favourited Service') }}</p>
-                <div class="flex rounded-xl bg-white dark:bg-[#1E1E1E] justify-around gap-4 mt-4 py-4 justify-between items-center">
+                <div class="flex rounded-2xl bg-white dark:bg-[#1E1E1E] justify-around gap-4 mt-4 py-4 justify-between items-center">
                     <div class="grid grid-cols-3">
                         <!-- Guidance -->
                         <div class="flex flex-col gap-2 items-center">
@@ -400,7 +400,7 @@
         @elseif(activeGuard() == 'company')
             <div class="w-full z-40 py-6">
                 <p class="text-lg font-semibold dark:text-white">{{ __('general.Favourited Service') }}</p>
-                <div class="flex rounded-xl bg-white dark:bg-[#1E1E1E] justify-around gap-4 mt-4 py-4 justify-between items-center">
+                <div class="flex rounded-2xl bg-white dark:bg-[#1E1E1E] justify-around gap-4 mt-4 py-4 justify-between items-center">
                     <div class="grid grid-cols-3">
                         <!-- Job Vacancy -->
                         <div class="flex flex-col gap-2 items-center">
