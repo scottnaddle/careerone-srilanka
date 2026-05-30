@@ -319,11 +319,20 @@ class TraineeResource extends Resource
                                 : [$data['institute_select']];
                         }
 
-                        $instituteIds = array_unique($instituteIds);
+                        $instituteIds = array_unique(array_filter($instituteIds));
                         if (!empty($instituteIds)) {
-                            $query->whereHas('institutes', function ($instituteQuery) use ($instituteIds) {
-                                $instituteQuery->whereIn('institute_id', $instituteIds);
-                            });
+                            // Chunk large ID arrays to avoid SQLite's 999 parameter limit
+                            if (count($instituteIds) > 900) {
+                                $query->whereHas('institutes', function ($q) use ($instituteIds) {
+                                    foreach (array_chunk($instituteIds, 900) as $chunk) {
+                                        $q->whereIn('institute_id', $chunk, 'or');
+                                    }
+                                });
+                            } else {
+                                $query->whereHas('institutes', function ($q) use ($instituteIds) {
+                                    $q->whereIn('institute_id', $instituteIds);
+                                });
+                            }
                         }
                     })
             ]);
