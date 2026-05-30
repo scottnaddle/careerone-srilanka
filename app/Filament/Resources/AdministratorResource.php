@@ -175,7 +175,6 @@ class AdministratorResource extends Resource
             ])
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
-            ->preserveScroll()
             ->paginated([10, 25, 50, 100])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

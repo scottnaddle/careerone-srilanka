@@ -43,7 +43,6 @@ class CounselingResource extends Resource
         ])->paginated([10, 25, 50, 100])
         ->defaultSort('updated_at', 'desc')
         ->reorderable('updated_at')
-            ->preserveScroll()
         ->bulkActions([
             // Define any bulk actions if needed
         ]);
