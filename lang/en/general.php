@@ -122,4 +122,13 @@ Developed under the TVET Career Platform Project funded by a grant from the Kore
     'Verified Companies' => 'Verified Companies',
     'Active Jobs' => 'Active Jobs',
     'Career Officers' => 'Career Officers',
+    'Who Are You?' => 'Who Are You?',
+    'Choose your path and get started' => 'Choose your path and get started',
+    'Sri Lanka premier career platform connecting trainees, companies, and guidance officers to build the future workforce.' => 'Sri Lanka premier career platform connecting trainees, companies, and guidance officers to build the future workforce.',
+    'Explore by Sector' => 'Explore by Sector',
+    'Discover opportunities in your industry' => 'Discover opportunities in your industry',
+    'Learn More' => 'Learn More',
+    'Platform is now open to public' => 'Platform is now open to public',
+    'Connecting Competencies' => 'Connecting Competencies',
+    'With Opportunities' => 'With Opportunities',
 ];
