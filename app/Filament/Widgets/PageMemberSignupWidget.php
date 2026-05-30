@@ -60,19 +60,19 @@ class PageMemberSignupWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('cgo_total')
                     ->label('CGO')
                     ->alignCenter()
-                    ->url(fn ($record) => route('filament.admin.resources.c-g-o-s.index', ['datePicker' => $record->date]), true),
+                    ->url(fn ($record) => route('filament.admin.resources.c-g-o-s.index', ['tableFilters' => ['created_at' => ['date' => $record->date]]]), true),
                 Tables\Columns\TextColumn::make('trainee_total')
                     ->label('Trainee')
                     ->alignCenter()
-                    ->url(fn ($record) => route('filament.admin.resources.trainees.index', ['datePicker' => $record->date]), true),
+                    ->url(fn ($record) => route('filament.admin.resources.trainees.index', ['tableFilters' => ['created_at' => ['date' => $record->date]]]), true),
                 Tables\Columns\TextColumn::make('company_total')
                     ->label('Company')
                     ->alignCenter()
-                    ->url(fn ($record) => route('filament.admin.resources.companies.index', ['datePicker' => $record->date]), true),
+                    ->url(fn ($record) => route('filament.admin.resources.companies.index', ['tableFilters' => ['created_at' => ['date' => $record->date]]]), true),
                 Tables\Columns\TextColumn::make('admin_total')
                     ->label('Admin')
                     ->alignCenter()
-                    ->url(fn ($record) => route('filament.admin.resources.administrators.index', ['datePicker' => $record->date]), true),
+                    ->url(fn ($record) => route('filament.admin.resources.administrators.index', ['tableFilters' => ['created_at' => ['date' => $record->date]]]), true),
                 Tables\Columns\TextColumn::make('total_users')
                     ->alignCenter()
                     ->label('Total'),
