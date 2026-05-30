@@ -176,7 +176,6 @@ class AdminPanelProvider extends PanelProvider
                 fn (): string => Blade::render('@livewire(\'Accessibility\')'),
             )->sidebarCollapsibleOnDesktop()
             ->unsavedChangesAlerts()
-            ->databaseNotifications()
             ->userMenuItems([
                 'profile' => MenuItem::make()->label('Edit Profile'),
                 MenuItem::make()
