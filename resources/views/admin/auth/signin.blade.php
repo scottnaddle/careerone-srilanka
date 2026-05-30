@@ -10,7 +10,7 @@
             </a>
 
             <a href="/" class="flex items-center rtl:space-x-reverse">
-                <img src="{{asset('images/careerone-logo.webp')}}" class="sm:h-8 md:h-12" alt="TVET Logo" />
+                <img src="{{asset('images/careerone-logo.webp')}}" class="sm:h-8 md:h-12" alt="Careerone Logo" />
             </a>
             <div>
                 <h2 class="text-2xl font-semibold text-gray-900 dark:text-white leading-9">{{trans('auth.welcome_back')}}</h2>
