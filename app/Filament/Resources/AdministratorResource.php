@@ -121,12 +121,12 @@ class AdministratorResource extends Resource
                     ->preload()
                     ->searchable()
                     ->query(function (Builder $query, array $data) {
-                        if (!empty($data['approval'])) {
-                            if ($data['approval'] == 'verified') {
+                        if (!empty($data['value'])) {
+                            if ($data['value'] == 'verified') {
                                 $query->whereNotNull('verify_at')
                                       ->whereNotNull('verify_by')
                                       ->whereNotNull('email_verified_at');
-                            } elseif ($data['approval'] == 'recently') {
+                            } elseif ($data['value'] == 'recently') {
                                 $query->orderBy('updated_at', 'desc');
                             }
                         }
