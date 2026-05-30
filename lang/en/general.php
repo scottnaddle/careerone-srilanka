@@ -131,4 +131,5 @@ Developed under the TVET Career Platform Project funded by a grant from the Kore
     'Platform is now open to public' => 'Platform is now open to public',
     'Connecting Competencies' => 'Connecting Competencies',
     'With Opportunities' => 'With Opportunities',
+    'Admin' => 'Admin',
 ];

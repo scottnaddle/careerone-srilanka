@@ -23,6 +23,8 @@
                 </div>
             @else
                 <a href="/choose-login" class="text-primary dark:text-blue-400 font-medium hover:underline">{{trans('system.menu.sign_in')}}</a>
+                <span class="text-gray-300 dark:text-gray-600">·</span>
+                <a href="/admin" class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 text-xs">{{ __('general.Admin') }}</a>
             @endif
         </div>
     </div>
