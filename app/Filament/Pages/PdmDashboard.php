@@ -31,8 +31,8 @@ class PdmDashboard extends Page
                 'value' => CareerTestTraineeResult::whereHas(
                     'careerTest',
                     fn ($q) => $q->where('test_type', 2)
-                )->count(),
-                'sub' => 'Test results (type 2)',
+                )->distinct('trainee_id')->count('trainee_id'),
+                'sub' => 'Unique trainees tested',
                 'icon' => 'heroicon-o-academic-cap',
                 'color' => 'blue',
                 'link' => '/admin/career-tests?tableFilters[test_type][value]=2',
