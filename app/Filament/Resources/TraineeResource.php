@@ -68,30 +68,7 @@ class TraineeResource extends Resource
                         \Filament\Forms\Components\DatePicker::make('date')
                             ->label('Created Date')
                             ->native(false),
-        
-                Tables\Filters\Filter::make('created_at')
-                    ->form([
-                        \Filament\Forms\Components\DatePicker::make('date')
-                            ->label('Created Date')
-                            ->native(false),
                     ])
-                    ->query(function ($query, array $data) {
-                        if (!empty($data['date'])) {
-                            $query->whereDate('created_at', $data['date']);
-                        }
-                    }),
-                Tables\Filters\Filter::make('updated_at')
-                    ->form([
-                        \Filament\Forms\Components\DatePicker::make('date')
-                            ->label('Updated Date')
-                            ->native(false),
-                    ])
-                    ->query(function ($query, array $data) {
-                        if (!empty($data['date'])) {
-                            $query->whereDate('updated_at', $data['date']);
-                        }
-                    }),
-            ])
                     ->query(function ($query, array $data) {
                         if (!empty($data['date'])) {
                             $query->whereDate('created_at', $data['date']);
@@ -129,7 +106,6 @@ class TraineeResource extends Resource
 
     public static function table(Table $table): Table
     {
-
         return $table->paginated([10, 25, 50, 100])
             ->searchPlaceholder('Email, NIC or Name')
             // ->modifyQueryUsing(fn (Builder $query) => $query->where('active', true))
@@ -383,7 +359,18 @@ class TraineeResource extends Resource
                                 });
                             }
                         }
-                    })
+                    }),
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('date')
+                            ->label('Created Date')
+                            ->native(false),
+                    ])
+                    ->query(function ($query, array $data) {
+                        if (!empty($data['date'])) {
+                            $query->whereDate('created_at', $data['date']);
+                        }
+                    }),
             ]);
     }
 

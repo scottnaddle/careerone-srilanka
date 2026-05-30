@@ -66,7 +66,6 @@ class AdministratorResource extends Resource
 
     public static function table(Table $table): Table
     {
-
         return $table
             ->searchPlaceholder(__('admin/dashboard.administrator.search_title'))
             ->columns([

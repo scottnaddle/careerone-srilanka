@@ -123,7 +123,6 @@ class CompanyResource extends Resource
     public static function table(Table $table): Table
     {
 
-
         return $table
             ->searchPlaceholder('Company name')
             ->columns([
