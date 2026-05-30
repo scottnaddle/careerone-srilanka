@@ -7,6 +7,57 @@
     <div class="flex flex-col gap-6 md:gap-9 mt-6">
             @include('homepage.partials.carousel')
 
+            {{-- Who Are You? Section --}}
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mt-2">
+                <a href="/choose-login"
+                    class="group flex flex-col items-center p-6 md:p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 bg-white dark:bg-[#1E1E1E] hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 md:w-10 md:h-10 text-[#4984F6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5"/></svg>
+                    </div>
+                    <h3 class="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-2">{{ __('general.Trainee') }}</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 text-center">{{ __('general.Find courses, jobs, and career guidance') }}</p>
+                    <span class="mt-3 text-[#4984F6] text-sm font-medium group-hover:underline">{{ __('general.Get Started') }} →</span>
+                </a>
+                <a href="/choose-login"
+                    class="group flex flex-col items-center p-6 md:p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 bg-white dark:bg-[#1E1E1E] hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-green-50 dark:bg-green-900/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 md:w-10 md:h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
+                    </div>
+                    <h3 class="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-2">{{ __('general.Company') }}</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 text-center">{{ __('general.Post jobs, find skilled talent') }}</p>
+                    <span class="mt-3 text-green-600 text-sm font-medium group-hover:underline">{{ __('general.Get Started') }} →</span>
+                </a>
+                <a href="/choose-login"
+                    class="group flex flex-col items-center p-6 md:p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 bg-white dark:bg-[#1E1E1E] hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <svg class="w-8 h-8 md:w-10 md:h-10 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/></svg>
+                    </div>
+                    <h3 class="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-2">{{ __('general.CGO') }}</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 text-center">{{ __('general.Guide trainees to success') }}</p>
+                    <span class="mt-3 text-purple-600 text-sm font-medium group-hover:underline">{{ __('general.Get Started') }} →</span>
+                </a>
+            </div>
+
+            {{-- Trust Bar --}}
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-6 md:p-8 text-white shadow-lg">
+                <div class="text-center">
+                    <div class="text-2xl md:text-3xl font-bold">{{ number_format($stats['trainees']) }}+</div>
+                    <div class="text-sm md:text-base text-blue-100 mt-1">{{ __('general.Active Trainees') }}</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl md:text-3xl font-bold">{{ number_format($stats['companies']) }}+</div>
+                    <div class="text-sm md:text-base text-blue-100 mt-1">{{ __('general.Verified Companies') }}</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl md:text-3xl font-bold">{{ number_format($stats['jobs']) }}+</div>
+                    <div class="text-sm md:text-base text-blue-100 mt-1">{{ __('general.Active Jobs') }}</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl md:text-3xl font-bold">{{ number_format($stats['cgos']) }}+</div>
+                    <div class="text-sm md:text-base text-blue-100 mt-1">{{ __('general.Career Officers') }}</div>
+                </div>
+            </div>
+
         {{--    Section our sector    --}}
             @include('homepage.partials.sector')
         {{--Section content--}}

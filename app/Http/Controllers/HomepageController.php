@@ -156,7 +156,13 @@ to support urbanisation, enhance connectivity, and stimulate industrial growth.'
                     ->orWhereDate('end_time', '>=', $today);
             })
             ->get();
-        return view('homepage.index', compact('mainEvent', 'newestEvents', 'recent_jobs', 'sectors', 'banners', 'popups', 'contents', 'contentCategory'));
+        $stats = [
+            'trainees' => TraineeUser::where('active', true)->count(),
+            'companies' => Company::whereNotNull('verified_by')->where('active', true)->count(),
+            'jobs' => Job::where('status', JobStatusEnum::PROGRESS->value)->count(),
+            'cgos' => CgoUser::whereNotNull('verify_at')->where('active', true)->count(),
+        ];
+        return view('homepage.index', compact('mainEvent', 'newestEvents', 'recent_jobs', 'sectors', 'banners', 'popups', 'contents', 'contentCategory', 'stats'));
     }
 
     public function getTests()
