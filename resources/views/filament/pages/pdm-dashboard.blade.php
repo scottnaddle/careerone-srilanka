@@ -31,8 +31,16 @@
                     <x-filament::icon icon="heroicon-o-briefcase" class="w-5 h-5 text-teal-500" />
                     OJT Programs
                 </h2>
-                <div class="text-4xl font-bold text-teal-600">{{ number_format($ojt['total']) }}</div>
-                <p class="text-sm text-gray-400 mt-1">Total OJT programs</p>
+                <div class="flex items-end gap-6">
+                    <div>
+                        <div class="text-4xl font-bold text-teal-600">{{ number_format($ojt['total']) }}</div>
+                        <p class="text-sm text-gray-400 mt-1">Total</p>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold text-green-600">{{ number_format($ojt['matched']) }}</div>
+                        <p class="text-sm text-gray-400 mt-1">Matched</p>
+                    </div>
+                </div>
             </div>
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-gray-700">
                 <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
