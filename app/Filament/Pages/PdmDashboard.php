@@ -27,18 +27,12 @@ class PdmDashboard extends Page
     {
         return [
             [
-                'label' => 'Career Key Test',
-                'value' => number_format(CareerTestTraineeResult::whereHas(
-                    'careerTest',
-                    fn ($q) => $q->where('test_type', 2)
-                )->count()) . ' (' . number_format(CareerTestTraineeResult::whereHas(
-                    'careerTest',
-                    fn ($q) => $q->where('test_type', 2)
-                )->distinct('trainee_id')->count('trainee_id')) . ')',
-                'sub' => 'Total results (unique trainees)',
+                'label' => 'Career Tests',
+                'value' => number_format(CareerTestTraineeResult::count()) . ' (' . number_format(CareerTestTraineeResult::distinct('trainee_id')->count('trainee_id')) . ')',
+                'sub' => 'All types — total (unique)',
                 'icon' => 'heroicon-o-academic-cap',
                 'color' => 'blue',
-                'link' => '/admin/career-tests?tableFilters[test_type][value]=2',
+                'link' => '/admin/career-tests',
             ],
             [
                 'label' => 'Trainees',
