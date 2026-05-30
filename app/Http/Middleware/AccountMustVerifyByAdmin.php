@@ -14,6 +14,11 @@ class AccountMustVerifyByAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Skip for AJAX/API requests and login-related routes
+        if ($request->ajax() || $request->expectsJson() || $request->is('admin/auth/*')) {
+            return $next($request);
+        }
+
         $guard = null;
         if (Auth::guard('admin')->check()) $guard = 'admin';
         if (Auth::guard('cgo')->check()) $guard = 'cgo';
