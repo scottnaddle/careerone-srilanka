@@ -12,7 +12,7 @@
     </div>
 
     {{-- Metrics grid --}}
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         @php $allStats = $this->getStats(); $max = collect($allStats)->max('value') ?: 1; @endphp
         @foreach($allStats as $stat)
             <a href="{{ $stat['link'] }}" class="group bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-100 dark:border-gray-700 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 block no-underline">

@@ -38,6 +38,14 @@ class PdmDashboard extends Page
                 'link' => '/admin/career-tests?tableFilters[test_type][value]=2',
             ],
             [
+                'label' => 'Trainees',
+                'value' => TraineeUser::where('active', true)->count(),
+                'sub' => 'Active trainees',
+                'icon' => 'heroicon-o-user',
+                'color' => 'sky',
+                'link' => '/admin/trainees',
+            ],
+            [
                 'label' => 'Portfolios',
                 'value' => TraineeUser::has('portfolio')->count(),
                 'sub' => 'Trainees with portfolio',
