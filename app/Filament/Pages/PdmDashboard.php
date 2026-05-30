@@ -47,8 +47,10 @@ class PdmDashboard extends Page
             ],
             [
                 'label' => 'Companies',
-                'value' => Company::whereNotNull('verified_by')->count(),
-                'sub' => 'Verified companies',
+                'value' => Company::where('active', true)
+                    ->whereNotNull('verified_at')
+                    ->whereNotNull('verified_by')->count(),
+                'sub' => 'Active & verified',
                 'icon' => 'heroicon-o-building-office',
                 'color' => 'amber',
                 'link' => '/admin/companies',
@@ -63,8 +65,10 @@ class PdmDashboard extends Page
             ],
             [
                 'label' => 'CGO Trained',
-                'value' => CgoUser::whereNotNull('verify_at')->count(),
-                'sub' => 'Approved CGOs',
+                'value' => CgoUser::where('active', true)
+                    ->whereNotNull('verify_at')
+                    ->whereNotNull('verify_by')->count(),
+                'sub' => 'Active & approved',
                 'icon' => 'heroicon-o-user-group',
                 'color' => 'rose',
                 'link' => '/admin/approved-c-g-o-details',
@@ -111,7 +115,7 @@ class PdmDashboard extends Page
     public function getTotal(): int
     {
         return TraineeUser::where('active', true)->count()
-             + Company::whereNotNull('verified_by')->count()
-             + CgoUser::whereNotNull('verify_at')->count();
+             + Company::where('active', true)->whereNotNull('verified_at')->whereNotNull('verified_by')->count()
+             + CgoUser::where('active', true)->whereNotNull('verify_at')->whereNotNull('verify_by')->count();
     }
 }
