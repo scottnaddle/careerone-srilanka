@@ -1,66 +1,92 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CareerOne — TVET Career Platform (Sri Lanka)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A comprehensive career guidance and job matching platform for Sri Lanka's TVET sector, connecting Trainees, Companies, Career Guidance Officers (CGOs), and Administrators.
 
-## About Laravel
+## Tech Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Backend**: Laravel 11, PHP 8.2
+- **Admin Panel**: Filament 3.3.36
+- **Database**: PostgreSQL (production) / SQLite (development)
+- **Frontend**: Blade + Tailwind CSS + Vite
+- **Auth**: Multi-guard (trainee, company, cgo, admin)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Key Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- 4 user types: Trainee, Company, CGO, Administrator
+- Career guidance & counseling system
+- OJT and Job matching with CGO recommendations
+- Portfolio management for trainees
+- Career tests (4 types including Career Key Test)
+- Content management (videos, documents) with TVEC approval workflow
+- Multi-language support (English, Sinhala, Korean)
+- Dark mode support
+- Google OAuth social login
+- Magic Link passwordless login
 
-## Learning Laravel
+## Recent Improvements (105 commits)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Auth & Registration Modernization (Phase 7)
+- Progressive Trainee signup: email + password only (75% field reduction)
+- Real-time password strength meter
+- Magic Link login (passwordless email-based auth)
+- Google OAuth social login for all 3 user types
+- Company Wizard 3-step unified registration
+- Floating label inputs
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Homepage Redesign (Phase 8)
+- Complete hero section with dark gradient + wave divider
+- "Who Are You?" 3-card user type navigation
+- Trust statistics bar with live DB counts
+- 2-tier header (utility bar + main nav)
+- Distinct login screens per user type
+- Vanilla JS dropdown menus
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Admin Panel Modernization (Phase 9-10)
+- CareerOne Admin branding (name, logo, favicon)
+- Dark mode, global search, language switcher
+- Full-width content (maxContentWidth: Full)
+- Collapsible sidebar, unsaved changes alerts
+- Striped tables on all resources
+- ILIKE→LIKE (SQLite/PostgreSQL compatibility)
+- Cumulative filter narrowing (Province→District→Divisional)
+- DatePicker filters on all main resources
+- Admin filter audit & fixes (72 resources checked)
 
-## Laravel Sponsors
+### PDM Dashboard
+- 8 key metrics: Career Tests, Trainees, Portfolios, Companies, Institutes, CGO, Content
+- OJT + Job Vacancy detail sections with matched/company stats
+- All cards clickable → detail pages
+- Counts synced with Dashboard Overview criteria
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Quick Start
 
-### Premium Partners
+```bash
+cp .env.example .env
+composer install
+npm install
+php artisan key:generate
+php artisan migrate
+npm run dev
+php artisan serve
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## PDM Dashboard
 
-## Contributing
+`/admin/pdm-dashboard` — Platform Development Metrics:
+- Career Tests: **3,292(1,211) / 1,771(807)** [all types / Career Key Test]
+- Trainees: 12,264 | Portfolios: 1,535 | Companies: 243
+- Institutes: 4,140 | CGO: 305
+- Content: Videos 29, Documents 183 (TVEC approved)
+- OJT: 11 total (5 matched) | Jobs: 41 total (32 matched)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Documentation
 
-## Code of Conduct
+- `IMPROVEMENTS.md` — full quality improvements report
+- `UI_UX_MODERNIZATION.md` — UI/UX analysis & recommendations
+- `SIGNUP_MODERNIZATION.md` — signup modernization plan
+- `HOMEPAGE_IA_ANALYSIS.md` — homepage IA analysis
+- `COMPANY_REG_REFACTOR.md` — company registration refactoring
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Repository
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+https://github.com/scottnaddle/careerone-srilanka (private)
