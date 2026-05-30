@@ -82,7 +82,6 @@
                             <li data-rule="number"><span class="rule-icon">○</span> One number</li>
                             <li data-rule="special"><span class="rule-icon">○</span> One special character</li>
                         </ul>
-                    </div>
                     @error('password')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
