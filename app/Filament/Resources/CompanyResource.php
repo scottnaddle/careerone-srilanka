@@ -123,6 +123,12 @@ class CompanyResource extends Resource
     public static function table(Table $table): Table
     {
 
+
+        // Apply datePicker from dashboard widget link
+        if ($date = request()->query('datePicker')) {
+            $table->modifyQueryUsing(fn ($query) => $query->whereDate('created_at', $date));
+        }
+
         return $table
             ->searchPlaceholder('Company name')
             ->columns([

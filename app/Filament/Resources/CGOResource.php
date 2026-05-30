@@ -55,11 +55,40 @@ class CGOResource extends Resource
                             $query->whereDate('updated_at', $data['date']);
                         }
                     }),
+
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('date')
+                            ->label('Created Date')
+                            ->native(false),
+                    ])
+                    ->query(function ($query, array $data) {
+                        if (!empty($data['date'])) {
+                            $query->whereDate('created_at', $data['date']);
+                        }
+                    }),
+                Tables\Filters\Filter::make('updated_at')
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('date')
+                            ->label('Updated Date')
+                            ->native(false),
+                    ])
+                    ->query(function ($query, array $data) {
+                        if (!empty($data['date'])) {
+                            $query->whereDate('updated_at', $data['date']);
+                        }
+                    }),
             ]);
     }
 
     public static function table(Table $table): Table
     {
+
+        // Apply datePicker from dashboard widget link
+        if ($date = request()->query('datePicker')) {
+            $table->modifyQueryUsing(fn ($query) => $query->whereDate('created_at', $date));
+        }
+
         return $table
             ->searchPlaceholder('Name or Email')
             ->columns([
