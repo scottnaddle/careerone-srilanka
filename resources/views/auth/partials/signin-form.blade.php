@@ -9,10 +9,29 @@
 --   $forgotRoute  (string) route name for "forgot password" link
 --   $registerRoute(string) route name for registration link
 --   $title        (string|null) optional override for "Sign In" section title
+--   $subtitle     (string|null) optional subtitle
+--   $accentColor  (string) accent color class, e.g. 'from-blue-500 to-blue-700'
+--   $accentBg     (string) accent background, e.g. 'bg-blue-50'
+--   $accentIcon   (string) SVG icon for the card header
 --   $userType     (string) user type for social login: trainee|company|cgo
 --}}
-<div class="bg-white shadow-lg border-0 space-y-6 rounded-2xl px-10 py-5 {{ $darkBg }} {{ $darkBorder }}">
-    <div class="flex flex-col gap-6">
+<div class="bg-white shadow-lg border-0 rounded-2xl overflow-hidden {{ $darkBg }} {{ $darkBorder }}">
+    {{-- Accent header --}}
+    <div class="bg-gradient-to-r {{ $accentColor ?? 'from-blue-500 to-blue-700' }} px-10 py-4">
+        <div class="flex items-center gap-3">
+            @if(isset($accentIcon))
+                <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                    {!! $accentIcon !!}
+                </div>
+            @endif
+            <div>
+                <h1 class="text-xl font-bold text-white">{{ $title ?? trans('auth.welcome_back') }}</h1>
+                <p class="text-sm text-white/70">{{ $subtitle ?? trans('auth.sign_in_to_continue') }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-10 py-6 space-y-6">
         <a href="/choose-login"
            class="text-gray-900 dark:text-white border-gray-200 font-medium gap-2 rounded-xl text-xl font-semibold w-fit text-center inline-flex items-center hover:text-primary dark:hover:text-primary">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">

@@ -1,36 +1,23 @@
 @extends('auth.layouts.master')
 
-@section('title', 'Sign In')
+@section('title', 'CGO Sign In')
 
 @section('content')
     <div class="max-w-2xl mx-auto w-screen py-24 flex flex-col h-full justify-start">
-        @include('auth.partials.signin-form', ['userType' => 'cgo'], [
+        @include('auth.partials.signin-form', [
             'route' => 'cgo.auth.postLogin',
-            'logo' => 'images/logo/careerone-logo.svg',
-            'logoDark' => 'images/logo/careerone-logo-dark.svg',
-            'darkBg' => 'dark:bg-[#1E1E1E]',
-            'darkBorder' => 'dark:border-white',
-            'submitMb' => 'mb-8',
+            'logo' => '/images/TVET.svg',
+            'logoDark' => null,
+            'darkBg' => 'dark:bg-gray-800',
+            'darkBorder' => 'dark:border-gray-700',
+            'submitMb' => 'mb-4',
             'forgotRoute' => 'cgo.auth.forgotPassword',
             'registerRoute' => 'cgo.auth.register',
+            'userType' => 'cgo',
+            'title' => 'CGO Sign In',
+            'subtitle' => 'Guide trainees and manage counseling',
+            'accentColor' => 'from-purple-600 to-violet-800',
+            'accentIcon' => '<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197"/></svg>',
         ])
     </div>
-    <script>
-        document.getElementById('toggle-password')?.addEventListener('click', function() {
-            const pwd = document.getElementById('password');
-            const showIcon = document.getElementById('eye-icon-show');
-            const hideIcon = document.getElementById('eye-icon-hide');
-            if (pwd.type === 'password') {
-                pwd.type = 'text';
-                showIcon.classList.add('hidden');
-                hideIcon.classList.remove('hidden');
-                this.setAttribute('aria-label', 'Hide password');
-            } else {
-                pwd.type = 'password';
-                showIcon.classList.remove('hidden');
-                hideIcon.classList.add('hidden');
-                this.setAttribute('aria-label', 'Show password');
-            }
-        });
-    </script>
 @endsection
