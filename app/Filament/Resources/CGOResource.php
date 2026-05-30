@@ -12,6 +12,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\TvetType;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -32,6 +33,28 @@ class CGOResource extends Resource
         return $form
             ->schema([
                 // Define your form schema here
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('date')
+                            ->label('Created Date')
+                            ->native(false),
+                    ])
+                    ->query(function ($query, array $data) {
+                        if (!empty($data['date'])) {
+                            $query->whereDate('created_at', $data['date']);
+                        }
+                    }),
+                Tables\Filters\Filter::make('updated_at')
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('date')
+                            ->label('Updated Date')
+                            ->native(false),
+                    ])
+                    ->query(function ($query, array $data) {
+                        if (!empty($data['date'])) {
+                            $query->whereDate('updated_at', $data['date']);
+                        }
+                    }),
             ]);
     }
 

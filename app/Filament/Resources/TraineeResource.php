@@ -17,6 +17,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Tables\Columns;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -62,7 +63,29 @@ class TraineeResource extends Resource
                         '1' => 'Male',
                         '2' => 'Female',
                         '3' => 'N/A',
+                        Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('date')
+                            ->label('Created Date')
+                            ->native(false),
                     ])
+                    ->query(function ($query, array $data) {
+                        if (!empty($data['date'])) {
+                            $query->whereDate('created_at', $data['date']);
+                        }
+                    }),
+                Tables\Filters\Filter::make('updated_at')
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('date')
+                            ->label('Updated Date')
+                            ->native(false),
+                    ])
+                    ->query(function ($query, array $data) {
+                        if (!empty($data['date'])) {
+                            $query->whereDate('updated_at', $data['date']);
+                        }
+                    }),
+            ])
                     ->nullable()->columnSpan("1/3"),
                 Forms\Components\TextInput::make('telephone')
                     ->maxLength(20)->columnSpan("1/3"),

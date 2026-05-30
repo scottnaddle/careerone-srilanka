@@ -15,12 +15,12 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Services\Admin\SearchComponentAdminService;
 use App\Models\Company;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\DatePicker;
 use Illuminate\Support\Facades\Hash;
 use Filament\Tables\Actions\Action;
 use Illuminate\Support\Facades\Storage;
@@ -360,6 +360,28 @@ class ComapnyUserListResource extends Resource
                     }),
 
 
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('date')
+                            ->label('Created Date')
+                            ->native(false),
+                    ])
+                    ->query(function ($query, array $data) {
+                        if (!empty($data['date'])) {
+                            $query->whereDate('created_at', $data['date']);
+                        }
+                    }),
+                Tables\Filters\Filter::make('updated_at')
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('date')
+                            ->label('Updated Date')
+                            ->native(false),
+                    ])
+                    ->query(function ($query, array $data) {
+                        if (!empty($data['date'])) {
+                            $query->whereDate('updated_at', $data['date']);
+                        }
+                    }),
             ]);
     }
 

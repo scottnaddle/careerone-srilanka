@@ -9,6 +9,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Filament\Forms\Components\DatePicker;
 use App\Services\Admin\SearchComponentAdminService;
 
 class CounselingListResource extends Resource
@@ -75,6 +76,28 @@ class CounselingListResource extends Resource
                             return $record->trainee_offline_firstname . ' ' . $record->trainee_offline_lastname;
                         }
                         return $record->traineeUser?->fullName;
+                    }),
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('date')
+                            ->label('Created Date')
+                            ->native(false),
+                    ])
+                    ->query(function ($query, array $data) {
+                        if (!empty($data['date'])) {
+                            $query->whereDate('created_at', $data['date']);
+                        }
+                    }),
+                Tables\Filters\Filter::make('updated_at')
+                    ->form([
+                        \Filament\Forms\Components\DatePicker::make('date')
+                            ->label('Updated Date')
+                            ->native(false),
+                    ])
+                    ->query(function ($query, array $data) {
+                        if (!empty($data['date'])) {
+                            $query->whereDate('updated_at', $data['date']);
+                        }
                     }),
             ])
             ->paginated([10, 25, 50, 100])
