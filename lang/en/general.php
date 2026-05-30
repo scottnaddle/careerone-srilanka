@@ -113,5 +113,13 @@ Developed under the TVET Career Platform Project funded by a grant from the Kore
     'Delete' => 'Delete',
     "You haven't had any Portfolio" => "You haven't had any Portfolio",
     'Create a new Portfolio' => 'Create a new Portfolio',
-    'Company/ Other organisation' => 'Company / Other organisation'
+    'Company/ Other organisation' => 'Company / Other organisation',
+    'Find courses, jobs, and career guidance' => 'Find courses, jobs, and career guidance',
+    'Post jobs, find skilled talent' => 'Post jobs, find skilled talent',
+    'Guide trainees to success' => 'Guide trainees to success',
+    'Get Started' => 'Get Started',
+    'Active Trainees' => 'Active Trainees',
+    'Verified Companies' => 'Verified Companies',
+    'Active Jobs' => 'Active Jobs',
+    'Career Officers' => 'Career Officers',
 ];
