@@ -175,6 +175,8 @@ class AdminPanelProvider extends PanelProvider
                 PanelsRenderHook::GLOBAL_SEARCH_BEFORE,
                 fn (): string => Blade::render('@livewire(\'Accessibility\')'),
             )->sidebarCollapsibleOnDesktop()
+            ->unsavedChangesAlerts()
+            ->databaseNotifications()
             ->userMenuItems([
                 'profile' => MenuItem::make()->label('Edit Profile'),
                 MenuItem::make()

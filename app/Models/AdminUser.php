@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasNotifications;
+use Filament\Notifications\Notification;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -21,7 +23,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class AdminUser extends Authenticatable implements FilamentUser, HasName
+class AdminUser extends Authenticatable implements FilamentUser, HasName, MustVerifyEmail, HasNotifications
 {
     use HasFactory;
     use Notifiable;
