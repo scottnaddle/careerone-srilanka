@@ -59,7 +59,7 @@ class ViewJobCandidate extends ViewRecord
                     foreach ($searchTerms as $term) {
                         $query->orWhereRaw('LOWER(first_name) LIKE ?', ["%$term%"])
                               ->orWhereRaw('LOWER(last_name) LIKE ?', ["%$term%"])
-                              ->orWhereRaw('LOWER(full_name) ILIKE ?', ["%$term%"]);
+                              ->orWhereRaw('LOWER(full_name) LIKE ?', ["%$term%"]);
                     }
                 });
             });

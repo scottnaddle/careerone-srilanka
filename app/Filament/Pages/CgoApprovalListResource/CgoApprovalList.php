@@ -53,6 +53,6 @@ class CgoApprovalList extends  Page
     }
     protected function getInstitute()
     {
-        return Institute::where('active_status', 'ILIKE', 'Active')->orderBy('name', 'asc')->get();
+        return Institute::where('active_status', 'LIKE', 'Active')->orderBy('name', 'asc')->get();
     }
 }

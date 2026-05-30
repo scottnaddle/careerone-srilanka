@@ -51,8 +51,8 @@ class AdministratorApprovalListtable extends BaseWidget
         }
 
         if (!empty($this->data['search'])) {
-                $admin->where('first_name', 'ilike', '%' . $this->data['search'] . '%')
-                    ->orWhere('last_name', 'ilike', '%' . $this->data['search'] . '%');
+                $admin->where('first_name', 'like', '%' . $this->data['search'] . '%')
+                    ->orWhere('last_name', 'like', '%' . $this->data['search'] . '%');
         }
         if (isset($this->data['date'])) {
             $admin->whereDate('updated_at', $this->data['date']);
@@ -91,8 +91,8 @@ class AdministratorApprovalListtable extends BaseWidget
             ->label('No.'),
                 Tables\Columns\TextColumn::make('tvet_type')->label(__('admin/dashboard.cgo.tvet_type')) ->sortable(),
                 Tables\Columns\TextColumn::make('fullName')->label('Name')->searchable(query: function ($query, $search) {
-                    $query->where('first_name', 'ilike', "%{$search}%")
-                        ->orWhere('last_name', 'ilike', "%{$search}%");
+                    $query->where('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%");
                 }),
                 Tables\Columns\TextColumn::make('nic')->label('NIC') ->sortable(),
                 Tables\Columns\TextColumn::make('contact')->label('Contact')

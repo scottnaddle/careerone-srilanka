@@ -43,9 +43,9 @@ class TraineeListView extends ViewRecord
             $appliesQuery->whereHas('user', function($query) use ($searchTerms) {
                 $query->where(function($query) use ($searchTerms) {
                     foreach ($searchTerms as $term) {
-                        $query->whereRaw('LOWER(first_name) ILIKE ?', ['%' . $term . '%'])
-                            ->orWhereRaw('LOWER(last_name) ILIKE ?', ['%' . $term . '%'])
-                            ->orWhereRaw('LOWER(full_name) ILIKE ?', ['%' . $term . '%']);
+                        $query->whereRaw('LOWER(first_name) LIKE ?', ['%' . $term . '%'])
+                            ->orWhereRaw('LOWER(last_name) LIKE ?', ['%' . $term . '%'])
+                            ->orWhereRaw('LOWER(full_name) LIKE ?', ['%' . $term . '%']);
                     }
                 });
             });

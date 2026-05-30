@@ -198,6 +198,7 @@ class EventApprovalListResource extends Resource
                 //  Tables\Actions\EditAction::make(),
                 // Tables\Actions\ViewAction::make(),
             ])
+            ->striped()
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
             ->bulkActions([

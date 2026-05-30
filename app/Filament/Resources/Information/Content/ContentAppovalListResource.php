@@ -136,6 +136,7 @@ class ContentAppovalListResource extends Resource
             ->actions([
                 // Tables\Actions\EditAction::make(),
             ])
+            ->striped()
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
             ->bulkActions([

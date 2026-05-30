@@ -26,7 +26,7 @@ class ListCareerTests extends ListRecords
         }
 
         if (!empty($keyword)) {
-            $query->where('name', 'ILIKE', '%' . $keyword . '%');
+            $query->where('name', 'LIKE', '%' . $keyword . '%');
         }
 
         $count = $query->count();

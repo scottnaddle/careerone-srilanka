@@ -47,7 +47,7 @@ class ComapnyUserListResource extends Resource
                 })
                 ->searchable()
                 ->getSearchResultsUsing(fn (string $search): array =>
-                Company::where('name', 'ilike', "%{$search}%")
+                Company::where('name', 'like', "%{$search}%")
                     ->whereNotNull('verified_by')
                     ->whereNotNull('verified_at')
                     ->where('active', true)
@@ -238,6 +238,7 @@ class ComapnyUserListResource extends Resource
                     ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
 
             ])
+            ->striped()
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
             ->bulkActions([
