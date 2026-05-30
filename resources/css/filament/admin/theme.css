@@ -53,3 +53,9 @@ section:has(button.action-btn-bottom) {
 .fi-sidebar.fi-sidebar-collapsed .fi-sidebar-group-label {
     display: none !important;
 }
+
+/* Full-width content area */
+.fi-main-ctn,
+.fi-content {
+    max-width: none !important;
+}
