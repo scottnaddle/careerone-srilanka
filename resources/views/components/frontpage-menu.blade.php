@@ -1,4 +1,18 @@
 <div id="header-web" class="hidden md:block">
+<style>
+.dd-menu {
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    pointer-events: none;
+}
+.dd-menu.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+</style>
+
     {{-- Utility bar: thin strip with accessibility, language, sign in --}}
     <div class="bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800">
         <div class="max-w-7xl mx-auto flex items-center justify-end gap-4 px-4 sm:px-6 lg:px-8 h-9 text-xs">
@@ -15,10 +29,10 @@
                     @endif
                     <span class="hidden lg:inline">{{ Str::limit(Auth::guard(activeGuard())->user()->fullName, 20) }}</span>
                 </button>
-                <div class="z-50 hidden my-4 w-52 text-base list-none bg-white divide-y divide-gray-100 rounded-xl dark:bg-gray-800 shadow-lg" id="user-dropdown" class="dd-menu">
+                <div class="z-50 hidden my-4 w-52 text-base list-none bg-white divide-y divide-gray-100 rounded-xl dark:bg-gray-800 shadow-lg" id="user-dropdown" class="dd-menu absolute right-0 mt-1 w-52>
                     <ul aria-labelledby="user-menu-button">
-                        <li><a href="{{route(activeGuard().'.my-page.my-page')}}" class="block px-4 py-2.5 text-sm hover:bg-primary hover:text-white rounded-t-xl font-medium dark:hover:bg-primary dark:text-white">{{trans('system.menu.my_page')}}</a></li>
-                        <li><a href="{{route(activeGuard().'.auth.logout')}}" class="block px-4 py-2.5 text-sm hover:text-white rounded-b-xl font-medium hover:bg-primary dark:hover:bg-primary dark:text-white">{{trans('system.menu.sign_out')}}</a></li>
+                        <li class="relative"><a href="{{route(activeGuard().'.my-page.my-page')}}" class="block px-4 py-2.5 text-sm hover:bg-primary hover:text-white rounded-t-xl font-medium dark:hover:bg-primary dark:text-white">{{trans('system.menu.my_page')}}</a></li>
+                        <li class="relative"><a href="{{route(activeGuard().'.auth.logout')}}" class="block px-4 py-2.5 text-sm hover:text-white rounded-b-xl font-medium hover:bg-primary dark:hover:bg-primary dark:text-white">{{trans('system.menu.sign_out')}}</a></li>
                     </ul>
                 </div>
             @else
@@ -41,7 +55,7 @@
             {{-- Menu --}}
             <ul class="flex items-center gap-1">
                 @foreach ($items as $item)
-                    <li>
+                    <li class="relative">
                         @if (isset($item['children']) && count($item['children']) > 0)
                             <button id="dropdownNavbarLink{{ $loop->index }}" data-dd-toggle="dropdownNavbar{{ $loop->index }}"
                                
@@ -50,10 +64,10 @@
                                 {{ $item['label'] }}
                                 <svg class="w-3 h-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                             </button>
-                            <div id="dropdownNavbar{{ $loop->index }}" class="dd-menu z-40 hidden w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700">
+                            <div id="dropdownNavbar{{ $loop->index }}" class="dd-menu absolute z-40 mt-1 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700">
                                 <ul class="py-2 text-sm">
                                     @foreach ($item['children'] as $child)
-                                        <li>
+                                        <li class="relative">
                                             @if (isset($child['children']) && count($child['children']) > 0)
                                                 <button id="submenu{{ $loop->parent->index }}-{{ $loop->index }}" data-dd-sub="submenu{{ $loop->parent->index }}-{{ $loop->index }}"
                                                     
@@ -62,10 +76,10 @@
                                                     {{ $child['label'] }}
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                                 </button>
-                                                <div id="submenu{{ $loop->parent->index }}-{{ $loop->index }}" class="dd-menu z-50 hidden w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700">
+                                                <div id="submenu{{ $loop->parent->index }}-{{ $loop->index }}" class="dd-menu absolute z-50 w-56" style="left:100%; top:-0.5rem" bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700">
                                                     <ul class="py-2 text-sm">
                                                         @foreach ($child['children'] as $grandchild)
-                                                            <li><a href="{{ $grandchild['link'] }}" class="block px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 font-medium">{{ $grandchild['label'] }}</a></li>
+                                                            <li class="relative"><a href="{{ $grandchild['link'] }}" class="block px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 font-medium">{{ $grandchild['label'] }}</a></li>
                                                         @endforeach
                                                     </ul>
                                                 </div>
@@ -159,24 +173,25 @@ document.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
         const target = document.getElementById(btn.dataset.ddToggle);
-        if (target) target.classList.toggle('hidden');
-        // Close sibling dropdowns
-        document.querySelectorAll('.dd-menu').forEach(m => {
-            if (m !== target) m.classList.add('hidden');
-        });
+        if (!target) return;
+        const wasOpen = target.classList.contains('open');
+        // Close all
+        document.querySelectorAll('.dd-menu.open').forEach(m => m.classList.remove('open'));
+        // Toggle this one
+        if (!wasOpen) target.classList.add('open');
         return;
     }
-    // Close submenu buttons
     const subBtn = e.target.closest('[data-dd-sub]');
     if (subBtn) {
         e.preventDefault();
         e.stopPropagation();
         const target = document.getElementById(subBtn.dataset.ddSub);
-        if (target) target.classList.toggle('hidden');
+        if (!target) return;
+        target.classList.toggle('open');
         return;
     }
     // Click outside — close all
-    document.querySelectorAll('.dd-menu').forEach(m => m.classList.add('hidden'));
+    document.querySelectorAll('.dd-menu.open').forEach(m => m.classList.remove('open'));
 });
 
 document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
