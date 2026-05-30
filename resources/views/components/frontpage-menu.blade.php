@@ -6,8 +6,8 @@
 
             @if(activeGuard() != '' && Auth::guard(activeGuard())->check())
                 {{-- User avatar + name --}}
-                <button type="button" class="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-blue-400" id="user-menu-button"
-                    data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
+                <button type="button" class="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-blue-400" id="user-menu-button" data-dd-toggle="user-dropdown"
+                    >
                     @if(Auth::guard(activeGuard())->user()->profile_image)
                         <img class="w-6 h-6 rounded-full object-cover" src="{{ Auth::guard(activeGuard())->user()->profile_image }}" alt="user photo">
                     @else
@@ -15,7 +15,7 @@
                     @endif
                     <span class="hidden lg:inline">{{ Str::limit(Auth::guard(activeGuard())->user()->fullName, 20) }}</span>
                 </button>
-                <div class="z-50 hidden my-4 w-52 text-base list-none bg-white divide-y divide-gray-100 rounded-xl dark:bg-gray-800 shadow-lg" id="user-dropdown">
+                <div class="z-50 hidden my-4 w-52 text-base list-none bg-white divide-y divide-gray-100 rounded-xl dark:bg-gray-800 shadow-lg" id="user-dropdown" class="dd-menu">
                     <ul aria-labelledby="user-menu-button">
                         <li><a href="{{route(activeGuard().'.my-page.my-page')}}" class="block px-4 py-2.5 text-sm hover:bg-primary hover:text-white rounded-t-xl font-medium dark:hover:bg-primary dark:text-white">{{trans('system.menu.my_page')}}</a></li>
                         <li><a href="{{route(activeGuard().'.auth.logout')}}" class="block px-4 py-2.5 text-sm hover:text-white rounded-b-xl font-medium hover:bg-primary dark:hover:bg-primary dark:text-white">{{trans('system.menu.sign_out')}}</a></li>
@@ -43,26 +43,26 @@
                 @foreach ($items as $item)
                     <li>
                         @if (isset($item['children']) && count($item['children']) > 0)
-                            <button id="dropdownNavbarLink{{ $loop->index }}"
-                                data-dropdown-toggle="dropdownNavbar{{ $loop->index }}"
-                                data-dropdown-trigger="hover"
+                            <button id="dropdownNavbarLink{{ $loop->index }}" data-dd-toggle="dropdownNavbar{{ $loop->index }}"
+                               
+                               
                                 class="flex items-center gap-1 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-blue-400 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                                 {{ $item['label'] }}
                                 <svg class="w-3 h-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                             </button>
-                            <div id="dropdownNavbar{{ $loop->index }}" class="z-40 hidden w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700">
+                            <div id="dropdownNavbar{{ $loop->index }}" class="dd-menu z-40 hidden w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700">
                                 <ul class="py-2 text-sm">
                                     @foreach ($item['children'] as $child)
                                         <li>
                                             @if (isset($child['children']) && count($child['children']) > 0)
-                                                <button id="submenu{{ $loop->parent->index }}-{{ $loop->index }}"
-                                                    data-dropdown-toggle="submenu{{ $loop->parent->index }}-{{ $loop->index }}"
-                                                    data-dropdown-trigger="hover" data-dropdown-placement="right-start"
+                                                <button id="submenu{{ $loop->parent->index }}-{{ $loop->index }}" data-dd-sub="submenu{{ $loop->parent->index }}-{{ $loop->index }}"
+                                                    
+                                                    
                                                     class="flex items-center justify-between w-full px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 font-medium">
                                                     {{ $child['label'] }}
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                                 </button>
-                                                <div id="submenu{{ $loop->parent->index }}-{{ $loop->index }}" class="z-50 hidden w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700">
+                                                <div id="submenu{{ $loop->parent->index }}-{{ $loop->index }}" class="dd-menu z-50 hidden w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700">
                                                     <ul class="py-2 text-sm">
                                                         @foreach ($child['children'] as $grandchild)
                                                             <li><a href="{{ $grandchild['link'] }}" class="block px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 font-medium">{{ $grandchild['label'] }}</a></li>
@@ -152,8 +152,35 @@
 
 @push('js')
 <script>
-    document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
-        document.getElementById('mobile-menu').classList.toggle('hidden');
-    });
+// Vanilla dropdown — click to toggle, click outside to close
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('[data-dd-toggle]');
+    if (btn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const target = document.getElementById(btn.dataset.ddToggle);
+        if (target) target.classList.toggle('hidden');
+        // Close sibling dropdowns
+        document.querySelectorAll('.dd-menu').forEach(m => {
+            if (m !== target) m.classList.add('hidden');
+        });
+        return;
+    }
+    // Close submenu buttons
+    const subBtn = e.target.closest('[data-dd-sub]');
+    if (subBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        const target = document.getElementById(subBtn.dataset.ddSub);
+        if (target) target.classList.toggle('hidden');
+        return;
+    }
+    // Click outside — close all
+    document.querySelectorAll('.dd-menu').forEach(m => m.classList.add('hidden'));
+});
+
+document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+    document.getElementById('mobile-menu').classList.toggle('hidden');
+});
 </script>
 @endpush
