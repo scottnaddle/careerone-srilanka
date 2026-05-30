@@ -44,3 +44,12 @@ section:has(button.action-btn-bottom) {
     flex-direction: row-reverse;
     justify-content: end;
 }
+
+/* Tight collapsed sidebar */
+.fi-sidebar.fi-sidebar-collapsed {
+    width: 4rem !important;
+}
+.fi-sidebar.fi-sidebar-collapsed .fi-sidebar-item-label,
+.fi-sidebar.fi-sidebar-collapsed .fi-sidebar-group-label {
+    display: none !important;
+}
