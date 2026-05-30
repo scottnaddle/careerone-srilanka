@@ -189,8 +189,8 @@ class SearchComponentAdminService
 
         if (!empty($data['search'])) {
             $admin->where(function ($query) use ($data) {
-                $query->where('first_name', 'ilike', '%' . $data['search'] . '%')
-                    ->orWhere('last_name', 'ilike', '%' . $data['search'] . '%');
+                $query->where('first_name', 'like', '%' . $data['search'] . '%')
+                    ->orWhere('last_name', 'like', '%' . $data['search'] . '%');
             });
         }
         if (isset($data['date'])) {
@@ -230,7 +230,7 @@ class SearchComponentAdminService
         }
         if (!empty($data['search'])) {
             $content->where(function ($query) use ($data) {
-                $query->where('title', 'ilike', '%' . $data['search'] . '%');
+                $query->where('title', 'like', '%' . $data['search'] . '%');
             });
         }
         if(isset($data['check_reject'])){
@@ -269,7 +269,7 @@ class SearchComponentAdminService
         }
         if (!empty($data['search'])) {
             $event->where(function ($query) use ($data) {
-                $query->where('title', 'ilike', '%' . $data['search'] . '%');
+                $query->where('title', 'like', '%' . $data['search'] . '%');
             });
         }
         if (isset($data['member'])) {
@@ -301,7 +301,7 @@ class SearchComponentAdminService
         }
         if (!empty($data['search'])) {
             $event->where(function ($query) use ($data) {
-                $query->where('title', 'ilike', '%' . $data['search'] . '%');
+                $query->where('title', 'like', '%' . $data['search'] . '%');
             });
         }
         if (!empty($data['search_time'])) {
@@ -320,7 +320,7 @@ class SearchComponentAdminService
         $event = Notice::query();
         if (!empty($data['search'])) {
             $event->where(function ($query) use ($data) {
-                $query->where('title', 'ilike', '%' . $data['search'] . '%');
+                $query->where('title', 'like', '%' . $data['search'] . '%');
             });
         }
         if (!empty($data['search_time'])) {
@@ -344,7 +344,7 @@ class SearchComponentAdminService
         // }
         if (!empty($data['search'])) {
             $faq->where(function ($query) use ($data) {
-                $query->where('category_name', 'ilike', '%' . $data['search'] . '%');
+                $query->where('category_name', 'like', '%' . $data['search'] . '%');
             });
         }
         if (!empty($data['search_time'])) {
@@ -363,7 +363,7 @@ class SearchComponentAdminService
         $companyUser = CompanyRecruiter::query();
         if (!empty($data['search'])) {
             $companyUser->where(function ($query) use ($data) {
-                $query->where('category_name', 'ilike', '%' . $data['search'] . '%');
+                $query->where('category_name', 'like', '%' . $data['search'] . '%');
             });
         }
         if (isset($data['check_approval'])) {
@@ -388,11 +388,10 @@ class SearchComponentAdminService
                             ->whereNotNull('cgo_counselings.result');
                     });
             });
-        // ->join('districts','districts.id','=','institutes.dist_id')
 
         if (!empty($data['search'])) {
             $counseling->where(function ($query) use ($data) {
-                $query->where('title', 'ilike', '%' . $data['search'] . '%');
+                $query->where('title', 'like', '%' . $data['search'] . '%');
             });
         }
         if(!empty($data['district'])){
