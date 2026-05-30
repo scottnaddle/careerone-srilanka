@@ -76,7 +76,7 @@
                                                     {{ $child['label'] }}
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                                 </button>
-                                                <div id="submenu{{ $loop->parent->index }}-{{ $loop->index }}" class="dd-menu absolute z-50 w-56" style="left:100%; top:-0.5rem" bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700">
+                                                <div id="submenu{{ $loop->parent->index }}-{{ $loop->index }}" class="dd-menu absolute z-50 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700" style="left:100%; top:-0.5rem">
                                                     <ul class="py-2 text-sm">
                                                         @foreach ($child['children'] as $grandchild)
                                                             <li class="relative"><a href="{{ $grandchild['link'] }}" class="block px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 font-medium">{{ $grandchild['label'] }}</a></li>
