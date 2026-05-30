@@ -40,6 +40,10 @@
                         <div class="text-4xl font-bold text-green-600">{{ number_format($ojt['matched']) }}</div>
                         <p class="text-sm text-gray-400 mt-1">Matched</p>
                     </div>
+                    <div>
+                        <div class="text-2xl font-bold text-gray-500">{{ number_format($ojt['companies']) }}</div>
+                        <p class="text-sm text-gray-400 mt-1">Companies</p>
+                    </div>
                 </div>
             </div>
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-gray-700">

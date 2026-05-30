@@ -98,6 +98,7 @@ class PdmDashboard extends Page
         return [
             'total' => OJT::count(),
             'matched' => OJT::has('ojtMatches')->count(),
+            'companies' => OJT::distinct('company_id')->count('company_id'),
         ];
     }
 
