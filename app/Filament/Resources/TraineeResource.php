@@ -324,9 +324,11 @@ class TraineeResource extends Resource
                             // Chunk large ID arrays to avoid SQLite's 999 parameter limit
                             if (count($instituteIds) > 900) {
                                 $query->whereHas('institutes', function ($q) use ($instituteIds) {
-                                    foreach (array_chunk($instituteIds, 900) as $chunk) {
-                                        $q->whereIn('institute_id', $chunk, 'or');
-                                    }
+                                    $q->where(function ($sub) use ($instituteIds) {
+                                        foreach (array_chunk($instituteIds, 900) as $i => $chunk) {
+                                            $sub->whereIn('institute_id', $chunk, $i === 0 ? 'and' : 'or');
+                                        }
+                                    });
                                 });
                             } else {
                                 $query->whereHas('institutes', function ($q) use ($instituteIds) {
