@@ -148,6 +148,7 @@ class CGOResource extends Resource
                         }
                     }),
             ])
+            ->striped()
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
             ->bulkActions([
