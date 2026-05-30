@@ -103,7 +103,7 @@
                 </div>
 
                 <button type="submit"
-                    class="w-full h-12 bg-[#4984F6] hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-lg">
+                    class="w-full h-12 bg-[#4984F6] hover:bg-blue-700 text-white font-semibold rounded-full transition-colors text-lg">
                     {{ __('trainee.my_page.complete_profile_cta') }}
                 </button>
 

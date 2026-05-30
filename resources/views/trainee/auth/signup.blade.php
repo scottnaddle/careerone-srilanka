@@ -125,7 +125,7 @@
 
                 {{-- Submit --}}
                 <button type="submit"
-                    class="w-full h-12 bg-[#4984F6] hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors text-lg flex items-center justify-center">
+                    class="w-full h-12 bg-[#4984F6] hover:bg-blue-700 text-white font-semibold rounded-full transition-colors text-lg flex items-center justify-center">
                     {{ __('auth.sign_up') }}
                 </button>
 

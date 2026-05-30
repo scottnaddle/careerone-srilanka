@@ -11,7 +11,7 @@
 --   $title        (string|null) optional override for "Sign In" section title
 --   $userType     (string) user type for social login: trainee|company|cgo
 --}}
-<div class="bg-white shadow-md border space-y-6 border-gray-200 rounded-xl px-10 py-5 {{ $darkBg }} {{ $darkBorder }}">
+<div class="bg-white shadow-lg border-0 space-y-6 rounded-2xl px-10 py-5 {{ $darkBg }} {{ $darkBorder }}">
     <div class="flex flex-col gap-6">
         <a href="/choose-login"
            class="text-gray-900 dark:text-white border-gray-200 font-medium gap-2 rounded-xl text-xl font-semibold w-fit text-center inline-flex items-center hover:text-primary dark:hover:text-primary">

@@ -5,7 +5,7 @@
 @section('content')
     <div class="w-[42rem] px-4 xl:max-w-lg mx-auto py-24 flex justify-center flex-col">
         <div
-            class="bg-white dark:bg-[#1E1E1E] shadow-md space-y-6 border-gray-200 rounded-xl px-10 py-7 dark:bg-[#1E1E1E]">
+            class="bg-white dark:bg-[#1E1E1E] shadow-lg space-y-6 rounded-2xl px-10 py-7 dark:bg-[#1E1E1E]">
             <div class="flex flex-col gap-6">
                 <a href="/"
                    class="text-gray-900 dark:text-white border-gray-200 font-medium gap-2 rounded-xl text-xl font-semibold w-fit text-center inline-flex items-center hover:text-primary dark:hover:text-primary">
