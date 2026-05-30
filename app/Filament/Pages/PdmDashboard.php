@@ -63,8 +63,8 @@ class PdmDashboard extends Page
             ],
             [
                 'label' => 'CGO Trained',
-                'value' => CgoUser::whereNotNull('verify_by')->count(),
-                'sub' => 'Admin-approved CGOs',
+                'value' => CgoUser::whereNotNull('verify_at')->count(),
+                'sub' => 'Approved CGOs',
                 'icon' => 'heroicon-o-user-group',
                 'color' => 'rose',
                 'link' => '/admin/approved-c-g-o-details',
@@ -112,6 +112,6 @@ class PdmDashboard extends Page
     {
         return TraineeUser::where('active', true)->count()
              + Company::whereNotNull('verified_by')->count()
-             + CgoUser::whereNotNull('verify_by')->count();
+             + CgoUser::whereNotNull('verify_at')->count();
     }
 }
