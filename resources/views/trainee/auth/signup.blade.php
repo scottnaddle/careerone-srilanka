@@ -43,14 +43,14 @@
                 @csrf
 
                 {{-- Email --}}
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                        {{ __('system.form.email') }}
-                    </label>
+                <div class="relative">
                     <input type="email" name="email" id="email" required
                         value="{{ old('email') }}"
-                        placeholder="you@email.com"
-                        class="w-full h-12 px-4 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:border-[#4984F6] focus:ring-0 focus:outline-none transition-colors @error('email') border-red-500 @enderror">
+                        placeholder=" "
+                        class="peer w-full h-12 px-4 pt-5 pb-2 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:border-[#4984F6] focus:ring-0 focus:outline-none transition-colors @error('email') border-red-500 @enderror">
+                    <label for="email" class="absolute left-4 top-3 text-gray-400 dark:text-gray-500 text-sm transition-all peer-focus:top-1 peer-focus:text-xs peer-focus:text-[#4984F6] peer-[:not(:placeholder-shown)]:top-1 peer-[:not(:placeholder-shown)]:text-xs">
+                        {{ __('system.form.email') }}
+                    </label>
                     @error('email')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -58,14 +58,14 @@
 
                 {{-- Password --}}
                 <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                        {{ __('system.form.password') }}
-                    </label>
                     <div class="relative">
                         <input type="password" name="password" id="password" required
-                            placeholder="••••••••"
-                            class="w-full h-12 px-4 pr-12 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:border-[#4984F6] focus:ring-0 focus:outline-none transition-colors @error('password') border-red-500 @enderror"
+                            placeholder=" "
+                            class="peer w-full h-12 px-4 pr-12 pt-5 pb-2 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:border-[#4984F6] focus:ring-0 focus:outline-none transition-colors @error('password') border-red-500 @enderror"
                             oninput="updateStrength()">
+                        <label for="password" class="absolute left-4 top-3 text-gray-400 dark:text-gray-500 text-sm transition-all peer-focus:top-1 peer-focus:text-xs peer-focus:text-[#4984F6] peer-[:not(:placeholder-shown)]:top-1 peer-[:not(:placeholder-shown)]:text-xs">
+                            {{ __('system.form.password') }}
+                        </label>
                         <button type="button" onclick="togglePassword('password', this)"
                             class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                             <svg id="password-eye" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,14 +89,14 @@
 
                 {{-- Confirm Password --}}
                 <div>
-                    <label for="repassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                        {{ __('system.form.confirm_password') }}
-                    </label>
                     <div class="relative">
                         <input type="password" name="repassword" id="repassword" required
-                            placeholder="{{ __('system.form.confirm_password') }}"
-                            class="w-full h-12 px-4 pr-12 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:border-[#4984F6] focus:ring-0 focus:outline-none transition-colors @error('repassword') border-red-500 @enderror"
+                            placeholder=" "
+                            class="peer w-full h-12 px-4 pr-12 pt-5 pb-2 border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:border-[#4984F6] focus:ring-0 focus:outline-none transition-colors @error('repassword') border-red-500 @enderror"
                             oninput="checkMatch()">
+                        <label for="repassword" class="absolute left-4 top-3 text-gray-400 dark:text-gray-500 text-sm transition-all peer-focus:top-1 peer-focus:text-xs peer-focus:text-[#4984F6] peer-[:not(:placeholder-shown)]:top-1 peer-[:not(:placeholder-shown)]:text-xs">
+                            {{ __('system.form.confirm_password') }}
+                        </label>
                         <button type="button" onclick="togglePassword('repassword', this)"
                             class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
