@@ -76,11 +76,11 @@
                     </div>
 
                     {{-- Strength Rules --}}
-                    <ul class="mt-1 space-y-0.5 text-xs" id="rules">
-                            <li data-rule="length"><span class="rule-icon">○</span> 8-16 characters</li>
-                            <li data-rule="upper"><span class="rule-icon">○</span> One uppercase letter</li>
-                            <li data-rule="number"><span class="rule-icon">○</span> One number</li>
-                            <li data-rule="special"><span class="rule-icon">○</span> One special character</li>
+                    <ul class="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs" id="rules">
+                            <li data-rule="length"><span class="rule-icon">○</span> 8-16</li>
+                            <li data-rule="upper"><span class="rule-icon">○</span> A-Z</li>
+                            <li data-rule="number"><span class="rule-icon">○</span> 0-9</li>
+                            <li data-rule="special"><span class="rule-icon">○</span> !@#</li>
                         </ul>
                     @error('password')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

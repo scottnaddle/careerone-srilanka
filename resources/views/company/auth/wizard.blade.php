@@ -194,11 +194,11 @@
                         class="bg-gray-50 border border-gray-300 p-3 h-10 rounded-xl w-full dark:bg-[#1E1E1E] dark:border-white dark:text-white"
                         oninput="updateStrength()">
                     {{-- Strength Rules --}}
-                        <ul class="mt-1 space-y-0.5 text-xs" id="rules">
-                            <li data-rule="length"><span class="inline-block w-4">○</span> 8-16 characters</li>
-                            <li data-rule="upper"><span class="inline-block w-4">○</span> One uppercase</li>
-                            <li data-rule="number"><span class="inline-block w-4">○</span> One number</li>
-                            <li data-rule="special"><span class="inline-block w-4">○</span> One special char</li>
+                        <ul class="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs" id="rules">
+                            <li data-rule="length"><span class="inline-block w-4">○</span> 8-16</li>
+                            <li data-rule="upper"><span class="inline-block w-4">○</span> A-Z</li>
+                            <li data-rule="number"><span class="inline-block w-4">○</span> 0-9</li>
+                            <li data-rule="special"><span class="inline-block w-4">○</span> !@#</li>
                         </ul>
                     </div>
                     <small class="text-xs text-gray-500 dark:text-gray-400">{{ __('auth.password_requirements') }}</small>
