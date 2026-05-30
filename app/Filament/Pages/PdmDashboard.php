@@ -46,6 +46,7 @@ class PdmDashboard extends Page
                 'sub' => 'Cumulative test results',
                 'icon' => 'heroicon-o-academic-cap',
                 'color' => 'blue',
+                'link' => '/admin/career-tests?tableFilters[test_type][value]=2',
             ],
             [
                 'label' => 'Portfolios',
@@ -53,6 +54,7 @@ class PdmDashboard extends Page
                 'sub' => 'Registered portfolios',
                 'icon' => 'heroicon-o-document-text',
                 'color' => 'green',
+                'link' => '/admin/trainees',
             ],
             [
                 'label' => 'Company Members',
@@ -60,6 +62,7 @@ class PdmDashboard extends Page
                 'sub' => 'Verified recruiters',
                 'icon' => 'heroicon-o-building-office',
                 'color' => 'amber',
+                'link' => '/admin/companies',
             ],
             [
                 'label' => 'TVET Institutes',
@@ -67,6 +70,7 @@ class PdmDashboard extends Page
                 'sub' => 'Active institutes',
                 'icon' => 'heroicon-o-building-library',
                 'color' => 'purple',
+                'link' => '/admin/head-offices',
             ],
             [
                 'label' => 'CGO Trained',
@@ -74,6 +78,7 @@ class PdmDashboard extends Page
                 'sub' => 'Verified CGOs',
                 'icon' => 'heroicon-o-user-group',
                 'color' => 'rose',
+                'link' => '/admin/c-g-o-s',
             ],
             [
                 'label' => 'CGO OJT Match',
@@ -81,6 +86,7 @@ class PdmDashboard extends Page
                 'sub' => 'Trainee recommendations by CGO',
                 'icon' => 'heroicon-o-hand-raised',
                 'color' => 'orange',
+                'link' => '/admin/o-j-t-s',
             ],
             [
                 'label' => 'Content / Deliverables',
@@ -88,6 +94,7 @@ class PdmDashboard extends Page
                 'sub' => 'Approved content',
                 'icon' => 'heroicon-o-folder',
                 'color' => 'indigo',
+                'link' => '/admin/contents',
             ],
         ];
     }
