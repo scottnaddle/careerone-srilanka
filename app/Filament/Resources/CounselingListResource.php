@@ -77,28 +77,6 @@ class CounselingListResource extends Resource
                         }
                         return $record->traineeUser?->fullName;
                     }),
-                Tables\Filters\Filter::make('created_at')
-                    ->form([
-                        \Filament\Forms\Components\DatePicker::make('date')
-                            ->label('Created Date')
-                            ->native(false),
-                    ])
-                    ->query(function ($query, array $data) {
-                        if (!empty($data['date'])) {
-                            $query->whereDate('created_at', $data['date']);
-                        }
-                    }),
-                Tables\Filters\Filter::make('updated_at')
-                    ->form([
-                        \Filament\Forms\Components\DatePicker::make('date')
-                            ->label('Updated Date')
-                            ->native(false),
-                    ])
-                    ->query(function ($query, array $data) {
-                        if (!empty($data['date'])) {
-                            $query->whereDate('updated_at', $data['date']);
-                        }
-                    }),
             ])
             ->paginated([10, 25, 50, 100])
             ->striped()
@@ -129,6 +107,17 @@ class CounselingListResource extends Resource
                             $query->whereHas('institute.tvetType', function ($q) use ($data) {
                                 $q->where('head_office_code', $data['value']);
                             });
+                        }
+                    }),
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('date')
+                            ->label('Created Date')
+                            ->native(false),
+                    ])
+                    ->query(function ($query, array $data) {
+                        if (!empty($data['date'])) {
+                            $query->whereDate('created_at', $data['date']);
                         }
                     }),
             ])
