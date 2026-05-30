@@ -167,35 +167,33 @@
 @push('js')
 <script>
 // Vanilla dropdown — click to toggle, click outside to close
+(function() {
 document.addEventListener('click', function(e) {
     const btn = e.target.closest('[data-dd-toggle]');
     if (btn) {
-        e.preventDefault();
         e.stopPropagation();
         const target = document.getElementById(btn.dataset.ddToggle);
         if (!target) return;
         const wasOpen = target.classList.contains('open');
-        // Close all
         document.querySelectorAll('.dd-menu.open').forEach(m => m.classList.remove('open'));
-        // Toggle this one
         if (!wasOpen) target.classList.add('open');
         return;
     }
     const subBtn = e.target.closest('[data-dd-sub]');
     if (subBtn) {
-        e.preventDefault();
         e.stopPropagation();
         const target = document.getElementById(subBtn.dataset.ddSub);
         if (!target) return;
         target.classList.toggle('open');
         return;
     }
-    // Click outside — close all
+    // Click outside — only close menus, don't stop link navigation
     document.querySelectorAll('.dd-menu.open').forEach(m => m.classList.remove('open'));
 });
 
 document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
     document.getElementById('mobile-menu').classList.toggle('hidden');
 });
+})();
 </script>
 @endpush
