@@ -8,7 +8,7 @@
             @include('homepage.partials.carousel')
 
             {{-- Who Are You? Section --}}
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mt-2">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mt-16 md:mt-24">
                 <a href="/choose-login"
                     class="group flex flex-col items-center p-6 md:p-8 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 bg-white dark:bg-[#1E1E1E] hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                     <div class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
