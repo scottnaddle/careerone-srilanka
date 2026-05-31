@@ -15,6 +15,6 @@ class CustomLoginResponse implements LoginResponseContract {
         // return whatever you want as url
         $url = '/admin/overview';
         session()->flash('loginSuccess', true);
-        return redirect()->intended($url);
+        return redirect()->to('/admin/overview');
     }
 }
