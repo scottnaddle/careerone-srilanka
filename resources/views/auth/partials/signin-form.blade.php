@@ -87,9 +87,14 @@
             <div class="mb-6">
                 <label for="email"
                     class="text-normal font-medium text-[#706F81] block mb-1.5 dark:text-gray-300 leading-6">
-                    {{ trans('system.form.email') }}<span class="text-red-600 p-1 text-center">*</span>
+                    @if(($userType ?? '') === 'trainee')
+                        {{ __('system.form.email_or_nic') }}<span class="text-red-600 p-1 text-center">*</span>
+                    @else
+                        {{ trans('system.form.email') }}<span class="text-red-600 p-1 text-center">*</span>
+                    @endif
                 </label>
                 <input type="text" name="email" id="email" autocomplete="email"
+                    @if(($userType ?? '') === 'trainee') placeholder="E-mail or NIC Number" @endif
                     class="bg-gray-50 border border-gray-300 py-2 px-4 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full {{ $darkBg }} {{ $darkBorder }} dark:placeholder-gray-400 dark:text-white">
                 @if ($errors->has('email'))
                     <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('email') }}</span>

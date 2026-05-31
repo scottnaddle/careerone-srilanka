@@ -96,6 +96,7 @@ return [
         'Proposed Career Guidance Date'=>'Proposed Career Guidance Date',
         'edit_qna' => 'Edit Q&A',
         'email' => 'E-mail',
+        'email_or_nic' => 'E-mail or NIC Number',
         'password' => 'Password',
         'confirm_password' => 'Confirm password',
         'forgot_password' => 'Forgot Password?',

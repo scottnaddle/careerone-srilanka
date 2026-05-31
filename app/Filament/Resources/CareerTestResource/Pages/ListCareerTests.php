@@ -14,7 +14,7 @@ class ListCareerTests extends ListRecords
 {
     protected static string $resource = CareerTestResource::class;
     protected static string $view = 'filament.pages.career-guidance.carrer-test.career-test-list';
-    protected static ?string $title = '';
+    protected static ?string $title = 'Career Tests';
 
     public function getCareerTestTraineeResult() {
         $careerTestType = CareerTest::all();

@@ -35,9 +35,24 @@ class TraineeLoginController extends Controller
 
     public function postLogin(LoginRequest $request)
     {
+        $credentials = $request->only('email', 'password');
+        $loginValue = $credentials['email'];
+        $isEmail = filter_var($loginValue, FILTER_VALIDATE_EMAIL);
 
-        $data = $request->except('_token');
-        if (Auth::guard('trainee')->attempt($data)) {
+        if ($isEmail) {
+            $attempt = Auth::guard('trainee')->attempt($credentials);
+        } else {
+            // NIC login
+            $user = \App\Models\TraineeUser::where('nic', $loginValue)->first();
+            if ($user && Auth::guard('trainee')->getProvider()->validateCredentials($user, ['password' => $credentials['password']])) {
+                Auth::guard('trainee')->login($user);
+                $attempt = true;
+            } else {
+                $attempt = false;
+            }
+        }
+
+        if ($attempt) {
             $user = Auth::guard('trainee')->user();
             if ($user->active == false) {
                 $token = base64_encode($user->id);
