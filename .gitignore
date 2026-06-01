@@ -28,3 +28,4 @@ table
 /storage/app/firebase_credentials.json
 /storage/framework/cache/data/*
 vite.config.js.timestamp-*
+/.hermes/
