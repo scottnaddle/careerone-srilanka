@@ -9,6 +9,11 @@ class CasServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        if (!env('CAS_HOSTNAME')) {
+            return;
+        }
+
+        \CAS_GracefullTerminationException::throwInsteadOfExiting();
         phpCAS::client(
             CAS_VERSION_2_0,
             env('CAS_HOSTNAME'),

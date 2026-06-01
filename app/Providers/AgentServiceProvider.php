@@ -2,27 +2,21 @@
 
 namespace App\Providers;
 
-use View;
+use Illuminate\Support\Facades\View;
 use Jenssegers\Agent\Agent;
 use Illuminate\Support\ServiceProvider;
 
 class AgentServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     */
     public function register(): void
     {
-        $agent = new Agent();
-
-        View::share('agent', $agent);
+        $this->app->singleton(Agent::class, function () {
+            return new Agent();
+        });
     }
 
-    /**
-     * Bootstrap services.
-     */
     public function boot(): void
     {
-        //
+        View::share('agent', app(Agent::class));
     }
 }
