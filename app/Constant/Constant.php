@@ -8,4 +8,5 @@ class Constant {
    const company = 'company';
    const cgo = 'cgo';
    const trainee = 'trainee';
+   const schoolkid = 'schoolkid';
 }
