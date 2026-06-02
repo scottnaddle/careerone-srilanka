@@ -109,27 +109,27 @@ class PolicyResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                 ->label(__('admin/dashboard.policy.name'))
                 ->limit(50)
-                    ->searchable(),
+                    ->searchable()->wrap(),
                 Tables\Columns\TextColumn::make('description')
                 ->label(__('admin/dashboard.policy.description'))
-                    ->searchable(),
+                    ->searchable()->wrap(),
                 Tables\Columns\TextColumn::make('file')
                 ->label(__('admin/dashboard.policy.file'))
-                    ->searchable(),
+                    ->searchable()->wrap(),
                 Tables\Columns\TextColumn::make('category_id')
                 ->label(__('admin/dashboard.policy.category_id'))
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()->wrap(),
                 Tables\Columns\TextColumn::make('created_at')
                 ->label(__('admin/dashboard.policy.created_at'))
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)->wrap(),
                 Tables\Columns\TextColumn::make('updated_at')
                 ->label(__('admin/dashboard.policy.updated_at'))
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)->wrap(),
             ])->searchPlaceholder(__('admin/dashboard.policy.name'))
             ->filters([
                 //

@@ -111,10 +111,12 @@ class NoiticeResource extends Resource
                     ->label(__('admin/dashboard.notice.title'))
                     ->searchable()
                     ->limit(50)
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('admin/dashboard.notice.registration_date'))
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
 
             ])->searchPlaceholder('Title')
             ->filters([

@@ -7,6 +7,7 @@ use App\Http\Requests\RegisterVerificationCodeRequest;
 use App\Models\CgoUser;
 use App\Models\AdminUser;
 use App\Models\CompanyRecruiter;
+use App\Models\SchoolKid;
 use App\Models\TraineeUser;
 use App\Models\VerificationCode;
 use App\Services\Trainee\TraineeCasSyncService;
@@ -71,6 +72,10 @@ class RegisterVerificationCodeController extends Controller
                 $user = TraineeUser::where(['email' => base64_decode($request->token)])->first();
 
                 break;
+            case Constant::schoolkid:
+                $user = SchoolKid::where(['email' => base64_decode($request->token)])->first();
+
+                break;
             default:
                 break;
         }
@@ -122,6 +127,9 @@ class RegisterVerificationCodeController extends Controller
                 break;
             case Constant::trainee:
                 $user = TraineeUser::where(['email' => base64_decode($token)])->first();
+                break;
+            case Constant::schoolkid:
+                $user = SchoolKid::where(['email' => base64_decode($token)])->first();
                 break;
             default:
                 break;

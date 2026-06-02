@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\ComapnyUserListResource\Pages;
+namespace App\Filament\Resources\CompanyRecruiterResource\Pages;
 
-use App\Filament\Resources\ComapnyUserListResource;
+use App\Filament\Resources\CompanyRecruiterResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Notifications\Notification;
@@ -12,9 +12,9 @@ use Filament\Forms\Components\Textarea;
 use App\Services\Cgo\NotificationManager as NotificationManagerCgo;
 use Filament\Support\Colors\Color;
 
-class ViewComapnyUserList extends ViewRecord
+class ViewCompanyRecruiter extends ViewRecord
 {
-    protected static string $resource = ComapnyUserListResource::class;
+    protected static string $resource = CompanyRecruiterResource::class;
     protected NotificationManagerCgo $notificationManagerCgo;
     protected static string $view = 'filament.pages.membership.company.company-recruiter-details';
 

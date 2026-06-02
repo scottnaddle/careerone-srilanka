@@ -77,10 +77,10 @@ class FAQResource extends Resource
 //                    ->sortable(),
                 Tables\Columns\TextColumn::make('category_name')
                     ->label(__('admin/dashboard.faq.title'))
-                    ->sortable()->searchable(),
+                    ->sortable()->searchable()->wrap(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('admin/dashboard.faq.registration_date'))
-                    ->sortable(),
+                    ->sortable()->wrap(),
 
             ])->searchPlaceholder(__('admin/dashboard.faq.search_title'))
             ->filters([

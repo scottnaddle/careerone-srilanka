@@ -57,15 +57,18 @@ class ContentAppovalListResource extends Resource
                     ->alignCenter(),
             Tables\Columns\TextColumn::make('created_at')
                 ->sortable()
-                ->label(__('admin/dashboard.content.date')),
+                ->label(__('admin/dashboard.content.date'))
+                ->wrap(),
             Tables\Columns\TextColumn::make('title')
                 ->sortable()
                 ->limit(50)
                 ->searchable()
-                ->label(__('admin/dashboard.content.title_table')),
+                ->label(__('admin/dashboard.content.title_table'))
+                ->wrap(),
             Tables\Columns\TextColumn::make('author')
                 ->sortable()
-                ->label(__('admin/dashboard.content.author')),
+                ->label(__('admin/dashboard.content.author'))
+                ->wrap(),
             Tables\Columns\TextColumn::make('content_type')
                 ->sortable()
                 ->getStateUsing(function ($record) {
@@ -75,7 +78,8 @@ class ContentAppovalListResource extends Resource
                         default => $record->content_type,
                     };
                 })
-                ->label(__('admin/dashboard.content.type')),
+                ->label(__('admin/dashboard.content.type'))
+                ->wrap(),
             Tables\Columns\TextColumn::make('system')
                 ->sortable()
                 ->getStateUsing(function ($record) {
@@ -86,7 +90,8 @@ class ContentAppovalListResource extends Resource
                         default => $record->system,
                     };
                 })
-                ->label(__('admin/dashboard.content.member')),
+                ->label(__('admin/dashboard.content.member'))
+                ->wrap(),
             Tables\Columns\TextColumn::make('approval')
                 ->label(__('admin/dashboard.content.status'))
                 ->getStateUsing(function ($record) {

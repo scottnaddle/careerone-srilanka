@@ -50,7 +50,7 @@ class MemberSignupTableWidget extends BaseWidget
 
     public function getTableRecordKey(\Illuminate\Database\Eloquent\Model $record): string
     {
-        return $record->date;
+        return $record->date ?? $record->getKey() ?? uniqid();
     }
 
     public function table(Table $table): Table

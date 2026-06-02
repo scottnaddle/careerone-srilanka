@@ -63,15 +63,15 @@ class ResourceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('title')->searchable()->sortable()->wrap(),
 
-                Tables\Columns\TextColumn::make('category.name')->label('Category')->sortable(),
+                Tables\Columns\TextColumn::make('category.name')->label('Category')->sortable()->wrap(),
 
-                Tables\Columns\TextColumn::make('content_type')->sortable()->alignCenter()->formatStateUsing(fn ($state) => ucfirst($state)),
+                Tables\Columns\TextColumn::make('content_type')->sortable()->alignCenter()->formatStateUsing(fn ($state) => ucfirst($state))->wrap(),
 
-                Tables\Columns\TextColumn::make('views')->alignCenter(),
+                Tables\Columns\TextColumn::make('views')->alignCenter()->wrap(),
 
-                Tables\Columns\TextColumn::make('created_at')->dateTime("Y-m-d"),
+                Tables\Columns\TextColumn::make('created_at')->dateTime("Y-m-d")->wrap(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('category')

@@ -59,12 +59,14 @@ class CompanyJobResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->limit(50)
                     ->label(__('admin/dashboard.compnay_job.company_name'))
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
 
                 Tables\Columns\TextColumn::make('district.name')
                     ->label(__('admin/dashboard.compnay_job.district'))
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
 
                 Tables\Columns\TextColumn::make('jobs')
                     ->label(__('admin/dashboard.compnay_job.job_posting'))

@@ -40,6 +40,13 @@ class SchoolKid extends Authenticatable implements HasName
         'email_verified_at' => 'datetime',
     ];
 
+    public function setPasswordAttribute($value)
+    {
+        if (!empty($value)) {
+            $this->attributes['password'] = bcrypt($value);
+        }
+    }
+
     public function sendEmailVerify($token)
     {
         $verificationCode = $this->generateVerificationCodeFor($this, Constant::schoolkid);

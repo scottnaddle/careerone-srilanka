@@ -32,29 +32,66 @@ class CGOResource extends Resource
     {
         return $form
             ->schema([
-                // Define your form schema here
-                Tables\Filters\Filter::make('created_at')
-                    ->form([
-                        \Filament\Forms\Components\DatePicker::make('date')
-                            ->label('Created Date')
-                            ->native(false),
-                    ])
-                    ->query(function ($query, array $data) {
-                        if (!empty($data['date'])) {
-                            $query->whereDate('created_at', $data['date']);
-                        }
-                    }),
-                Tables\Filters\Filter::make('updated_at')
-                    ->form([
-                        \Filament\Forms\Components\DatePicker::make('date')
-                            ->label('Updated Date')
-                            ->native(false),
-                    ])
-                    ->query(function ($query, array $data) {
-                        if (!empty($data['date'])) {
-                            $query->whereDate('updated_at', $data['date']);
-                        }
-                    }),
+                Forms\Components\Section::make('Personal Information')
+                    ->schema([
+                        Forms\Components\TextInput::make('first_name')
+                            ->label('First Name')
+                            ->required()
+                            ->maxLength(100),
+                        Forms\Components\TextInput::make('last_name')
+                            ->label('Last Name')
+                            ->required()
+                            ->maxLength(100),
+                        Forms\Components\TextInput::make('nic')
+                            ->label('NIC')
+                            ->maxLength(12),
+                        Forms\Components\Select::make('gender')
+                            ->label('Gender')
+                            ->options([
+                                '1' => 'Male',
+                                '2' => 'Female',
+                                '3' => 'N/A',
+                            ]),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Contact Information')
+                    ->schema([
+                        Forms\Components\TextInput::make('email')
+                            ->label('Email')
+                            ->email()
+                            ->required()
+                            ->maxLength(100)
+                            ->unique(ignoreRecord: true),
+                        Forms\Components\TextInput::make('telephone')
+                            ->label('Telephone')
+                            ->tel()
+                            ->required()
+                            ->maxLength(20),
+                        Forms\Components\Select::make('district_id')
+                            ->label('District')
+                            ->relationship('district', 'name')
+                            ->searchable()
+                            ->preload(),
+                        Forms\Components\Select::make('institute_id')
+                            ->label('Institute')
+                            ->relationship('institute', 'name')
+                            ->searchable()
+                            ->preload(),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Account Settings')
+                    ->schema([
+                        Forms\Components\TextInput::make('password')
+                            ->label('Password')
+                            ->password()
+                            ->revealable()
+                            ->visible(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\CreateRecord)
+                            ->required(fn ($livewire) => $livewire instanceof \Filament\Resources\Pages\CreateRecord)
+                            ->maxLength(255),
+                        Forms\Components\Toggle::make('active')
+                            ->label('Active')
+                            ->default(true),
+                    ])->columns(2),
             ]);
     }
 
@@ -70,13 +107,15 @@ class CGOResource extends Resource
 
                 Tables\Columns\TextColumn::make('institute.name')
                     ->label(__('admin/dashboard.cgo.institute'))
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('district.name')->label(trans('trainee.job_support.company.table.label.district')) ->sortable(),
+                    ->sortable()
+                    ->wrap(),
+                Tables\Columns\TextColumn::make('district.name')->label(trans('trainee.job_support.company.table.label.district')) ->sortable()->wrap(),
                 Tables\Columns\TextColumn::make('fullName')
                     ->label(__('admin/dashboard.cgo.name'))
                     ->getStateUsing(fn($record) => $record->fullName ?? 'N/A')
-                    ->searchable(['first_name', 'last_name']),
-                Tables\Columns\TextColumn::make('email')->searchable(),
+                    ->searchable(['first_name', 'last_name'])
+                    ->wrap(),
+                Tables\Columns\TextColumn::make('email')->searchable()->copyable()->copyMessage('Email copied')->wrap(),
 //                Tables\Columns\TextColumn::make('counseling')
 //                    ->getStateUsing(fn($record) => $record->counselings->count())
 //                    ->label(__('admin/dashboard.cgo.guidance'))
@@ -109,26 +148,44 @@ class CGOResource extends Resource
                     ->color(fn ($state) => $state ? 'success' : 'danger')
             ])->paginated([10, 25, 50, 100])
             ->actions([
-                Action::make('deactivate')
-                ->label(__('Deactivate'))
-                ->icon('heroicon-o-x-circle')
-                ->color('danger')
-                ->requiresConfirmation()
-                ->action(function ($record) {
-                    $record->update(['active' => false, 'verify_at' => null, 'verify_by' => auth()->guard('admin')->id()]);
-                })
-                ->hidden(fn ($record) => $record->active === false)
+                Tables\Actions\ViewAction::make()
+                    ->iconButton()
+                    ->tooltip('View'),
+
+                Tables\Actions\EditAction::make()
+                    ->iconButton()
+                    ->tooltip('Edit')
                     ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
-            Action::make('activate')
-                ->label(__('Activate'))
-                ->icon('heroicon-o-check-circle')
-                ->color('success')
-                ->requiresConfirmation()
-                ->action(function ($record) {
-                    $record->update(['active' => true, 'verify_at' => now(), 'verify_by' => auth()->guard('admin')->id()]);
-                })
-                ->hidden(fn ($record) => $record->active === true)
-                ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+
+                Action::make('deactivate')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->iconButton()
+                    ->tooltip('Deactivate')
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        $record->update(['active' => false, 'verify_at' => null, 'verify_by' => auth()->guard('admin')->id()]);
+                    })
+                    ->hidden(fn ($record) => $record->active === false)
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+
+                Action::make('activate')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->iconButton()
+                    ->tooltip('Activate')
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        $record->update(['active' => true, 'verify_at' => now(), 'verify_by' => auth()->guard('admin')->id()]);
+                    })
+                    ->hidden(fn ($record) => $record->active === true)
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+
+                Tables\Actions\DeleteAction::make()
+                    ->iconButton()
+                    ->tooltip('Delete')
+                    ->requiresConfirmation()
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
             ])
             ->filters([
                 Tables\Filters\Filter::make('tvet_type')
@@ -176,16 +233,10 @@ class CGOResource extends Resource
             ->reorderable('updated_at')
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
                 ]),
-            ])
-            ->modifyQueryUsing(function (Builder $query) {
-                // Example of user-based query modification
-                // $user = auth('admin')->user();
-                // if (!$user->hasRole('SuperAdmin')) {
-                //     $query->where('institute_id', $user->institute_id);
-                // }
-            });
+            ]);
     }
 
 

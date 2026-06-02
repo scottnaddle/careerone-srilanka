@@ -132,14 +132,17 @@ class EventApprovalListResource extends Resource
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->sortable()
-                    ->label(__('admin/dashboard.event.title')),
+                    ->label(__('admin/dashboard.event.title'))
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('title')
                     ->sortable()
                     ->searchable()
                     ->limit(50)
-                    ->label(__('admin/dashboard.event.title_table')),
+                    ->label(__('admin/dashboard.event.title_table'))
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('full_name')
-                    ->label('Author'),
+                    ->label('Author')
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('event_type')
                 ->label(__('admin/dashboard.event.event_type'))
                     ->html()
@@ -156,7 +159,8 @@ class EventApprovalListResource extends Resource
                             default => $record,
                         };
                     })
-                    ->label(__('admin/dashboard.event.member')),
+                    ->label(__('admin/dashboard.event.member'))
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('approval')
                 ->label(__('admin/dashboard.event.status'))
                 ->getStateUsing(fn($record) => $record->status == \App\Enums\StatusEnumsManagement::APPROVED->value ?

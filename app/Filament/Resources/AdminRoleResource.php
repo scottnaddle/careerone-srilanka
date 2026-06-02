@@ -100,8 +100,8 @@ class AdminRoleResource extends Resource
                     ->rowIndex()
                     ->alignCenter(),
 
-                Tables\Columns\TextColumn::make('username')->label(__('admin/dashboard.admin_user.admin_name')),
-                Tables\Columns\TextColumn::make('roles.name')->label(__('admin/dashboard.admin_user.roles')),
+                Tables\Columns\TextColumn::make('username')->label(__('admin/dashboard.admin_user.admin_name'))->wrap(),
+                Tables\Columns\TextColumn::make('roles.name')->label(__('admin/dashboard.admin_user.roles'))->wrap(),
             ])
             ->paginated([10, 25, 50, 100])
             ->defaultSort('updated_at', 'desc')

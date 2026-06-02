@@ -61,49 +61,57 @@ class PolicyCategoryResource extends Resource
                     ->label(__('admin/dashboard.policy.name'))
                     ->searchable()
                     ->limit(50)
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('description')
                     ->label(__('admin/dashboard.policy.description'))
                     ->searchable()
                     ->limit(50)
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
 
                     Tables\Columns\TextColumn::make('name_tm')
                     ->label(__('admin/dashboard.policy.name_tm'))
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable()
                     ->limit(50)
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('description_tm')
                     ->label(__('admin/dashboard.policy.description_tm'))
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable()
                     ->limit(50)
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
 
                     Tables\Columns\TextColumn::make('name_sn')
                     ->label(__('admin/dashboard.policy.name_sn'))
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable()
                     ->limit(50)
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('description_sn')
                     ->label(__('admin/dashboard.policy.description_sn'))
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable()
                     ->limit(50)
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('admin/dashboard.policy.created_at'))
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('admin/dashboard.policy.updated_at'))
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->wrap(),
             ])->searchPlaceholder('Name')
             ->filters([
                 //

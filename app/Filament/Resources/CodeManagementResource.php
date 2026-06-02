@@ -74,29 +74,34 @@ class CodeManagementResource extends Resource
             Tables\Columns\TextColumn::make('module')
                 ->label(__('admin/dashboard.code_management.module'))
 //                ->searchable()
-                ->sortable(),
+                ->sortable()
+                ->wrap(),
 
             Tables\Columns\TextColumn::make('code_name_en')
                 ->label(__('admin/dashboard.code_management.code_name_en'))
                 ->searchable()
-                ->sortable(),
+                ->sortable()
+                ->wrap(),
 
             Tables\Columns\TextColumn::make('code_name_tm')
                 ->label(__('admin/dashboard.code_management.code_name_tm'))
                 ->searchable()
-                ->sortable(),
+                ->sortable()
+                ->wrap(),
 
             Tables\Columns\TextColumn::make('code_name_sn')
                 ->label(__('admin/dashboard.code_management.code_name_sn'))
                 ->searchable()
-                ->sortable(),
+                ->sortable()
+                ->wrap(),
 
                 Tables\Columns\TextColumn::make('status')
                 ->label(__('admin/dashboard.code_management.status'))
                 ->sortable()
                 ->formatStateUsing(function ($state) {
                     return $state ? 'Show' : 'Hide';
-                }),
+                })
+                ->wrap(),
 
         ])
         ->searchPlaceholder('Code name')

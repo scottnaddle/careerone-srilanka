@@ -54,7 +54,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->brandName('CareerOne Admin')
             ->brandLogo(asset('images/careerone-logo.webp'))
-            ->brandLogoHeight('2rem')
+            ->brandLogoHeight('3rem')
             ->favicon(asset('favicon.ico'))
             ->colors([
                 'primary' => Color::hex('#4984F6'),

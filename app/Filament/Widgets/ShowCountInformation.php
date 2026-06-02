@@ -52,7 +52,7 @@ class ShowCountInformation extends StatsOverviewWidget
                 'value' => $resultCount['unverified_company_recruiters'],
                 'description' => '',
                 'color' => 'bg-[#4984F6]',
-                'link' => route('filament.admin.resources.comapny-user-lists.index'),
+                'link' => route('filament.admin.resources.company-recruiters.index'),
             ],
             3 => [
                 'title' => __('admin/dashboard.job_vacancy_title'),

@@ -298,17 +298,20 @@ class OJTResource extends Resource
                     ->sortable()
                     ->limit(50)
                     ->searchable()
-                    ->url(fn($record) => url('admin/o-j-t-s/' . $record->id . '/view')),
+                    ->url(fn($record) => url('admin/o-j-t-s/' . $record->id . '/view'))
+                    ->wrap(),
 
                 Tables\Columns\TextColumn::make('company.name')
                     ->label(__('admin/dashboard.compnay_job.company_name'))
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('admin/dashboard.ojt.registration_date'))
                     ->date('Y-m-d')
                     ->sortable()
-                    ->alignCenter(),
+                    ->alignCenter()
+                    ->wrap(),
 
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('admin/dashboard.ojt.status'))

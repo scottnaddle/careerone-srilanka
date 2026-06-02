@@ -40,7 +40,7 @@
                 </div>
             </div>
             <div class="px-4 py-5 flex flex-col">
-                <a class="text-xl text-[#464559] dark:text-white flex gap-4 items-center font-semibold capitalize hover:text-primary" href="{{route('trainee.my-page.my-page')}}">
+                <a class="text-xl text-[#464559] dark:text-white flex gap-4 items-center font-semibold capitalize hover:text-primary" href="{{route('schoolkid.my-page.my-page')}}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                     </svg>
@@ -54,7 +54,7 @@
                 @if($errors->any())
                     {!! implode('', $errors->all('<div class="alert alert-danger text-red-600 dark:text-red font-semibold bg-red-200 px-4 py-2 rounded-xl">:message</div>')) !!}
                 @endif
-                <form class="flex flex-col gap-6 px-6 py-5 lg:justify-between" method="post" action="{{route('trainee.my-page.personal-information.post')}}" enctype="multipart/form-data">
+                <form class="flex flex-col gap-6 px-6 py-5 lg:justify-between" method="post" action="{{route('schoolkid.my-page.personal-information.post')}}" enctype="multipart/form-data">
                     @csrf
                     <div class="flex flex-col gap-4 items-center relative">
                         <div class="avatar-wrapper shadow-custom-light dark:shadow-custom-dark rounded-full">
@@ -155,7 +155,7 @@
                         </div>
                         <div class="flex justify-end gap-4">
 {{--                            <button type="button" id="custom-reset" class="text-[#9F9FAA] bg-[#EDEDED] hover:bg-gray-300 focus:ring-4 focus:outline-none font-medium rounded-full text-sm sm:w-auto px-10 py-2.5 text-center">{{trans('system.form.button.reset')}}</button>--}}
-                            <a href="{{route('trainee.my-page.my-page')}}" class="text-[#9F9FAA] bg-[#EDEDED] hover:bg-gray-300  focus:outline-none font-medium rounded-full text-sm sm:w-auto px-10 py-2.5 text-center">{{trans('system.form.button.cancel')}}</a>
+                            <a href="{{route('schoolkid.my-page.my-page')}}" class="text-[#9F9FAA] bg-[#EDEDED] hover:bg-gray-300  focus:outline-none font-medium rounded-full text-sm sm:w-auto px-10 py-2.5 text-center">{{trans('system.form.button.cancel')}}</a>
                             <button type="submit" class="text-white bg-primary hover:bg-blue-700 focus:outline-none font-medium rounded-full text-sm  sm:w-auto px-10 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">{{trans('system.form.button.save')}}</button>
                         </div>
                     </div>
@@ -201,7 +201,7 @@
                 $(".loading").removeClass('hidden');
                 $.ajax({
                     type: 'GET',
-                    url: '/trainee/my-page/get-my-information',
+                    url: '/schoolkid/my-page/get-my-information',
                     success: function(data) {
                         if (data.success) {
                             let responses = data.data[0];

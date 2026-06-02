@@ -121,18 +121,22 @@ class NewsletterResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                 ->label(__('admin/dashboard.new_letter.title'))
                 ->limit(50)
-                ->sortable()->searchable(),
+                ->sortable()->searchable()
+                ->wrap(),
                 Tables\Columns\TextColumn::make('description')
                 ->label(__('admin/dashboard.new_letter.description'))
-                ->limit(50),
+                ->limit(50)
+                ->wrap(),
                 Tables\Columns\TextColumn::make('attachment')
                     ->label(__('admin/dashboard.new_letter.pdf_attachment'))
                     ->formatStateUsing(fn ($state) => 'View PDF') // Display 'View PDF'
                     ->url(fn ($record) => asset($record->attachment))
-                    ->openUrlInNewTab(),
+                    ->openUrlInNewTab()
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('created_at')
                 ->label(__('admin/dashboard.career_expert_interview.created_at'))
-                ->dateTime()->sortable(),
+                ->dateTime()->sortable()
+                ->wrap(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

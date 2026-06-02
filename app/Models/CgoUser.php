@@ -25,6 +25,13 @@ class CgoUser extends Authenticatable implements HasName
         'email_verified_at' => 'datetime',
     ];
 
+    public function setPasswordAttribute($value)
+    {
+        if (!empty($value)) {
+            $this->attributes['password'] = bcrypt($value);
+        }
+    }
+
     public function institute()
     {
         return $this->belongsTo(Institute::class);

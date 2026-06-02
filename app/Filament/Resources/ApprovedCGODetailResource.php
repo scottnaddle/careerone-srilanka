@@ -58,12 +58,12 @@ class ApprovedCGODetailResource extends Resource
 
                 Tables\Columns\TextColumn::make('institute.name')
                     ->label(__('admin/dashboard.cgo.institute'))
-                    ->sortable()->limit('50'),
-                Tables\Columns\TextColumn::make('district.name')->label(trans('trainee.job_support.company.table.label.district')) ->sortable(),
+                    ->sortable()->limit('50')->wrap(),
+                Tables\Columns\TextColumn::make('district.name')->label(trans('trainee.job_support.company.table.label.district')) ->sortable()->wrap(),
                 Tables\Columns\TextColumn::make('fullName')
                     ->label(__('admin/dashboard.cgo.name'))
                     ->getStateUsing(fn($record) => $record->fullName ?? 'N/A')
-                    ->searchable(['first_name', 'last_name']),
+                    ->searchable(['first_name', 'last_name'])->wrap(),
 //                Tables\Columns\TextColumn::make('counseling')
 //                    ->getStateUsing(fn($record) => $record->counselings->count())
 //                    ->label(__('admin/dashboard.cgo.guidance'))

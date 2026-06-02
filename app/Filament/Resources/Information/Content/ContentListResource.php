@@ -56,18 +56,21 @@ class ContentListResource extends Resource
                     ->alignCenter(),
             Tables\Columns\TextColumn::make('created_at')
                 ->sortable('created_at')
-                ->label(__('admin/dashboard.content.date')),
+                ->label(__('admin/dashboard.content.date'))
+                ->wrap(),
             Tables\Columns\TextColumn::make('title')
                 ->limit(50)
                 ->sortable()
                 ->searchable()
-                ->label(__('admin/dashboard.content.title_table')),
+                ->label(__('admin/dashboard.content.title_table'))
+                ->wrap(),
             Tables\Columns\TextColumn::make('author')
                 ->getStateUsing(function ($record) {
                     return $record->getAuthor($record->system,$record->created_by)->fullName ?? '';
                 })
                 ->sortable()
-                ->label(__('admin/dashboard.content.author')),
+                ->label(__('admin/dashboard.content.author'))
+                ->wrap(),
             Tables\Columns\TextColumn::make('content_type')
                 ->sortable()
                 ->getStateUsing(function ($record) {
@@ -77,7 +80,8 @@ class ContentListResource extends Resource
                         default => $record->content_type,
                     };
                 })
-                ->label(__('admin/dashboard.content.type')),
+                ->label(__('admin/dashboard.content.type'))
+                ->wrap(),
             Tables\Columns\TextColumn::make('system')
                 ->sortable()
                 ->getStateUsing(function ($record) {
@@ -88,7 +92,8 @@ class ContentListResource extends Resource
                         default => $record->system,
                     };
                 })
-                ->label(__('admin/dashboard.content.member')),
+                ->label(__('admin/dashboard.content.member'))
+                ->wrap(),
             Tables\Columns\TextColumn::make('approval')
                 ->label(__('admin/dashboard.content.status'))
                 ->getStateUsing(function ($record) {

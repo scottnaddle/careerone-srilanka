@@ -81,7 +81,22 @@
 
             </x-filament-panels::form>
 
-
+            <!-- Relation Managers (Recruiters, etc.) -->
+            <div class="mt-6">
+                @foreach ($this->getRelationManagers() as $manager)
+                    @php
+                        $managerClass = is_string($manager) ? $manager : (is_array($manager) ? ($manager['class'] ?? null) : null);
+                    @endphp
+                    @if ($managerClass)
+                        <livewire:dynamic-component
+                            :component="$managerClass"
+                            :key="'relation-manager-' . $this->getRecord()->id"
+                            :owner-record="$this->getRecord()"
+                            :page-class="static::class"
+                        />
+                    @endif
+                @endforeach
+            </div>
 
 
             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, scopes: $this->getRenderHookScopes()) }}

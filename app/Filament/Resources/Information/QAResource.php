@@ -61,19 +61,19 @@ class QAResource extends Resource
                 ->getStateUsing(function($record){
                     return $record->title .'('.$record->replies->count().')';
                 })
-                ->sortable()->searchable(),
+                ->sortable()->searchable()->wrap(),
                 Tables\Columns\TextColumn::make('author.full_name')
                 ->limit(50)
-                ->label(__('admin/dashboard.qna.owner'))
+                ->label(__('admin/dashboard.qna.owner'))->wrap()
                 ,
                 Tables\Columns\TextColumn::make('created_at')
                 ->label(__('admin/dashboard.qna.registration_date'))
-                ->sortable(),
+                ->sortable()->wrap(),
                 Tables\Columns\TextColumn::make('approval')
                 ->label('Approval')
                 ->getStateUsing(function ($record) {
                     return $record->status ? 'Approved' : 'Non-Approved';
-                }),
+                })->wrap(),
                 Tables\Columns\TextColumn::make('approval')
                 ->label(__('admin/dashboard.qna.action'))
                 ->getStateUsing(function ($record) {

@@ -48,11 +48,13 @@ class CareerGuideCategoryResource extends Resource
                 TextColumn::make('name')
                 ->label(__('admin/dashboard.career_guidance.name'))
                 ->limit(50)
-                ->sortable()->searchable(),
+                ->sortable()->searchable()
+                ->wrap(),
 //                TextColumn::make('slug')->sortable()->searchable(),
                 TextColumn::make('created_at')
                 ->label(__('admin/dashboard.career_guidance.created_at'))
-                ->label('Created At')->dateTime(),
+                ->label('Created At')->dateTime()
+                ->wrap(),
             ])->searchPlaceholder('Name')
             ->reorderable('sort')
             ->defaultSort('sort', 'asc')

@@ -83,13 +83,15 @@ class InstituteResource extends Resource
                 ->label(__('admin/dashboard.institute.name'))
                 ->sortable()
                 ->limit(50)
-                ->searchable(),
+                ->searchable()
+                ->wrap(),
 
 //            Tables\Columns\TextColumn::make('detail')
 //                ->label(__('admin/dashboard.institute.detail')),
 
             Tables\Columns\TextColumn::make('phone')
-                ->label(__('admin/dashboard.institute.phone')),
+                ->label(__('admin/dashboard.institute.phone'))
+                ->wrap(),
 
 //            Tables\Columns\TextColumn::make('fax')
 //                ->label(__('admin/dashboard.institute.fax')),
@@ -98,28 +100,36 @@ class InstituteResource extends Resource
 //                ->label(__('admin/dashboard.institute.prov_id')),
 
             Tables\Columns\TextColumn::make('dist_id')
-                ->label(__('admin/dashboard.institute.dist_id')),
+                ->label(__('admin/dashboard.institute.dist_id'))
+                ->wrap(),
 
             Tables\Columns\TextColumn::make('ds_id')
-                ->label(__('admin/dashboard.institute.ds_id')),
+                ->label(__('admin/dashboard.institute.ds_id'))
+                ->wrap(),
 
             Tables\Columns\TextColumn::make('valid_form')
-                ->label(__('admin/dashboard.institute.valid_form')),
+                ->label(__('admin/dashboard.institute.valid_form'))
+                ->wrap(),
 
             Tables\Columns\TextColumn::make('valid_to')
-                ->label(__('admin/dashboard.institute.valid_to')),
+                ->label(__('admin/dashboard.institute.valid_to'))
+                ->wrap(),
 
             Tables\Columns\TextColumn::make('reg_no')
-                ->label(__('admin/dashboard.institute.reg_no')),
+                ->label(__('admin/dashboard.institute.reg_no'))
+                ->wrap(),
 
             Tables\Columns\TextColumn::make('ownership')
-                ->label(__('admin/dashboard.institute.ownership')),
+                ->label(__('admin/dashboard.institute.ownership'))
+                ->wrap(),
 
             Tables\Columns\TextColumn::make('active_status')
-                ->label(__('admin/dashboard.institute.active_status')),
+                ->label(__('admin/dashboard.institute.active_status'))
+                ->wrap(),
 
             Tables\Columns\TextColumn::make('institute_head_office')
-                ->label(__('admin/dashboard.institute.institute_head_office')),
+                ->label(__('admin/dashboard.institute.institute_head_office'))
+                ->wrap(),
 
         ])
         ->paginated([10, 25, 50, 100])

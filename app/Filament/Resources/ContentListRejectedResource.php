@@ -59,22 +59,22 @@ class ContentListRejectedResource extends Resource
 
                     Tables\Columns\TextColumn::make('created_at')
                     ->sortable()
-                    ->label('Date'),
+                    ->label('Date')->wrap(),
                     Tables\Columns\TextColumn::make('title')
                     ->sortable()
                     ->limit(50)
                     ->searchable()
-                    ->label('Title'),
+                    ->label('Title')->wrap(),
                     Tables\Columns\TextColumn::make('author')
                     ->searchable()
                     ->sortable()
-                    ->label('Author'),
+                    ->label('Author')->wrap(),
                     Tables\Columns\TextColumn::make('type')
                     ->sortable()
-                    ->label('Type'),
+                    ->label('Type')->wrap(),
                     Tables\Columns\TextColumn::make('system')
                     ->sortable()
-                    ->label('Member'),
+                    ->label('Member')->wrap(),
                     Tables\Columns\TextColumn::make('approval')
                     ->label('Approval')
                     ->getStateUsing(function ($record) {

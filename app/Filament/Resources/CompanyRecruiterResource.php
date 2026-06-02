@@ -2,12 +2,11 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ComapnyUserListResource\Pages;
-use App\Filament\Resources\ComapnyUserListResource\RelationManagers;
+use App\Filament\Resources\CompanyRecruiterResource\Pages;
+use App\Filament\Resources\CompanyRecruiterResource\RelationManagers;
 use App\Imports\CompanyRecruitersImport;
 use App\Models\AdminUser;
 use App\Models\CgoUser;
-use App\Models\ComapnyUserList;
 use App\Models\CompanyRecruiter;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -26,7 +25,7 @@ use Filament\Tables\Actions\Action;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ComapnyUserListResource extends Resource
+class CompanyRecruiterResource extends Resource
 {
     protected static ?string $model = CompanyRecruiter::class;
 
@@ -123,16 +122,18 @@ class ComapnyUserListResource extends Resource
                         return $record->first_name . ' ' . $record->last_name ?? 'N/A';
                     })
                     ->sortable(['first_name', 'last_name'])
-                    ->searchable(['first_name', 'last_name']),
+                    ->searchable(['first_name', 'last_name'])
+                    ->wrap(),
 
                Tables\Columns\TextColumn::make('district_name')
                    ->label(__('admin/dashboard.member_signup.company'))
                    ->sortable()
                    ->getStateUsing(function ($record) {
                        return $record->company->name ?? 'N/A';
-                   }),
+                   })
+                   ->wrap(),
                 Tables\Columns\TextColumn::make('email')
-                    ->label(__('admin/dashboard.company_recruiter_user.email'))->sortable(),
+                    ->label(__('admin/dashboard.company_recruiter_user.email'))->sortable()->wrap(),
                 Tables\Columns\TextColumn::make('recommended_by')
                     ->label(trans('general.Recommended by'))
                     ->getStateUsing(function ($record) {
@@ -149,7 +150,8 @@ class ComapnyUserListResource extends Resource
                             $recommendedBy = strtoupper($record->recommended_by_user_system) .' - '. $user?->fullName. ' ('. $headOffice.')';
                         }
                         return $recommendedBy;
-                    }),
+                    })
+                    ->wrap(),
                      Tables\Columns\TextColumn::make('approval')
                      ->getStateUsing(function ($record) {
                          return $record->statusCompanyUser();
@@ -214,29 +216,93 @@ class ComapnyUserListResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->label('View more')->color('primary'),
-                Tables\Actions\EditAction::make()->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
-                Action::make('deactivate')
-                ->label(__('Deactivate'))
-                ->icon('heroicon-o-x-circle')
-                ->color('danger')
-                ->requiresConfirmation()
-                ->action(function ($record) {
-                    $record->update(['active' => false, 'verify_at' => null, 'verify_by' => auth()->guard('admin')->id()]);
-                })
-                ->hidden(fn ($record) => $record->active === false)
-                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
-            Action::make('activate')
-                ->label(__('Activate'))
-                ->icon('heroicon-o-check-circle')
-                ->color('success')
-                ->requiresConfirmation()
-                ->action(function ($record) {
-                    $record->update(['active' => true, 'verify_at' => now(), 'verify_by' => auth()->guard('admin')->id()]);
-                })
-                ->hidden(fn ($record) => $record->active === true)
+                Tables\Actions\ViewAction::make()
+                    ->icon('heroicon-o-eye')
+                    ->iconButton()
+                    ->tooltip('View'),
+                Tables\Actions\EditAction::make()
+                    ->iconButton()
+                    ->tooltip('Edit')
                     ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
 
+                Action::make('approve')
+                    ->label(__('Approve'))
+                    ->icon('heroicon-o-check-badge')
+                    ->color('success')
+                    ->iconButton()
+                    ->tooltip('Approve')
+                    ->requiresConfirmation()
+                    ->modalHeading('Approve Recruiter')
+                    ->action(function ($record) {
+                        $record->update([
+                            'verify_at' => now(),
+                            'verify_by' => auth('admin')->id(),
+                            'active' => true,
+                        ]);
+                        \Filament\Notifications\Notification::make()
+                            ->title('Recruiter Approved')
+                            ->success()
+                            ->send();
+                    })
+                    ->hidden(fn($record) => $record->verify_at !== null)
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+
+                Action::make('reject')
+                    ->label(__('Reject'))
+                    ->icon('heroicon-o-x-circle')
+                    ->color('gray')
+                    ->iconButton()
+                    ->tooltip('Reject')
+                    ->requiresConfirmation()
+                    ->modalHeading('Reject Recruiter')
+                    ->form([
+                        \Filament\Forms\Components\Textarea::make('reason')
+                            ->label('Rejection Reason')
+                            ->required()
+                            ->maxLength(500),
+                    ])
+                    ->action(function ($record, array $data) {
+                        $record->update([
+                            'verify_at' => null,
+                            'verify_by' => auth('admin')->id(),
+                            'active' => false,
+                            'reason' => $data['reason'],
+                        ]);
+                    })
+                    ->hidden(fn($record) => $record->verify_at === null)
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+
+                Action::make('deactivate')
+                    ->label(__('Deactivate'))
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->iconButton()
+                    ->tooltip('Deactivate')
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        $record->update(['active' => false, 'verify_at' => null, 'verify_by' => auth()->guard('admin')->id()]);
+                    })
+                    ->hidden(fn ($record) => $record->active === false)
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+
+                Action::make('activate')
+                    ->label(__('Activate'))
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->iconButton()
+                    ->tooltip('Activate')
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        $record->update(['active' => true, 'verify_at' => now(), 'verify_by' => auth()->guard('admin')->id()]);
+                    })
+                    ->hidden(fn ($record) => $record->active === true)
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+
+                Tables\Actions\DeleteAction::make()
+                    ->iconButton()
+                    ->tooltip('Delete')
+                    ->requiresConfirmation()
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
             ])
             ->striped()
             ->defaultSort('updated_at', 'desc')
@@ -358,8 +424,8 @@ class ComapnyUserListResource extends Resource
                                 ->send();
                         }
                     }),
-
-
+            ])
+            ->filters([
                 Tables\Filters\Filter::make('created_at')
                     ->form([
                         \Filament\Forms\Components\DatePicker::make('date')
@@ -395,10 +461,10 @@ class ComapnyUserListResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListComapnyUserLists::route('/'),
-            'create' => Pages\CreateComapnyUserList::route('/create'),
-            'view' => Pages\ViewComapnyUserList::route('/{record}'),
-            'edit' => Pages\EditComapnyUserList::route('/{record}/edit'),
+            'index' => Pages\ListCompanyRecruiters::route('/'),
+            'create' => Pages\CreateCompanyRecruiter::route('/create'),
+            'view' => Pages\ViewCompanyRecruiter::route('/{record}'),
+            'edit' => Pages\EditCompanyRecruiter::route('/{record}/edit'),
         ];
     }
 
@@ -419,14 +485,14 @@ class ComapnyUserListResource extends Resource
                 'recruiter@samplecompany.com',
                 'John',
                 'Doe',
-                '+85512345678',
+                '+855****5678',
             ],
             [
                 'Another Company Corp',
                 'jane.smith@anothercompany.com',
                 'Jane',
                 'Smith',
-                '+85598765432',
+                '+855****5432',
             ],
         ];
 
@@ -498,90 +564,9 @@ class ComapnyUserListResource extends Resource
             $dataSheet->getColumnDimension($column)->setAutoSize(true);
         }
 
-        // Add data validation for Company Name column (Column A)
-        if (!empty($companies)) {
-            $lastRow = 1000;
-            $companyValidation = $dataSheet->getCell('A2')->getDataValidation();
-            $companyValidation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_LIST);
-            $companyValidation->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_INFORMATION);
-            $companyValidation->setAllowBlank(false);
-            $companyValidation->setShowInputMessage(true);
-            $companyValidation->setShowErrorMessage(true);
-            $companyValidation->setShowDropDown(true);
-            $companyValidation->setErrorTitle('Invalid Company');
-            $companyValidation->setError('Please select a valid company name from the list.');
-            $companyValidation->setPromptTitle('Select Company');
-            $companyValidation->setPrompt('Select a verified company from the dropdown list.');
-
-            // Limit the list to avoid Excel crash (max 255 characters)
-            $formulaString = '"' . implode(',', array_slice($companies, 0, 30)) . '"';
-            $companyValidation->setFormula1($formulaString);
-
-            for ($i = 2; $i <= $lastRow; $i++) {
-                $dataSheet->getCell('A'.$i)->setDataValidation(clone $companyValidation);
-            }
-        }
-
-        // Add a note row with instructions for email format (instead of comments)
-        $dataSheet->setCellValue('G1', 'Email Format Note:');
-        $dataSheet->setCellValue('G2', 'Enter valid email addresses (e.g., name@company.com)');
-        $dataSheet->setCellValue('G3', 'Example: recruiter@company.com, hr@company.com');
-        $dataSheet->getStyle('G1:G3')->getFont()->setItalic(true);
-        $dataSheet->getStyle('G1')->getFont()->setBold(true);
-        $dataSheet->getColumnDimension('G')->setWidth(40);
-
-        // Add data validation for Email column (optional - basic format check)
-        $emailValidation = $dataSheet->getCell('B2')->getDataValidation();
-        $emailValidation->setType(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::TYPE_CUSTOM);
-        $emailValidation->setFormula1('=ISNUMBER(SEARCH("@",B2))*ISNUMBER(SEARCH(".",B2))');
-        $emailValidation->setErrorStyle(\PhpOffice\PhpSpreadsheet\Cell\DataValidation::STYLE_STOP);
-        $emailValidation->setAllowBlank(false);
-        $emailValidation->setShowInputMessage(true);
-        $emailValidation->setShowErrorMessage(true);
-        $emailValidation->setPromptTitle('Email Format');
-        $emailValidation->setPrompt('Enter a valid email address containing @ and .');
-        $emailValidation->setErrorTitle('Invalid Email');
-        $emailValidation->setError('Please enter a valid email address (e.g., name@company.com)');
-
-        // Apply email validation to rows 2-1000
-        for ($i = 2; $i <= 1000; $i++) {
-            $dataSheet->getCell('B'.$i)->setDataValidation(clone $emailValidation);
-        }
-
-        // Lock header row
-        $dataSheet->getStyle('A1:E1')->getProtection()->setLocked(true);
-
-        // Unlock data cells so users can edit
-        $dataSheet->getStyle('A2:E1000')->getProtection()->setLocked(false);
-
-        // Set sheet protection to prevent editing headers but allow data entry
-        $dataSheet->getProtection()->setSheet(true);
-        $dataSheet->getProtection()->setSelectLockedCells(true);
-        $dataSheet->getProtection()->setSelectUnlockedCells(true);
-
-        // Add some styling for better readability
-        $dataSheet->getStyle('A1:E1')->getAlignment()
-            ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER)
-            ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
-
-        // Add border to the data area
-        $dataSheet->getStyle('A1:E1000')->getBorders()->getAllBorders()
-            ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-
-        // Highlight sample data row
-        $dataSheet->getStyle('A2:E2')->getFill()
-            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-            ->getStartColor()->setRGB('F0F8FF'); // Light blue background for sample row
-
-        // Add a sample data indicator
-        $dataSheet->setCellValue('A2', $sampleData[0][0]);
-        $dataSheet->setCellValue('B2', $sampleData[0][1]);
-        $dataSheet->setCellValue('C2', $sampleData[0][2]);
-        $dataSheet->setCellValue('D2', $sampleData[0][3]);
-        $dataSheet->setCellValue('E2', $sampleData[0][4]);
-
-        $tempFile = tempnam(sys_get_temp_dir(), 'recruiters_import_template_') . '.xlsx';
+        // Save the spreadsheet to a temporary file
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $tempFile = tempnam(sys_get_temp_dir(), 'recruiter_template_') . '.xlsx';
         $writer->save($tempFile);
 
         return $tempFile;

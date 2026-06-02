@@ -65,14 +65,9 @@ class OJTController extends Controller
                 $data['max_work_experience'] = null;
             }
 
-            // Xử lý trạng thái theo ngày
-            $currentDate = Carbon::now()->format('Y-m-d');
+            // Always set newly created OJT to In Progress (status=1)
+            // The recruiter can change the status manually from the dashboard
             $data['status'] = 1;
-            if ($data['application_starttime'] && $data['application_endtime']) {
-                if ($currentDate < $data['application_starttime'] || $currentDate > $data['application_endtime']) {
-                    $data['status'] = 0;
-                }
-            }
 
             // Lưu dữ liệu
             $result=OJT::create($data);

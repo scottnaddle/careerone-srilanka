@@ -16,7 +16,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 use Filament\Forms\Components\{TextInput, Textarea, FileUpload, DateTimePicker, Select};
-use Filament\Tables\Columns\{TextColumn, ImageColumn, BadgeColumn, DateTimeColumn};
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\DateTimeColumn;
 
 class PopupResource extends Resource
 {
@@ -68,15 +70,18 @@ class PopupResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('popup_name')->label(trans('admin/dashboard.popup_name'))->searchable(),
+                TextColumn::make('popup_name')->label(trans('admin/dashboard.popup_name'))->searchable()->wrap(),
 //                TextColumn::make('title')->label(trans('cgo.title'))->searchable(),
-                BadgeColumn::make('status')->label(trans('admin/dashboard.event.status'))->colors([
-                    'success' => 'active',
-                    'secondary' => 'inactive',
-                ]),
+                TextColumn::make('status')
+                    ->label(trans('admin/dashboard.event.status'))
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'active' => 'success',
+                        'inactive' => 'secondary',
+                    }),
 //                ImageColumn::make('image')->label(trans('admin/dashboard.banner.image_section')),
-                TextColumn::make('start_time')->label(trans('admin/dashboard.event.start_time'))->date("Y-m-d"),
-                TextColumn::make('end_time')->label(trans('admin/dashboard.event.end_time'))->date("Y-m-d"),
+                TextColumn::make('start_time')->label(trans('admin/dashboard.event.start_time'))->date("Y-m-d")->wrap(),
+                TextColumn::make('end_time')->label(trans('admin/dashboard.event.end_time'))->date("Y-m-d")->wrap(),
             ])
             ->filters([
                 //

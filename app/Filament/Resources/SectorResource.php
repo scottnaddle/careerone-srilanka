@@ -38,9 +38,9 @@ class SectorResource extends Resource
                     ->label(__('admin/dashboard.content.no'))
                     ->rowIndex()
                     ->alignCenter(),
-                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('short_description')->limit(50),
-                Tables\Columns\TextColumn::make('created_at')->date('Y-m-d')->sortable(),
+                Tables\Columns\TextColumn::make('name')->searchable()->sortable()->wrap(),
+                Tables\Columns\TextColumn::make('short_description')->limit(50)->wrap(),
+                Tables\Columns\TextColumn::make('created_at')->date('Y-m-d')->sortable()->wrap(),
             ])
             ->filters([
                 //

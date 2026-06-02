@@ -36,49 +36,58 @@ class TraineeResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nic')
-                    ->label('NIC')
-                    ->maxLength(12)
-                    ->required()
-                    ->unique(ignoreRecord: true),
+                Forms\Components\Section::make('Personal Information')
+                    ->schema([
+                        Forms\Components\TextInput::make('nic')
+                            ->label('NIC')
+                            ->maxLength(12)
+                            ->required()
+                            ->unique(ignoreRecord: true),
 
-                Forms\Components\TextInput::make('full_name')
-                    ->required(),
-
-
-
-                Forms\Components\Textarea::make('permanant_address')
-                    ->columnSpan("1/2"),
-
-                Forms\Components\Textarea::make('contact_address')
-                    ->columnSpan("1/2"),
-
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->maxLength(150)
-                    ->required()
-                    ->unique(ignoreRecord: true),
-                Forms\Components\Select::make('gender')
-                    ->options([
-                        '1' => 'Male',
-                        '2' => 'Female',
-                        '3' => 'N/A',
-                    ])
-                    ->nullable()->columnSpan("1/3"),
-                Forms\Components\TextInput::make('telephone')
-                    ->maxLength(20)->columnSpan("1/3"),
-
-                Forms\Components\TextInput::make('mobile')
-                    ->maxLength(20)->columnSpan("1/3"),
+                        Forms\Components\TextInput::make('full_name')
+                            ->required(),
 
 
-                Forms\Components\TextInput::make('std_surname'),
+                        Forms\Components\Select::make('gender')
+                            ->options([
+                                '1' => 'Male',
+                                '2' => 'Female',
+                                '3' => 'N/A',
+                            ])
+                            ->nullable(),
 
-                Forms\Components\TextInput::make('std_initials')
-                    ->maxLength(60),
+                        Forms\Components\TextInput::make('std_surname'),
 
-                Forms\Components\Toggle::make('active')
-                    ->default(true),
+                        Forms\Components\TextInput::make('std_initials')
+                            ->maxLength(60),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Contact Information')
+                    ->schema([
+                        Forms\Components\Textarea::make('permanant_address')
+                            ->columnSpan("1/2"),
+
+                        Forms\Components\Textarea::make('contact_address')
+                            ->columnSpan("1/2"),
+
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->maxLength(150)
+                            ->required()
+                            ->unique(ignoreRecord: true),
+
+                        Forms\Components\TextInput::make('telephone')
+                            ->maxLength(20),
+
+                        Forms\Components\TextInput::make('mobile')
+                            ->maxLength(20),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Account Settings')
+                    ->schema([
+                        Forms\Components\Toggle::make('active')
+                            ->default(true),
+                    ])->columns(2),
             ]);
     }
 
@@ -94,16 +103,22 @@ class TraineeResource extends Resource
                 ->alignCenter(),
 
                 Tables\Columns\TextColumn::make('institutes.name')->limit(50)
-                    ->label(__('admin/dashboard.trainee.institute')),
+                    ->label(__('admin/dashboard.trainee.institute'))
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('full_name')
                     ->searchable()
-                    ->label(__('admin/dashboard.trainee.name')),
+                    ->label(__('admin/dashboard.trainee.name'))
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
-                    ->label(__('admin/dashboard.trainee.email')),
+                    ->copyable()
+                    ->copyMessage('Email copied')
+                    ->label(__('admin/dashboard.trainee.email'))
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('nic')
                     ->label('NIC')->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('recommended_by')
                     ->label(trans('general.Recommended by'))
                     ->getStateUsing(function ($record) {
@@ -120,7 +135,8 @@ class TraineeResource extends Resource
                             $recommendedBy = strtoupper($record->recommended_by_user_system) .' - '. $user?->fullName. ' ('. $headOffice.')';
                         }
                         return $recommendedBy;
-                    }),
+                    })
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('career_test')
                     ->getStateUsing(function ($record) {
                         return $record->careerTest()->count();
@@ -154,31 +170,52 @@ class TraineeResource extends Resource
                     ->color(fn ($state) => $state ? 'success' : 'danger')
             ])
             ->actions([
-                // Tables\Actions\DeleteAction::make()->requiresConfirmation(),
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make()->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+                Tables\Actions\DeleteAction::make()
+                    ->iconButton()
+                    ->tooltip('Delete')
+                    ->requiresConfirmation()
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+                Tables\Actions\ViewAction::make()
+                    ->iconButton()
+                    ->tooltip('View'),
+                Tables\Actions\EditAction::make()
+                    ->iconButton()
+                    ->tooltip('Edit')
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
                 Action::make('deactivate')
-                ->label(__('Deactivate'))
-                ->icon('heroicon-o-x-circle')
-                ->color('danger')
-                ->requiresConfirmation()
-                ->action(function ($record) {
-                    $record->update(['active' => false]);
-                })
-                ->hidden(fn ($record) => $record->active === false)->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
-            Action::make('activate')
-                ->label(__('Activate'))
-                ->icon('heroicon-o-check-circle')
-                ->color('success')
-                ->requiresConfirmation()
-                ->action(function ($record) {
-                    $record->update(['active' => true]);
-                })
-                ->hidden(fn ($record) => $record->active === true)->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+                    ->label(__('Deactivate'))
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->iconButton()
+                    ->tooltip('Deactivate')
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        $record->update(['active' => false]);
+                    })
+                    ->hidden(fn ($record) => $record->active === false)
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+                Action::make('activate')
+                    ->label(__('Activate'))
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->iconButton()
+                    ->tooltip('Activate')
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        $record->update(['active' => true]);
+                    })
+                    ->hidden(fn ($record) => $record->active === true)
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
             ])
             ->striped()
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+                ]),
+            ])
             ->filters([
                 Tables\Filters\Filter::make('search')
                     ->form([

@@ -42,32 +42,38 @@ class CounselingListResource extends Resource
                     ->label(__('admin/dashboard.counseling.detail.type'))
                     ->getStateUsing(function ($record) {
                         return getCodeNameByCodeId('counselling_type', $record->counseling_type) ?? 'N/A';
-                    }),
+                    })
+                    ->wrap(),
 
                 TextColumn::make('counseling_field_id')
                     ->label(__('admin/dashboard.counseling.detail.counseling_field'))
                     ->getStateUsing(function ($record) {
                         return getCodeNameByCodeId('counselling_field', $record->counseling_field_id) ?? 'N/A';
                     })
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
 
                 TextColumn::make('title')
                     ->label(__('admin/dashboard.counseling.detail.title'))
                     ->searchable()
                     ->limit(50)
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
 
                 TextColumn::make('registration_date')
                     ->label(__('admin/dashboard.counseling.detail.registraton_date'))
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
 
                 TextColumn::make('available_time')
                     ->label(__('admin/dashboard.counseling.detail.counseling_date'))
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
 
                 TextColumn::make('institute.name')
                     ->label(__('admin/dashboard.counseling.detail.trainee_institute'))
-                    ->sortable(),
+                    ->sortable()
+                    ->wrap(),
 
                 TextColumn::make('trainee_name.full_name')
                     ->label(__('admin/dashboard.counseling.detail.trainee_name'))
@@ -76,7 +82,8 @@ class CounselingListResource extends Resource
                             return $record->trainee_offline_firstname . ' ' . $record->trainee_offline_lastname;
                         }
                         return $record->traineeUser?->fullName;
-                    }),
+                    })
+                    ->wrap(),
             ])
             ->paginated([10, 25, 50, 100])
             ->striped()

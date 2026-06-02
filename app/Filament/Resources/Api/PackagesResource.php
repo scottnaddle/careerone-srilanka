@@ -43,28 +43,34 @@ class PackagesResource extends Resource
             TextColumn::make('code')
                 ->label(__('admin/dashboard.package.code'))
                 ->sortable()
-                ->searchable(),
+                ->searchable()
+                ->wrap(),
         
             TextColumn::make('version')
-                ->label(__('admin/dashboard.package.version')),
+                ->label(__('admin/dashboard.package.version'))
+                ->wrap(),
         
             TextColumn::make('name')
                 ->label(__('admin/dashboard.package.name'))
                 ->sortable()
                 ->limit(50)
-                ->searchable(),
+                ->searchable()
+                ->wrap(),
         
             TextColumn::make('level')
                 ->label(__('admin/dashboard.package.level'))
-                ->sortable(),
+                ->sortable()
+                ->wrap(),
         
             TextColumn::make('ncs_code')
                 ->label(__('admin/dashboard.package.ncs_code'))
-                ->sortable(),
+                ->sortable()
+                ->wrap(),
         
             TextColumn::make('ncs_name')
                 ->label(__('admin/dashboard.package.ncs_name'))
-                ->sortable(),
+                ->sortable()
+                ->wrap(),
         ])
         ->paginated([10, 25, 50, 100])
         ->searchPlaceholder('Name or Code')

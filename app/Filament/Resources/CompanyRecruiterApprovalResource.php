@@ -105,17 +105,17 @@ class CompanyRecruiterApprovalResource extends Resource
                         return $record->first_name . ' ' . $record->last_name ?? 'N/A';
                     })
                     ->sortable(['first_name', 'last_name'])
-                    ->searchable(['first_name', 'last_name']),
+                    ->searchable(['first_name', 'last_name'])->wrap(),
 
                 Tables\Columns\TextColumn::make('district_name')
                     ->label(__('admin/dashboard.company_recruiter_user.district'))
                     ->sortable(['first_name', 'last_name'])
                     ->getStateUsing(function ($record) {
                         return $record->company->district->name ?? 'N/A';
-                    }),
+                    })->wrap(),
                     Tables\Columns\TextColumn::make('company.name')
                     ->label(__('admin/dashboard.company_recruiter_user.company'))
-                    ->sortable(),
+                    ->sortable()->wrap(),
                 Tables\Columns\TextColumn::make('recommended_by')
                     ->label(trans('general.Recommended by'))
                     ->getStateUsing(function ($record) {
@@ -132,7 +132,7 @@ class CompanyRecruiterApprovalResource extends Resource
                             $recommendedBy = strtoupper($record->recommended_by_user_system) .' - '. $user?->fullName. ' ('. $headOffice.')';
                         }
                         return $recommendedBy;
-                    }),
+                    })->wrap(),
 //                    Tables\Columns\TextColumn::make('approval')
 //                    ->label(__('admin/dashboard.company_recruiter_user.approval'))
 //                    ->getStateUsing(function ($record) {

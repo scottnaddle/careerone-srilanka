@@ -166,7 +166,8 @@ class BannerResource extends Resource
 //                ->lineClamp(2)
 //                ->wrap()
                 ->searchable()
-                ->extraAttributes(['class' => '!w-96']),
+                ->extraAttributes(['class' => '!w-96'])
+                ->wrap(),
 
             Tables\Columns\IconColumn::make('is_visible')
                 ->label(__('admin/dashboard.banner.visibility'))
@@ -176,28 +177,33 @@ class BannerResource extends Resource
             Tables\Columns\TextColumn::make('start_date')
                 ->label(__('admin/dashboard.banner.start_date'))
                 ->dateTime()
-                ->sortable(),
+                ->sortable()
+                ->wrap(),
 
             Tables\Columns\TextColumn::make('end_date')
                 ->label(__('admin/dashboard.banner.end_date'))
                 ->dateTime()
-                ->sortable(),
+                ->sortable()
+                ->wrap(),
 
             Tables\Columns\TextColumn::make('click_url')
                 ->label(__('admin/dashboard.banner.click_url'))
-                ->toggleable(isToggledHiddenByDefault: true),
+                ->toggleable(isToggledHiddenByDefault: true)
+                ->wrap(),
 
             Tables\Columns\TextColumn::make('created_at')
                 ->label(__('admin/dashboard.banner.created_at'))
                 ->dateTime()
                 ->sortable()
-                ->toggleable(isToggledHiddenByDefault: true),
+                ->toggleable(isToggledHiddenByDefault: true)
+                ->wrap(),
 
             Tables\Columns\TextColumn::make('updated_at')
                 ->label(__('admin/dashboard.banner.updated_at'))
                 ->dateTime()
                 ->sortable()
-                ->toggleable(isToggledHiddenByDefault: true),
+                ->toggleable(isToggledHiddenByDefault: true)
+                ->wrap(),
         ])
         ->searchPlaceholder('Title')
             ->filters([

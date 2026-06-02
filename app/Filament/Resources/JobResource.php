@@ -189,8 +189,8 @@ class JobResource extends Resource
 
                 Tables\Columns\TextColumn::make('company.name')
                     ->label(__('admin/dashboard.compnay_job.company_name'))
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('title')->label(__('admin/dashboard.job.job_title'))->sortable()->searchable()->limit(50),
+                    ->sortable()->wrap(),
+                Tables\Columns\TextColumn::make('title')->label(__('admin/dashboard.job.job_title'))->sortable()->searchable()->limit(50)->wrap(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('admin/dashboard.ojt.registration_date'))
                     ->date('Y-m-d')

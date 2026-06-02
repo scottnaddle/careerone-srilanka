@@ -97,8 +97,14 @@ class MyPageController extends Controller
             $user->email = $request->email;
             $user->save();
 
-            //Disable account to waiting verify email
-//            $user->disabled = 1;
+            // Send verification email to new address
+            $token = base64_encode($user->email);
+            $user->sendEmailVerify($token);
+
+            return redirect()->route('verification.isnotverified', [
+                'u_type' => 'schoolkid',
+                'token' => $token,
+            ])->with('message', __('auth.email_changed_verify'));
         }
 
         return redirect()->route('schoolkid.my-page.personal-information')->with('success', 'SAVED!');

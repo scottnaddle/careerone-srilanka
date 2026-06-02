@@ -152,22 +152,26 @@ class EventListResource extends Resource
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->sortable()
-                    ->label(__('admin/dashboard.event.date'))->date("Y-m-d"),
+                    ->label(__('admin/dashboard.event.date'))->date("Y-m-d")
+                    ->wrap(),
 
                 Tables\Columns\TextColumn::make('title')
                     ->sortable()
                     ->searchable()
                     ->label(__('admin/dashboard.event.title_table'))
-                    ->limit(50),
+                    ->limit(50)
+                    ->wrap(),
 
                 Tables\Columns\TextColumn::make('full_name')
-                    ->label(__('admin/dashboard.event.author')),
+                    ->label(__('admin/dashboard.event.author'))
+                    ->wrap(),
 
                 Tables\Columns\TextColumn::make('event_type')
                     ->label(__('admin/dashboard.event.event_type'))
                     ->formatStateUsing(function ($record) {
                         return getCodeNameByCodeId('event_type', $record->event_type);
-                    }),
+                    })
+                    ->wrap(),
 
                 Tables\Columns\TextColumn::make('system')
                     ->sortable()
@@ -179,7 +183,8 @@ class EventListResource extends Resource
                             default => $record,
                         };
                     })
-                    ->label(__('admin/dashboard.event.member')),
+                    ->label(__('admin/dashboard.event.member'))
+                    ->wrap(),
 
                     Tables\Columns\TextColumn::make('approval')
                     ->label(__('admin/dashboard.event.status'))
