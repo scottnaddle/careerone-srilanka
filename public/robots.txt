@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /choose-login/
+Allow: /public/
+
+Sitemap: https://careerone.gov.lk/sitemap.xml

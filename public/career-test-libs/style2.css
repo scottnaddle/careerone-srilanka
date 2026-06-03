@@ -1,0 +1,436 @@
+@import url(https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap);
+
+body {
+    font-family: Montserrat, Arial, Helvetica Neue, Helvetica, sans-serif;
+    color: #222;
+    background-color: #f6f4f0
+}
+
+.loader-wrapper {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #f6f4f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1
+}
+
+.loader {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    position: relative;
+    border: 4px solid #222;
+    animation: loader 2s infinite ease
+}
+
+.loader-inner {
+    vertical-align: top;
+    display: inline-block;
+    width: 100%;
+    background-color: #222;
+    animation: loader-inner 2s infinite ease-in
+}
+
+@keyframes loader {
+    0% {
+        transform: rotate(0)
+    }
+
+    25% {
+        transform: rotate(180deg)
+    }
+
+    50% {
+        transform: rotate(180deg)
+    }
+
+    75% {
+        transform: rotate(360deg)
+    }
+
+    100% {
+        transform: rotate(360deg)
+    }
+}
+
+@keyframes loader-inner {
+    0% {
+        height: 0%
+    }
+
+    25% {
+        height: 0%
+    }
+
+    50% {
+        height: 100%
+    }
+
+    75% {
+        height: 100%
+    }
+
+    100% {
+        height: 0%
+    }
+}
+
+a {
+    color: #222
+}
+
+a:hover {
+    text-decoration: none;
+    color: #bebebe
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    line-height: 1.5rem
+}
+
+#page1,
+#page2,
+#page3,
+#page4,
+#page5 {
+    justify-content: center
+}
+
+.content-box h1 {
+    font-size: 3rem;
+    line-height: 4rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem
+}
+
+.btn a {
+    border: 1px solid #222;
+    padding: .7rem 1rem;
+    margin-top: 1rem;
+    display: inline-flex;
+    min-width: 200px;
+    justify-content: center;
+    text-align: center;
+    border-radius: .25rem;
+    transition: ackground-color .2s cubic-bezier(.4, 0, .2, 1), color .2s cubic-bezier(.4, 0, .2, 1), border .2s cubic-bezier(.4, 0, .2, 1);
+    font-size: 1rem;
+    font-weight: 500
+}
+
+.btn .secondary {
+    color: #222;
+    background: #fff;
+    text-decoration: none
+}
+
+.btn .secondary:hover {
+    background: #222;
+    border-color: #222;
+    color: #fff;
+    transition: .4s;
+    text-decoration: none
+}
+
+.btn .primary {
+    color: #fff;
+    background: #222;
+    text-decoration: none
+}
+
+.btn .primary:hover {
+    background: #505050;
+    border-color: #505050;
+    transition: .4s;
+    text-decoration: none
+}
+
+#page2 .row {
+    justify-content: center
+}
+
+#page3 .row {
+    justify-content: center
+}
+
+#page4 .row {
+    justify-content: center
+}
+
+#page4 .row .alert {
+    margin-top: 1rem
+}
+
+.btn-group .btn {
+    color: #222;
+    background-color: #fff;
+    border: 1px solid #222;
+    padding: .7rem 1rem;
+    margin-top: 1rem;
+    display: inline-flex;
+    justify-content: center;
+    text-align: center;
+    border-radius: .25rem;
+    transition: ackground-color .2s cubic-bezier(.4, 0, .2, 1), color .2s cubic-bezier(.4, 0, .2, 1), border .2s cubic-bezier(.4, 0, .2, 1);
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: capitalize
+}
+
+.btn-group .btn:focus,
+.btn-group .btn:hover {
+    color: #fff;
+    background-color: #222;
+    box-shadow: none
+}
+
+.top_menu {
+    color: #bebebe
+}
+
+.lang-select {
+    color: #bebebe
+}
+
+.lang-select:hover {
+    color: #222
+}
+
+.top_menu .active {
+    color: #222;
+    text-decoration: none
+}
+
+.content-box {
+    margin: 2rem;
+    border: 1px solid #bebebe;
+    border-radius: 5px;
+    padding: 2rem;
+    background-color: #fff;
+    -webkit-box-shadow: 0 4px 24px 0 rgba(0, 0%, 0%, 14%);
+    box-shadow: 0 4px 24px 0 rgba(0, 0%, 0%, 14%)
+}
+
+@media only screen and (max-width:600px) {
+    .txt_para {
+        padding-top: 10%;
+        padding-bottom: 10%
+    }
+
+    .txt_para h1 {
+        font-size: 2.5rem;
+        line-height: 3rem
+    }
+}
+
+.chart {
+    min-height: 450px;
+    margin-bottom: 1rem
+}
+
+.top_menu {
+    text-align: right;
+    letter-spacing: 2px;
+    padding-top: 20px;
+    font-size: 12px
+}
+
+.progress-bar {
+    background-color: #222
+}
+
+#myChart1-license-text {
+    display: none
+}
+
+@media print {
+    .top_menu {
+        display: none
+    }
+
+    #page5 .btn {
+        display: none
+    }
+}
+.input-group-text {
+    white-space: break-spaces;
+}
+.input-group>.form-control, .input-group>.form-select {
+    min-width: 10% !important;
+}
+
+/* Căn chỉnh responsive cho các card */
+@media (max-width: 768px) {
+    .content-box {
+        padding: 10px 15px;
+    }
+
+    .card {
+        margin-bottom: 1.5rem;
+    }
+
+    .input-group-text, .form-select {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    .btn a.primary, .btn a.secondary {
+        display: block;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .input-group-text, .form-select {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    .btn a.primary, .btn a.secondary {
+        font-size: 20px;
+    }
+
+    .card-header {
+        text-align: center;
+    }
+}
+
+/* Căn chỉnh các bảng */
+table {
+    font-size: 14px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+/* Tùy chỉnh thẻ span trong input-group */
+.input-group-text.input-group__realistic--type {
+    background-color: #D4E6F4;
+    color: #3B82F6;
+    font-weight: bold;
+}
+
+.input-group-text.input-group__social--type {
+    background-color: #F5E6D6;
+    color: #D97706;
+    font-weight: bold;
+}
+
+.input-group-text.input-group__artistic--type {
+    background-color: #F4E7F9;
+    color: #A855F7;
+    font-weight: bold;
+}
+
+.input-group-text.input-group__enterprising--type {
+    background-color: #FCE7F3;
+    color: #EC4899;
+    font-weight: bold;
+}
+
+.input-group-text.input-group__investigative--type {
+    background-color: #E6F7E6;
+    color: #10B981;
+    font-weight: bold;
+}
+
+.input-group-text.input-group__conventional--type {
+    background-color: #FEE2E2;
+    color: #F87171;
+    font-weight: bold;
+}
+
+.chart {
+    overflow: auto;
+}
+
+/* Tăng khoảng cách giữa các phần trong nội dung */
+.content-box {
+    margin-top: 20px;
+}
+
+/* Căn chỉnh bảng kết quả */
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Nút button responsive */
+.btn {
+    text-align: left;
+}
+
+.btn a {
+    padding: 10px 20px;
+    margin: 5px;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.btn a.primary {
+    background-color: #3498DB;
+    color: white;
+}
+
+.btn a.secondary {
+    background-color: #95A5A6;
+    color: white;
+}
+
+/* Tiêu đề cho các phần */
+h1, h5 {
+    margin-bottom: 15px;
+}
+
+/* Responsive cho các phần khác */
+.table-responsive {
+    margin-top: 20px;
+}
+
+/* Bảng kết quả có căn lề đẹp hơn */
+table.results-table td {
+    text-align: center;
+}
+
+.progress-bar {
+    height: 5px;
+    background-color: #3498db;
+}
+
+/* Màu sắc cho các phần */
+.card-realistic .card-header {
+    background-color: #D4E6F4;
+    color: #3B82F6;
+}
+
+.card-social .card-header {
+    background-color: #F5E6D6;
+    color: #D97706;
+}
+
+.card-artistic .card-header {
+    background-color: #F4E7F9;
+    color: #A855F7;
+}
+
+.card-enterprising .card-header {
+    background-color: #FCE7F3;
+    color: #EC4899;
+}
+
+.card-investigative .card-header {
+    background-color: #E6F7E6;
+    color: #10B981;
+}
+
+.card-conventional .card-header {
+    background-color: #FEE2E2;
+    color: #F87171;
+}
