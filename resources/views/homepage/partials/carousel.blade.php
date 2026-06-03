@@ -49,16 +49,16 @@
                     <p class="text-xl text-black dark:text-white font-semibold text-center pb-4">{{ __('general.User Manual') }}</p>
                     <div class="grid grid-cols-3">
                         <div class="flex flex-col gap-2.5 items-center">
-                            <a href="/guideline#trainee"><img src="{{asset('images/1.webp')}}" alt="Trainee" class="w-28 h-28 rounded-full p-6 border-1 border-[#F3F8FF] bg-[#EAF3FF]"></a>
-                            <a href="/guideline#trainee" class="text-center"><span class="text-lg text-[#464559] dark:text-white font-semibold hover:text-primary">{{ __('general.Trainee') }}</span></a>
+                            <a href="{{ route('trainee.auth.login') }}"><img src="{{asset('images/1.webp')}}" alt="Trainee" class="w-28 h-28 rounded-full p-6 border-1 border-[#F3F8FF] bg-[#EAF3FF]"></a>
+                            <a href="{{ route('trainee.auth.login') }}" class="text-center"><span class="text-lg text-[#464559] dark:text-white font-semibold hover:text-primary">{{ __('general.Trainee') }}</span></a>
                         </div>
                         <div class="flex flex-col gap-2.5 items-center">
-                            <a href="/guideline#cgo"><img src="{{asset('images/2.webp')}}" alt="CGO" class="w-28 h-28 rounded-full p-6 border-1 border-[#F3F8FF] bg-[#EAF3FF]"></a>
-                            <a href="/guideline#cgo" class="text-center"><span class="text-lg text-[#464559] dark:text-white font-semibold hover:text-primary">{{ __('general.CGO') }}</span></a>
+                            <a href="{{ route('cgo.auth.login') }}"><img src="{{asset('images/2.webp')}}" alt="CGO" class="w-28 h-28 rounded-full p-6 border-1 border-[#F3F8FF] bg-[#EAF3FF]"></a>
+                            <a href="{{ route('cgo.auth.login') }}" class="text-center"><span class="text-lg text-[#464559] dark:text-white font-semibold hover:text-primary">{{ __('general.CGO') }}</span></a>
                         </div>
                         <div class="flex flex-col gap-2.5 items-center">
-                            <a href="/guideline#company"><img src="{{asset('images/3.webp')}}" alt="Company" class="w-28 h-28 rounded-full p-6 border-1 border-[#F3F8FF] bg-[#EAF3FF]"></a>
-                            <a href="/guideline#company" class="text-center"><span class="text-lg text-[#464559] dark:text-white font-semibold hover:text-primary">{{ __('general.Company/ Other organisation') }}</span></a>
+                            <a href="{{ route('company.auth.login') }}"><img src="{{asset('images/3.webp')}}" alt="Company" class="w-28 h-28 rounded-full p-6 border-1 border-[#F3F8FF] bg-[#EAF3FF]"></a>
+                            <a href="{{ route('company.auth.login') }}" class="text-center"><span class="text-lg text-[#464559] dark:text-white font-semibold hover:text-primary">{{ __('general.Company/ Other organisation') }}</span></a>
                         </div>
                     </div>
 
@@ -284,16 +284,16 @@
                 <p class="text-lg font-semibold dark:text-white">{{ __('general.User Manual') }}</p>
                 <div class="flex rounded-xl bg-white dark:bg-[#1E1E1E] justify-around gap-4 mt-4 py-4 justify-between items-center">
                     <div class="flex flex-col gap-2.5 items-center">
-                        <a href="/guideline#trainee"><img src="{{asset('images/1.webp')}}" alt="" class="w-28 object-cover p-6 rounded-full border-1 border-[#F3F8FF] bg-[#EAF3FF]"></a>
-                        <a href="/guideline#trainee"><span class="text-sm text-[#464559] font-semibold dark:text-white">{{ __('general.Trainee') }}</span></a>
+                        <a href="{{ route('trainee.auth.login') }}"><img src="{{asset('images/1.webp')}}" alt="" class="w-28 object-cover p-6 rounded-full border-1 border-[#F3F8FF] bg-[#EAF3FF]"></a>
+                        <a href="{{ route('trainee.auth.login') }}"><span class="text-sm text-[#464559] font-semibold dark:text-white">{{ __('general.Trainee') }}</span></a>
                     </div>
                     <div class="flex flex-col gap-2.5 items-center">
-                        <a href="/guideline#cgo"><img src="{{asset('images/2.webp')}}" alt="" class="w-28 object-cover p-6 rounded-full border-1 border-[#F3F8FF] bg-[#EAF3FF]"></a>
-                        <a href="/guideline#cgo"><span class="text-sm text-[#464559] font-semibold dark:text-white">{{ __('general.CGO') }}</span></a>
+                        <a href="{{ route('cgo.auth.login') }}"><img src="{{asset('images/2.webp')}}" alt="" class="w-28 object-cover p-6 rounded-full border-1 border-[#F3F8FF] bg-[#EAF3FF]"></a>
+                        <a href="{{ route('cgo.auth.login') }}"><span class="text-sm text-[#464559] font-semibold dark:text-white">{{ __('general.CGO') }}</span></a>
                     </div>
                     <div class="flex flex-col gap-2.5 items-center">
-                        <a href="/guideline#company"><img src="{{asset('images/3.webp')}}" alt="" class="w-28 object-cover p-6 rounded-full border-1 border-[#F3F8FF] bg-[#EAF3FF]"></a>
-                        <a href="/guideline#company"><span class="text-sm text-[#464559] font-semibold dark:text-white">{{ __('general.Company') }}</span></a>
+                        <a href="{{ route('company.auth.login') }}"><img src="{{asset('images/3.webp')}}" alt="" class="w-28 object-cover p-6 rounded-full border-1 border-[#F3F8FF] bg-[#EAF3FF]"></a>
+                        <a href="{{ route('company.auth.login') }}"><span class="text-sm text-[#464559] font-semibold dark:text-white">{{ __('general.Company') }}</span></a>
                     </div>
                 </div>
             </div>

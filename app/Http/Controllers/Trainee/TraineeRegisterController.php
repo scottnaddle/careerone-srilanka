@@ -22,6 +22,15 @@ class TraineeRegisterController extends Controller
 
     public function register(Request $request)
     {
+//        $recommendedCgo = CgoUser::where('active', true)->get()->each(function ($cgo) {
+//            $cgo->system = 'cgo';
+//        });
+//
+//        $recommendedAdmin = AdminUser::where('active', true)->get()->each(function ($admin) {
+//            $admin->system = 'admin';
+//        });
+//
+//        $recommendedList = $recommendedCgo->merge($recommendedAdmin);
         $recommendedCgo = CgoUser::where('active', true)
             ->get()
             ->map(function ($cgo) {
@@ -50,14 +59,11 @@ class TraineeRegisterController extends Controller
     public function postRegister(RegisterRequest $request)
     {
         $isManual = $request->has('manual') && $request->manual == 1;
-        $verificationMethod = $request->verification_type ?? Constant::email;
+        $verificationMethod = $request->verification_type;
         $data = $request->except(['_token', 'verification_type', 'accept_terms']);
         $password = bcrypt($request->password);
 
-        // Progressive signup: only email + password provided
-        if (empty($request->nic) && !$isManual) {
-            $userData = $this->buildProgressiveUserData($data, $password);
-        } elseif ($isManual) {
+        if ($isManual) {
             $data['full_name'] = $data['first_name'] . ' ' . $data['last_name'];
             $userData = $this->buildManualUserData($data, $password);
         } else {
@@ -75,16 +81,12 @@ class TraineeRegisterController extends Controller
 
         $user = TraineeUser::create($userData);
 
-        // Sync with external systems (skip for progressive signup)
-        if (empty($request->nic) && !$isManual) {
-            // Progressive signup — no external sync needed
-        } else {
-            $data['disabled'] = 0;
-            $this->traineeCasSyncService->signUp($data);
+        // Sync with external systems
+        $data['disabled'] = 0;
+        $this->traineeCasSyncService->signUp($data);
 
-            if (!$isManual) {
-                $this->traineeSyncService->syncTraineeTrainingInformation($user);
-            }
+        if (!$isManual) {
+            $this->traineeSyncService->syncTraineeTrainingInformation($user);
         }
 
         // Send verification
@@ -95,7 +97,7 @@ class TraineeRegisterController extends Controller
             'u_type' => 'trainee',
             'token' => $token,
             'verification_method' => $verificationMethod
-        ])->with('message', __('system.messages.verification_sent'));
+        ])->with('message', 'Verification code has been sent');
     }
 
     private function buildManualUserData($data, $password)
@@ -162,19 +164,91 @@ class TraineeRegisterController extends Controller
         };
     }
 
-
-    private function buildProgressiveUserData($data, $password)
-    {
-        return [
-            'username' => $data['email'],
-            'email' => $data['email'],
-            'password' => $password,
-            'full_name' => $data['email'], // temporary, user will update later
-            'open_to_work' => 1,
-            'public_portfolio' => 1,
-            'profile_incomplete' => true,
-        ];
-    }
+//    public function syncTraineeTrainingInformation($user)
+//    {
+//        try {
+//            // Fetch trainee training information
+//            $traineeTrainingInformations = $this->traineeInfomationService->getTrainingHistoryInformation($user->nic);
+//
+//            if ($traineeTrainingInformations['message'] != 'No Information.') {
+//                // Save trainee training history
+//                $traineeTrainingHistory = new TraineeTrainingHistory();
+//                $traineeTrainingHistory->trainee_id = $user->id;
+//                $traineeTrainingHistory->content = json_encode($traineeTrainingInformations['message']);
+//                $traineeTrainingHistory->save();
+//
+//                // Save NVQ information
+//                \Log::info("---------Syncing user information with NIC: " .$user->nic.'--------------');
+//                foreach ($traineeTrainingInformations['message'] as $item) {
+//                    // Ensure NVQ record is found before saving
+//                    $nvq = NVQLevel::where(DB::raw('LOWER(code)'), strtolower($item['NVQ_QUALIFICATION']['QUALIFICATION_CODE']))->first();
+//                    if ($nvq) {
+//                        \Log::info("NVQ: " .$item['NVQ_QUALIFICATION']['QUALIFICATION_NAME']);
+//                        \Log::info("- Effectivedate: " .$item['NVQ_QUALIFICATION']['EFFECTIVE_DATE']);
+//                        \Log::info("- Found in DB: " .json_encode($nvq));
+//                        $traineeNvq = new TraineeNVQ();
+//                        $traineeNvq->trainee_id = $user->id;
+//                        $traineeNvq->nvq_id = $nvq->id;
+//                        $traineeNvq->effective_date = $item['NVQ_QUALIFICATION']['EFFECTIVE_DATE'];
+//                        $traineeNvq->course_mode = $item['NVQ_QUALIFICATION']['COURSE_MODE'];
+//                        $traineeNvq->save();
+//                    }
+//
+//                    // Ensure Institute record is found before saving
+//                    $institute = Institute::where(DB::raw('LOWER(reg_no)'), strtolower($item['INSTITUTE']['INSTITUTE_REG_NO']))->first();
+//                    if ($institute) {
+//                        \Log::info("Institute: " .$item['INSTITUTE']['INSTITUTE_NAME']);
+//                        \Log::info("- Start date: " .$item['COURSE']['START_DATE']);
+//                        \Log::info("- End date: " .$item['COURSE']['END_DATE']);
+//                        \Log::info("- Found in DB: " .json_encode($institute));
+//                        $traineeInstitute = new TraineeInstitute();
+//                        $traineeInstitute->trainee_id = $user->id;
+//                        $traineeInstitute->institute_id = $institute->id;
+//                        $traineeInstitute->start_date = $item['COURSE']['START_DATE'];
+//                        $traineeInstitute->end_date = $item['COURSE']['END_DATE'];
+//                        $traineeInstitute->save();
+//                    }
+//
+//                    $sector = Sector::where(DB::raw('LOWER(name)'), strtolower($item['COURSE']['INDUSTRY_SECTOR']))->first();
+//                    if ($sector) {
+//                        \Log::info("Sector: " .$item['COURSE']['INDUSTRY_SECTOR']);
+//                        \Log::info("- Start date: " .$item['COURSE']['START_DATE']);
+//                        \Log::info("- End date: " .$item['COURSE']['END_DATE']);
+//                        \Log::info("- Found in DB: " .json_encode($sector));
+//                        $traineeSector = new TraineeSector();
+//                        $traineeSector->trainee_id = $user->id;
+//                        $traineeSector->sector_id = $sector->id;
+//                        $traineeSector->start_date = $item['COURSE']['START_DATE'];
+//                        $traineeSector->end_date = $item['COURSE']['END_DATE'];
+//                        $traineeSector->save();
+//                    }
+//
+//                    $course = ReqCourse::where(DB::raw('LOWER(institute_reg_no)'), strtolower($item['INSTITUTE']['INSTITUTE_REG_NO']))
+//                        ->where(DB::raw('LOWER(course_name)'), strtolower($item['COURSE']['COURSE_NAME']))
+//                        ->first();
+//                    if ($course) {
+//                        \Log::info("Course: " .$item['COURSE']['COURSE_NAME']);
+//                        \Log::info("- Start date: " .$item['COURSE']['START_DATE']);
+//                        \Log::info("- End date: " .$item['COURSE']['END_DATE']);
+//                        \Log::info("- Found in DB: " .json_encode($course));
+//                        $traineeRegCourse = new TraineeRegCourse();
+//                        $traineeRegCourse->trainee_id = $user->id;
+//                        $traineeRegCourse->reg_course_id = $course->id;
+//                        $traineeRegCourse->batch_no = $item['COURSE']['BATCH_NO'];
+//                        $traineeRegCourse->start_date = $item['COURSE']['START_DATE'];
+//                        $traineeRegCourse->end_date = $item['COURSE']['END_DATE'];
+//                        $traineeRegCourse->save();
+//                    }
+//                }
+//            }
+//        } catch (\Exception $e) {
+//            // Handle the exception by logging the error or returning a custom message
+//            \Log::error('Error syncing trainee training information: ' . $e->getMessage());
+//
+//            // Optionally, you can rethrow the exception or handle it gracefully
+//            // return response()->json(['error' => 'An error occurred while syncing trainee information.']);
+//        }
+//    }
 
     public function checkNIC(Request $request)
     {

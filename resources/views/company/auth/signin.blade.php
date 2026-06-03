@@ -1,23 +1,129 @@
-@extends('auth.layouts.master')
+@extends('cgo.auth.layouts.master')
 
 @section('title', 'Company Sign In')
 
 @section('content')
-    <div class="max-w-2xl mx-auto w-screen py-24 flex flex-col h-full justify-start">
-        @include('auth.partials.signin-form', [
-            'route' => 'company.auth.postLogin',
-            'logo' => '/images/TVET.svg',
-            'logoDark' => null,
-            'darkBg' => 'dark:bg-gray-800',
-            'darkBorder' => 'dark:border-gray-700',
-            'submitMb' => 'mb-4',
-            'forgotRoute' => 'company.auth.forgotPassword',
-            'registerRoute' => 'company.auth.register',
-            'userType' => 'company',
-            'title' => 'Company Sign In',
-            'subtitle' => 'Post jobs and find skilled talent',
-            'accentColor' => 'from-green-600 to-emerald-800',
-            'accentIcon' => '<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>',
-        ])
+    <div class="flex flex-col gap-2.5 w-full max-w-xl bg-white px-4 md:px-8 py-6 rounded-xl dark:bg-[#1E1E1E]">
+        <!-- Logo -->
+        <a href="/" class="flex w-full justify-start py-5">
+            <img src="{{asset('/images/careerone-logo.webp')}}" class="h-8 md:h-12 block dark:hidden" alt="Careerone Logo" />
+            <img src="{{asset('/images/careerone-logo-dark.webp')}}" class="h-8 md:h-12 hidden dark:block" alt="Careerone Logo" />
+        </a>
+
+        <div class="flex flex-col gap-6">
+            <!-- Nút Back -->
+            <a href="/choose-login"
+               class="text-[#404040] dark:text-white border-gray-200 gap-2 rounded-xl text-xl font-semibold w-fit text-center inline-flex items-center hover:text-primary dark:hover:text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                     stroke="currentColor" class="size-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                </svg>
+                {{ trans('auth.choose_login_title') }}
+            </a>
+
+            <div class="flex flex-col gap-6 mt-4">
+                <!-- Cột trái: Icon và lời chào tương tự CGO nhưng đổi text định danh sang Company -->
+                <div class="flex flex-col items-center justify-center gap-4">
+                    <img src="/images/companny-user-icon.webp" class="w-1/2 lg:w-1/3" alt="Company Icon">
+                    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white text-center">{{trans('auth.welcome_back')}}</h2>
+                    <p class="text-primary dark:text-white font-semibold text-center text-base">{{trans('auth.Sign in to your Company Recruiter account.')}}</p>
+                </div>
+
+                <!-- Cột phải: Form Đăng Nhập -->
+                <div class="w-full flex flex-col items-center justify-center gap-6 md:col-span-2">
+
+                    <form class="w-full flex flex-col gap-4 leading-5" action="{{ route('company.auth.postLogin') }}" method="POST" autocomplete="off">
+                        @csrf
+
+                        <!-- Thông báo Session -->
+                        @if (session()->get('message'))
+                            <span class="bg-green-100 text-green-800 text-sm font-medium px-3 py-3 rounded-xl dark:bg-[#1E1E1E] dark:text-green-400 border border-green-400">
+                                {!! session()->get('message') !!}
+                            </span>
+                        @endif
+
+                        @if (session()->get('error'))
+                            <span class="bg-red-100 text-red-800 text-sm font-medium px-3 py-3 rounded-xl dark:bg-[#1E1E1E] dark:text-red-400 border border-red-400">
+                                {!! session()->get('error') !!}
+                            </span>
+                        @endif
+
+                        <!-- Input: Email -->
+                        <div>
+                            <label for="email" class="text-sm font-medium text-[#404040] block mb-1 dark:text-gray-300">
+                                {{trans('system.form.email')}}<span class="text-red-600 p-1 text-center">*</span>
+                            </label>
+                            <input type="text" name="email" id="email" value="{{ old('email') }}" required
+                                   class="bg-gray-50 border p-3 pl-4 h-11 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-[#1E1E1E] dark:border-gray-500 dark:text-white">
+                            @if ($errors->has('email'))
+                                <span class="text-red-600 text-xs">{{ $errors->first('email') }}</span>
+                            @endif
+                        </div>
+
+                        <!-- Input: Password -->
+                        <div>
+                            <label for="password" class="text-sm font-medium text-[#404040] block mb-1 dark:text-gray-300">
+                                {{trans('system.form.password')}}<span class="text-red-600 p-1 text-center">*</span>
+                            </label>
+                            <div class="relative">
+                                <input type="password" name="password" id="password" required
+                                       class="bg-gray-50 border p-3 pl-4 h-11 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-[#1E1E1E] dark:border-gray-500 dark:text-white">
+                                <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500">
+                                    <svg id="eye-icon-show" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"></path><path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd"></path></svg>
+                                    <svg id="eye-icon-hide" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 hidden"><path fill-rule="evenodd" d="M3.28 2.22a.75.75 0 0 0-1.06 1.06l14.5 14.5a.75.75 0 1 0 1.06-1.06l-1.745-1.745a10.029 10.029 0 0 0 3.3-4.38 1.651 1.651 0 0 0 0-1.185A10.004 10.004 0 0 0 9.999 3a9.956 9.956 0 0 0-4.744 1.194L3.28 2.22ZM7.752 6.69l1.092 1.092a2.5 2.5 0 0 1 3.374 3.373l1.091 1.092a4 4 0 0 0-5.557-5.557Z" clip-rule="evenodd"></path><path d="m10.748 13.93 2.523 2.523a9.987 9.987 0 0 1-3.27.547c-4.258 0-7.894-2.66-9.337-6.41a1.651 1.651 0 0 1 0-1.186A10.007 10.007 0 0 1 2.839 6.02L6.07 9.252a4 4 0 0 0 4.678 4.678Z"></path></svg>
+                                </button>
+                            </div>
+                            @if ($errors->has('password'))
+                                <span class="text-red-600 text-xs">{{ $errors->first('password') }}</span>
+                            @endif
+                        </div>
+
+                        <!-- Quên mật khẩu -->
+                        <div class="flex items-start">
+                            <a href="{{ route('company.auth.forgotPassword') }}"
+                               class="text-sm text-primary hover:underline ml-auto dark:text-blue-500">{{trans('system.form.forgot_password')}}</a>
+                        </div>
+
+                        <!-- Button Đăng nhập -->
+                        <div class="pt-4">
+                            <button type="submit"
+                                    class="w-full text-white bg-[#4984F6] hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-xl text-xl px-5 py-3 text-center dark:bg-blue-600 dark:hover:bg-blue-700">
+                                {{trans('auth.sign_in')}}
+                            </button>
+                        </div>
+
+                        <!-- Link Đăng ký -->
+                        <div class="text-sm font-medium text-center text-gray-500 dark:text-gray-300 mt-2">
+                            {{trans('auth.dont_have_account')}} <a href="{{ route('company.auth.register') }}"
+                                                                   class="text-primary hover:underline dark:text-blue-500">{{trans('auth.sign_up')}}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
+
+@push('js')
+    <script src="{{ asset('js/jquery.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            // Script cho việc Ẩn / Hiện mật khẩu đồng bộ
+            $('#toggle-password').click(function() {
+                const passwordInput = $('#password');
+                const eyeIconShow = $('#eye-icon-show');
+                const eyeIconHide = $('#eye-icon-hide');
+
+                if (passwordInput.attr('type') === 'password') {
+                    passwordInput.attr('type', 'text');
+                    eyeIconShow.addClass('hidden');
+                    eyeIconHide.removeClass('hidden');
+                } else {
+                    passwordInput.attr('type', 'password');
+                    eyeIconShow.removeClass('hidden');
+                    eyeIconHide.addClass('hidden');
+                }
+            });
+        });
+    </script>
+@endpush

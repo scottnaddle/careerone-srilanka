@@ -1,4 +1,4 @@
-@extends('auth.layouts.master')
+@extends('cgo.auth.layouts.master')
 
 @section('title', 'Reset Password')
 

@@ -105,7 +105,10 @@ class RegisterController extends Controller
     public function checkNIC(Request $request)
     {
         return response()->json([
-            'success' => 'NIC confirmed!',
+            'success' => 'NIC confirmed!'
+        ]);
+        return response()->json([
+            'error' => 'NIC confirm fail!'
         ]);
     }
 
