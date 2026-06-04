@@ -23,7 +23,7 @@ class CgoRegisterController extends Controller
 
     public function postRegister(RegisterRequest $request)
     {
-        $request->merge(['password' => bcrypt($request->password)]);
+        // Password is auto-hashed by CgoUser::setPasswordAttribute mutator
         $verification_method = $request->verification_type;
         $data = $request->except(['_token', 'verification_type', 'accept_terms']);
         $data['verify_at'] = null;

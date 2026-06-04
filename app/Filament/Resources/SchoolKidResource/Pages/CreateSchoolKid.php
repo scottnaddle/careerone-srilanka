@@ -17,9 +17,7 @@ class CreateSchoolKid extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        if (isset($data['password'])) {
-            $data['password'] = bcrypt($data['password']);
-        }
+        // Password is auto-hashed by SchoolKid::setPasswordAttribute mutator
         return $data;
     }
 }

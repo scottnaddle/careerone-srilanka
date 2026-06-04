@@ -130,13 +130,9 @@
                         <div class="relative">
                             <input type="text" id="trainee_nic" name="trainee_nic" oninput="this.value = this.value.toUpperCase()"
                                    class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                   value="{{ old('trainee_nic') }}" pattern="^[0-9]{9}[A-Z]|[0-9]{12}$" required/>
-                            <button type="button" id="check-trainee" disabled
-                                    class="absolute flex items-center justify-center right-0 bottom-0 h-full rounded-r-lg min-w-16 text-white bg-[#4984F6] hover:bg-blue-800  font-medium
-                    text-base px-2 py-1 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 text-sm"><span class="loading-spinner hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                                <span class="btn-text">{{ __('system.form.button.check') }}</span>
-                            </button>
+                                   value="{{ old('trainee_nic') }}" pattern="^([0-9]{9}[A-Z]|[0-9]{12})$" required/>
                         </div>
+                        <span id="duplicate-warning" class="text-red-600 text-xs"></span>
 
                         @if ($errors->has('trainee_nic'))
                             <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('trainee_nic') }}</span>
@@ -321,23 +317,14 @@
             }
 
 
-            $('#trainee_nic').on('input', function() {
-                let pattern = /^[0-9]{9}[A-Z]|[0-9]{12}$/;
-                if (pattern.test($(this).val())) {
-                    $('#check-trainee').prop('disabled', false);
-                } else {
-                    $('#check-trainee').prop('disabled', true);
+            $('#trainee_nic').on('blur', function() {
+                let nic = $(this).val();
+                let pattern = /^([0-9]{9}[A-Z]|[0-9]{12})$/;
+                if (!pattern.test(nic)) {
+                    return;
                 }
-            });
-
-
-            $('#check-trainee').on('click', function() {
-                let $button = $(this);
-                let $spinner = $button.find('.loading-spinner');
-                let $btnText = $button.find('.btn-text');
-                let nic = $('#trainee_nic').val();
-                $spinner.removeClass('hidden');
-                $btnText.addClass('hidden');
+                let date = $('#available_date').val();
+                // Auto-fetch trainee info
                 $.ajax({
                     url: '/cgo/career-guidance/counseling/create-offline/get-trainee-info/'+nic,
                     type: 'GET',
@@ -347,19 +334,30 @@
                             $('#trainee_offline_email').val(response.email ?? '');
                             $('#trainee_offline_firstname').val(response.first_name ?? '');
                             $('#trainee_offline_lastname').val(response.last_name ?? '');
-                        } else {
-                            alert('Can not find trainee information.');
                         }
                     },
                     error: function() {
                         alert('Đã xảy ra lỗi. Vui lòng thử lại.');
-                    },
-                    complete: function() {
-                        // Hide loading
-                        $spinner.addClass('hidden');
-                        $btnText.removeClass('hidden');
                     }
                 });
+                // Check duplicate counseling if date is also filled
+                if (date) {
+                    $.ajax({
+                        url: '/cgo/career-guidance/counseling/check-duplicate',
+                        type: 'GET',
+                        data: { nic: nic, date: date },
+                        success: function(response) {
+                            if (response.duplicate) {
+                                $('#duplicate-warning').text(response.message || 'Duplicate counseling found.');
+                            } else {
+                                $('#duplicate-warning').text('');
+                            }
+                        },
+                        error: function() {
+                            // Silently fail for duplicate check
+                        }
+                    });
+                }
             });
         });
     </script>

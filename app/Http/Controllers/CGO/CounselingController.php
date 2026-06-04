@@ -92,8 +92,10 @@ class CounselingController extends Controller
                                 ->select('id', \DB::raw("$moduleColumn as name"))
                                 ->get();
         // $listCounselingField = $this->counselingService->categoryModule();
-        $districts = District::findOrFail(Auth::guard('cgo')->user()->district_id);
-        $instituteName = CgoUser::query()->where('id', Auth::guard('cgo')->user()->id)->with('institute')->firstOrFail()->institute->name;
+        $districtId = Auth::guard('cgo')->user()->district_id;
+        $districts = $districtId ? District::findOrFail($districtId) : null;
+        $institute = CgoUser::query()->where('id', Auth::guard('cgo')->user()->id)->with('institute')->firstOrFail()->institute;
+        $instituteName = $institute?->name ?? '';
 
         return view('cgo.career-guidance.counseling.create-offline',
             compact('listCounselingField', 'instituteName','districts'));
@@ -122,7 +124,7 @@ class CounselingController extends Controller
                 ->where('counseling_id', $id)
                 ->first();
             $currentUserId = Auth::guard('cgo')->user()->id;
-            if ($counselingRecord->assignee_to !== $currentUserId) {
+            if (!$counselingRecord || $counselingRecord->assignee_to !== $currentUserId) {
                 return redirect()
                     ->route('cgo.career-guidance.counseling.counseling-list')
                     ->with('error', __('cgo.error_toastify') . " (You are not authorized to reject this counseling)");
@@ -258,4 +260,39 @@ class CounselingController extends Controller
         ]);
     }
 
+    public function checkDuplicate(Request $request)
+    {
+        $nic = $request->input('nic');
+        $date = $request->input('date');
+        $cancelCode = getCodeIdByStringEn('counselling_status', 'cancel');
+
+        $duplicate = CgoCounseling::where('trainee_nic', $nic)
+            ->whereDate('available_time', $date)
+            ->where('status', '!=', $cancelCode)
+            ->exists();
+
+        return response()->json([
+            'duplicate' => $duplicate,
+            'message' => $duplicate
+                ? 'A counseling session already exists for this NIC on the selected date.'
+                : 'No duplicate counseling found.',
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $counseling = CgoCounseling::findOrFail($id);
+
+        $currentCgoId = Auth::guard('cgo')->user()->id;
+        $assignedCgoId = $counseling->cgo_user_id;
+
+        if ($assignedCgoId !== $currentCgoId) {
+            return redirect()->back()->with('error', __('cgo.error_toastify') . ' (You are not authorized to update this counseling.)');
+        }
+
+        $counseling->result = $request->input('result');
+        $counseling->save();
+
+        return redirect()->back()->with('success', 'Counseling result updated successfully.');
+    }
 }

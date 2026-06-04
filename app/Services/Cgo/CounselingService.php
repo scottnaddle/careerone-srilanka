@@ -209,22 +209,33 @@ class CounselingService implements CounselingServiceInterface {
 
         $listCounseling =  $this->model->query()->orderBy('cgo_counselings.available_time', 'desc')
             ->with('traineeUser')
-            ->join('cgo_counseling_assign_histories as cah', 'cah.counseling_id', '=', 'cgo_counselings.id')
+            ->leftJoin('cgo_counseling_assign_histories as cah', 'cah.counseling_id', '=', 'cgo_counselings.id')
             ->where('cgo_counselings.status', '!=', getCodeIdByStringEn('counselling_status', 'cancel'))
-            ->where('cah.assignee_to', $id);
+            ->where(function ($q) use ($id) {
+                $q->where('cah.assignee_to', $id)
+                  ->orWhereNull('cah.assignee_to')
+                  ->orWhere('cah.assignee_to', 0);
+            });
 
-//        if ($request->has('search_query')) {
-//            $listCounseling->where('cgo_counselings.title', 'ILIKE', '%' . $request->search_query . '%');
-//        }
-        //Search by trainee name
+        //Search by search_field (name, nic, title)
         if ($request->has('search_query')) {
             $searchQuery = $request->input('search_query');
+            $searchField = $request->input('search_field', 'name');
 
-            $listCounseling->whereHas('traineeUser', function ($query) use ($searchQuery) {
-                $query->where('full_name', 'ILIKE', '%' . $searchQuery . '%');
-            });
-            $listCounseling->orWhere('trainee_offline_firstname', 'ILIKE', '%'.$searchQuery.'%');
-            $listCounseling->orWhere('trainee_offline_lastname', 'ILIKE', '%'.$searchQuery.'%');
+            if ($searchField === 'nic') {
+                $listCounseling->where('cgo_counselings.trainee_nic', 'ILIKE', '%' . $searchQuery . '%');
+            } elseif ($searchField === 'title') {
+                $listCounseling->where('cgo_counselings.title', 'ILIKE', '%' . $searchQuery . '%');
+            } else {
+                // Default: search by trainee name
+                $listCounseling->where(function ($query) use ($searchQuery) {
+                    $query->whereHas('traineeUser', function ($subQuery) use ($searchQuery) {
+                        $subQuery->where('full_name', 'ILIKE', '%' . $searchQuery . '%');
+                    });
+                    $query->orWhere('trainee_offline_firstname', 'ILIKE', '%'.$searchQuery.'%');
+                    $query->orWhere('trainee_offline_lastname', 'ILIKE', '%'.$searchQuery.'%');
+                });
+            }
         }
 
         if ($request->has('status') && $request->status !== 'all') {

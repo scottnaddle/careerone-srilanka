@@ -46,6 +46,13 @@
                                         placeholder="{{ __('general.Trainee name') }}" />
                                 </div>
 
+                                <select name="search_field" id="searchField"
+                                    class="bg-gray-50 border border-[#EDEDED] text-[#706F81] text-sm rounded-lg block p-2.5 dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white">
+                                    <option value="name" @selected(request()->get('search_field') == 'name')>Name</option>
+                                    <option value="nic" @selected(request()->get('search_field') == 'nic')>NIC</option>
+                                    <option value="title" @selected(request()->get('search_field') == 'title')>Title</option>
+                                </select>
+
                                 <button type="submit"
                                     class="px-6 lg:px-12 py-2 md:py-3 font-medium text-white bg-primary rounded-full hover:bg-blue-800  shadow-xs">
                                     {{ __('cgo.search') }}
@@ -84,6 +91,29 @@
                             </div>
                         </div>
                     </form>
+
+                    <script>
+                        (function() {
+                            const searchField = document.getElementById('searchField');
+                            const searchQuery = document.getElementById('searchQuery');
+                            const placeholders = {
+                                name: '{{ __('general.Trainee name') }}',
+                                nic: 'NIC',
+                                title: 'Title'
+                            };
+
+                            function updatePlaceholder() {
+                                const value = searchField.value;
+                                searchQuery.placeholder = placeholders[value] || placeholders.name;
+                            }
+
+                            if (searchField && searchQuery) {
+                                searchField.addEventListener('change', updatePlaceholder);
+                                updatePlaceholder();
+                            }
+                        })();
+                    </script>
+
                     <div class="flex justify-start">
                         <a href="{{ route('cgo.career-guidance.counseling.create-offline') }}"
                             class="flex items-center gap-2 font-bold text-white bg-primary hover:bg-blue-600 focus:ring-4 focus:outline-none rounded-full text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"

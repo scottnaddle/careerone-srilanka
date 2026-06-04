@@ -78,7 +78,7 @@
                             class="sm:text-sm font-medium text-gray-600 block mb-1.5 dark:text-gray-300">{{trans('auth.enter_code_message')}}<span class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <input type="text" name="code" id="code"
-                            class="bg-gray-50 border p-3 pl-4 h-9 w-full border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white" required>
+                            class="bg-gray-50 border py-2 px-3 pl-4 h-9 w-full border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white" required>
                         @if ($errors->has('code'))
                             <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('code') }}</span>
                         @endif

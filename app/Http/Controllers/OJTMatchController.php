@@ -18,7 +18,6 @@ class OJTMatchController extends Controller
     protected $notificationManager;
     public function __construct(NotificationManager $notificationManager)
     {
-        $this->middleware('company.auth');
         $this->notificationManager = $notificationManager;
     }
     /**

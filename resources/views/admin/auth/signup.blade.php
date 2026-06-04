@@ -29,7 +29,7 @@
                         <div class="flex flex-col">
                             <div class="flex gap-4 items-center">
                                 <input type="text" name="nic" id="nic"
-                                    class="w-full p-3 pl-4 h-9 bg-gray-50 border border-gray-300 text-[#91919A] sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
+                                    class="w-full py-2 px-3 pl-4 h-9 bg-gray-50 border border-gray-300 text-[#91919A] sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
                                     value="{{ old('nic') }}" placeholder="{{ trans('system.form.nic_hint') }}"
                                     pattern="\d{9}[VXvx]|\d{12}">
                                 {{--                                <a href="javascript:void(0)" --}}
@@ -61,7 +61,7 @@
                     {{--                            class="font-medium text-gray-600 block mb-1.5 dark:text-gray-300">Username<span class="text-red-600 p-1 text-center">*</span> --}}
                     {{--                        </label> --}}
                     {{--                        <input type="text" name="username" id="username" --}}
-                    {{--                            class="bg-gray-50 border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white" --}}
+                    {{--                            class="bg-gray-50 border py-2 px-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white" --}}
                     {{--                            required> --}}
                     {{--                    </div> --}}
                     <div>
@@ -70,7 +70,7 @@
                                 class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <input type="text" name="email" id="email"
-                            class="bg-gray-50 w-full  border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
+                            class="bg-gray-50 w-full  border py-2 px-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
                             required value="{{ old('email') }}">
                         @if ($errors->has('email'))
                             <span class="help-block">
@@ -87,7 +87,7 @@
                         </label>
                         <div class="relative">
                             <input type="password" name="password" id="password"
-                                class="bg-gray-50 border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
+                                class="bg-gray-50 border py-2 px-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
                                 placeholder="********" required>
                             <button type="button" id="toggle-password"
                                 class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 dark:text-white">
@@ -124,7 +124,7 @@
                         </label>
                         <div class="relative">
                             <input type="password" name="password_confirmation" id="password_confirmation"
-                                class="bg-gray-50 border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
+                                class="bg-gray-50 border py-2 px-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
                                 required placeholder="{{trans('auth.Retype your password')}}">
                             <button type="button" id="toggle-password-confirm"
                                 class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 dark:text-white">
@@ -156,7 +156,7 @@
                                 class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <input type="text" name="firstname" id="firstname"
-                            class="bg-gray-50 border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
+                            class="bg-gray-50 border py-2 px-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
                             value="{{ old('firstname') }}" required placeholder="E.g: Saman">
                         @if ($errors->has('firstname'))
                             <span class="help-block">
@@ -170,7 +170,7 @@
                                 class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <input type="text" name="lastname" id="lastname"
-                            class="bg-gray-50 border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
+                            class="bg-gray-50 border py-2 px-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
                             value="{{ old('lastname') }}" placeholder="E.g: Gamage" required>
                         @if ($errors->has('lastname'))
                             <span class="help-block">
@@ -186,7 +186,7 @@
                                 class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <input type="text" name="phone" id="telephone-input"
-                            class="bg-gray-50 border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
+                            class="bg-gray-50 border py-2 px-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
                             {{ old('phone') }} required placeholder="Eg: 0129 084 713" value="{{ old('phone') }}">
                         @if ($errors->has('phone'))
                             <span class="help-block">

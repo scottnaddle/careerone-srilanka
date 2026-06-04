@@ -485,19 +485,38 @@
             @endif
 
             @if ($counseling->status == getCodeIdByStringEn('counselling_status', 'completed'))
-                <div class="col-start-2 col-end-5">
-                    <div>
-                        <label for=""
-                            class="sm:text-base text-base font-semibold text-[#464559] block mb-1.5 dark:text-white">{{ __('cgo.result') }}
-                        </label>
-                        <textarea type="" id="" name="result" maxlength="1000" rows="6"
-                            class=" mb-2 border border-[#EDEDED] text-[#706F81] text-base rounded-lg
-                       focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-[#1E1E1E]
-                       dark:border-gray-600 dark:placeholder-white dark:text-white dark:focus:ring-blue-500
-                       dark:focus:border-blue-500"
-                            readonly disabled>{{ $counseling->result }}</textarea>
+                <form id="form-edit-result"
+                    action="{{ route('cgo.career-guidance.counseling.counseling-list.update', $counseling->id) }}"
+                    method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="col-start-2 col-end-5">
+                        <div>
+                            <label for=""
+                                class="sm:text-base text-base font-semibold text-[#464559] block mb-1.5 dark:text-white">{{ __('cgo.result') }}
+                            </label>
+                            <textarea id="completed-result" name="result" maxlength="1000" rows="6"
+                                class="mb-2 border border-[#EDEDED] text-[#706F81] text-base rounded-lg
+                           focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-[#1E1E1E]
+                           dark:border-gray-600 dark:placeholder-white dark:text-white dark:focus:ring-blue-500
+                           dark:focus:border-blue-500"
+                                readonly>{{ $counseling->result }}</textarea>
+                        </div>
                     </div>
-                </div>
+                    @if (\Carbon\Carbon::parse($counseling->updated_at)->diffInHours(now()) < 24)
+                        <div class="flex mt-4 gap-3 justify-end">
+                            <button type="button" id="edit-result-button"
+                                class="w-fit text-white bg-[#4984F6] hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-base px-8 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                Edit Result
+                            </button>
+                            <button type="submit" id="save-result-button"
+                                class="w-fit text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-full text-base px-8 py-2 dark:bg-green-500 dark:hover:bg-green-600 dark:focus:ring-green-800 hidden">
+                                Save
+                            </button>
+                        </div>
+                    @endif
+                </form>
+            @endif
                 @if ($counseling->counseling_type != getCodeIdByStringEn('counselling_type', 'Guidance without reservation'))
                 <div class="col-start-2 col-end-5">
 
@@ -634,7 +653,6 @@
                     </div>
                 </div>
 
-            @endif
             @endif
         </div>
     </div>
@@ -882,7 +900,7 @@
                                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                     <option value="" disabled selected>{{trans('cgo.select_cgo')}}</option>
                                     @forelse($CGOList as $cgo)
-                                        <option value="{{ $cgo->id }}">{{ $cgo->fullName }} - {{$cgo->institute->name}}
+                                        <option value="{{ $cgo->id }}">{{ $cgo->fullName }} - {{ $cgo->institute?->name ?? __('cgo.no_institute') }}
                                         </option>
                                     @empty
                                     @endif
@@ -900,11 +918,6 @@
                             </div>
                         </form>
                     @endif
-                        <script>
-                            $(document).ready(function () {
-                                $("#cgo").select2();
-                            })
-                        </script>
                 </div>
             </div>
         </div>
@@ -934,28 +947,7 @@
         </div>
     </div>
 @endsection
-@push('css')
-    <style>
-        .lable-custom-padding {
-            padding-bottom: 0.5rem;
-        }
-
-        .select2-container--default .select2-selection--single {
-            padding: 1.25rem .75rem 1.25rem 1rem !important;
-        }
-        .select2-search__field {
-            width: 100% !important;
-            height: 2.25rem !important;
-            border: 1px solid;
-            overflow: hidden;
-        }
-        .select2-container .select2-search--inline {
-            display: contents !important;
-        }
-    </style>
-@endpush
 @push('js')
-    <script src="{{ asset('js/select2.js') }}" type="module"></script>
     <script type="module">
         $(document).ready(function() {
 
@@ -1073,99 +1065,6 @@
                 }
             })
 
-            function initializeSelect2(selector, apiEndpoint, placeholderText) {
-                $(selector).select2({
-                    ajax: {
-                        url: apiEndpoint,
-                        dataType: 'json',
-                        delay: 200, // Delay for search queries (ms)
-                        data: function (params) {
-                            return {
-                                search: params.term // The search term
-                            };
-                        },
-                        processResults: function (data) {
-                            return {
-                                results: data.results // Map to the "results" key in the response
-                            };
-                        },
-                        cache: true // Cache results for better performance
-                    },
-                    placeholder: placeholderText,
-                    minimumInputLength: 1, // Trigger search after typing 1 character
-                    multiple: true, // Enable multiple selection
-                    width: '100%', // Ensure it takes full width of the parent container
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.error(`Error fetching data from ${apiEndpoint}:`, textStatus, errorThrown);
-                    }
-                });
-            }
-
-            $(document).ready(function() {
-                initializeSelect2('#institute-search', '/api/cgo/search-institutes', '{{__('cgo.Search by institute name or registration number...')}} ');
-                initializeSelect2('#nvq-course-search', '/api/cgo/search-nvq-course', '{{__('cgo.Search by course name or registration number...')}} ');
-                initializeSelect2('#tvec-course-search', '/api/cgo/search-tvec-course', '{{__('cgo.Search by course name or registration number...')}} ');
-            });
-
-            // Handle "Done" button click
-            $('#btn-done').on('click', function () {
-                // Get selected values from all select2 dropdowns
-                const selectedInstitutes = $('#institute-search').select2('data');
-                const selectedNVQCourses = $('#nvq-course-search').select2('data');
-                const selectedTVECCourses = $('#tvec-course-search').select2('data');
-
-                // Map to get IDs and text for each selection
-                const institutes = selectedInstitutes.map(item => ({ id: item.id, text: item.text }));
-                const nvqCourses = selectedNVQCourses.map(item => ({ id: item.id, text: item.text }));
-                const tvecCourses = selectedTVECCourses.map(item => ({ id: item.id, text: item.text }));
-
-                // Check if all three are empty
-                if (institutes.length === 0 && nvqCourses.length === 0 && tvecCourses.length === 0) {
-                    alert('Please select at least one option from the dropdowns.');
-                    return; // Exit the function early
-                }
-
-                // Generate HTML for each category
-                const generateHTML = (data, inputName) => {
-                    let html = '';
-                    data.forEach(item => {
-                        html += `
-                            <div class="border p-1">
-                                <p class="dark:text-white text-sm">${item.text}</p>
-                            </div>`;
-                    });
-                    html += `<input type="hidden" name="${inputName}" value='${JSON.stringify(data)}'>`;
-                    return html;
-                };
-
-                // Update containers with generated HTML
-                $(".institute-container").html(generateHTML(institutes, 'suggested_institutes'));
-                $(".nvq-course-container").html(generateHTML(nvqCourses, 'suggested_nvq_courses'));
-                $(".tvec-course-container").html(generateHTML(tvecCourses, 'suggested_tvec_courses'));
-
-                // Show the suggested information section
-                $('.suggested-information').removeClass('hidden');
-
-                $("#btn-close").trigger("click");
-
-            });
-
-// Handle "Reset" button click
-            $('#btn-reset').on('click', function () {
-                // Reset all select2 dropdowns
-                $('#institute-search').val(null).trigger('change');
-                $('#nvq-course-search').val(null).trigger('change');
-                $('#tvec-course-search').val(null).trigger('change');
-
-                // Clear the containers
-                $(".institute-container").html('');
-                $(".nvq-course-container").html('');
-                $(".tvec-course-container").html('');
-
-                // Optionally, hide the suggested information section
-                $('.suggested-information').addClass('hidden');
-            });
-
             $('.ajax-call').on('click', function() {
                 let url = $(this).data('url');
                 $(".loading").removeClass('hidden');
@@ -1253,6 +1152,13 @@
                         alert('Error: ' + error);
                     }
                 });
+            });
+
+            // Edit Result button toggle
+            $('#edit-result-button').on('click', function () {
+                $('#completed-result').prop('readonly', false).removeClass('text-[#706F81]').addClass('text-gray-900');
+                $('#edit-result-button').addClass('hidden');
+                $('#save-result-button').removeClass('hidden');
             });
         });
     </script>

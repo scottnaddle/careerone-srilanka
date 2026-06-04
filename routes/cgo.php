@@ -101,6 +101,7 @@ Route::group(['prefix' => 'cgo', 'as' => 'cgo.'], function () {
             Route::get('/attachments/{id}/download', [CounselingController::class, 'downloadAttachment'])->name('attachments.download');
             Route::post('/change-cgo', [CounselingController::class, 'changeCGO'])->name('change-cgo');
             Route::get('/create-offline/get-trainee-info/{nic}', [CounselingController::class, 'getTraineeInfo'])->name('create-offline.get-trainee-info');
+            Route::get('/check-duplicate', [CounselingController::class, 'checkDuplicate'])->name('counseling.check-duplicate');
         });
         //        Route::group(['prefix' => 'career-information', 'as' => 'career-information.'], function () {
         //            Route::get('/job-information', [CareerTestController::class, 'getJobInformation'])->name('job-information');

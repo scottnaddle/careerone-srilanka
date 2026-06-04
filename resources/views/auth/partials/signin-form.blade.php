@@ -69,7 +69,7 @@
 
             {{-- Google Login --}}
             <a href="{{ route('social.redirect', ['user_type' => $userType ?? 'trainee']) }}"
-                class="w-full flex items-center justify-center gap-3 h-12 border-2 border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors mb-6 font-medium text-gray-700 dark:text-gray-300">
+                class="w-full hidden items-center justify-center gap-3 h-12 border-2 border-gray-200 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors mb-6 font-medium text-gray-700 dark:text-gray-300">
                 <svg class="w-5 h-5" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>

@@ -41,7 +41,7 @@ class SchoolKidRegisterController extends Controller
     {
         $verificationMethod = $request->verification_type;
         $data = $request->except(['_token', 'verification_type', 'accept_terms']);
-        $password = bcrypt($request->password);
+        $password = $request->password; // auto-hashed by SchoolKid::setPasswordAttribute mutator
 
         $userData = $this->buildManualUserData($data, $password);
 

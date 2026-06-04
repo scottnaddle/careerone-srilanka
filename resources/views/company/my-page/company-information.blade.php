@@ -55,6 +55,7 @@
         }
         .select2-container .select2-selection--single .select2-selection__rendered {
             padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
             padding-left: 0 !important;
         }
 
@@ -119,7 +120,7 @@
                             <div class="flex gap-4 mb-1">
                                 <input type="text" name="business_registration_number" id="business_registration_number" value="{{ $company->business_registration_number }}"
                                        placeholder="XXXX XXXX XXXX"
-                                       class="w-full p-3 pl-4 h-9 bg-white border border-gray-300 text-[#91919A] sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white">
+                                       class="w-full py-2 px-3 pl-4 h-9 bg-white border border-gray-300 text-[#91919A] sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white">
                             </div>
                             @if ($errors->has('business_registration_number'))
                                 <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('business_registration_number') }}</span>
@@ -131,7 +132,7 @@
                                     class="text-red-600 p-1 text-center">*</span>
                             </label>
                             <input type="text" name="name" id="name" value="{{$company->name}}"
-                                   class="bg-white border p-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white" required>
+                                   class="bg-white border py-2 px-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white" required>
                             @if ($errors->has('name'))
                                 <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('name') }}</span>
                             @endif
@@ -179,7 +180,7 @@
                                    class=" font-medium text-[#706F81] block mb-1.5 dark:text-gray-300">{{trans('company.my_page.address')}}<span class="text-red-600 p-1 text-center">*</span>
                             </label>
                             <input type="text" name="address" id="address" value="{{$company->address}}"
-                                   class="bg-white border p-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white" required>
+                                   class="bg-white border py-2 px-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white" required>
                             @if ($errors->has('address'))
                                 <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('address') }}</span>
                             @endif
@@ -199,7 +200,7 @@
 {{--                                        class="text-red-600 p-1 text-center">*</span>--}}
                                 </label>
                                 <input type="url" name="website" id="website" value="{{ $company->website }}"
-                                       class="bg-white border p-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white" pattern="https?://.+" placeholder="https://example.com">
+                                       class="bg-white border py-2 px-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white" pattern="https?://.+" placeholder="https://example.com">
                                 @if ($errors->has('website'))
                                     <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('website') }}</span>
                                 @endif
@@ -251,7 +252,7 @@
 {{--                                    class="text-red-600 p-1 text-center">*</span>--}}
                             </label>
                             <input type="text" name="name_of_representative" id="name_of_representative" value="{{$company->name_of_representation }}"
-                                   class="bg-white border p-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white">
+                                   class="bg-white border py-2 px-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white">
                             @if ($errors->has('name_of_representative'))
                                 <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('name_of_representative') }}</span>
                             @endif
@@ -263,7 +264,7 @@
                                     class="text-red-600 p-1 text-center">*</span>
                             </label>
                             <input type="text" name="number_workers" id="number_workers" value="{{ $company->number_workers }}"
-                                   class="bg-white border p-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white" required >
+                                   class="bg-white border py-2 px-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white" required >
                             @if ($errors->has('number_workers'))
                                 <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('number_workers') }}</span>
                             @endif
@@ -274,7 +275,7 @@
                             </label>
                             <input type="email" name="email" id="email" value="{{ $company->email }}"
                                    placeholder="You@email.com"
-                                   class="bg-white border p-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white" required>
+                                   class="bg-white border py-2 px-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white" required>
                             @if ($errors->has('email'))
                                 <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('email') }}</span>
                             @endif
@@ -327,7 +328,7 @@
                                    class=" font-medium text-[#706F81] block mb-1.5 dark:text-gray-300">{{trans('company.my_page.co_business')}}
                             </label>
                             <input type="text" name="co_business" id="co_business" value="{{ $company->co_business }}"
-                                   class="bg-white border p-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white" >
+                                   class="bg-white border py-2 px-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white" >
                             {{--                            <select class="select2 mb-0 bg-white dark:bg-[#1E1E1E]" id="co_businessSelect" name="co_business" style="width: 100%"--}}
                             {{--                                    data-placeholder="Please select one" required>--}}
                             {{--                                <option></option>--}}
@@ -347,7 +348,7 @@
                                    class=" font-medium text-[#706F81] block mb-1.5 dark:text-gray-300">{{trans('company.sns_channel')}}
                             </label>
                             <input type="text" name="sns_channel" id="sns_channel" value="{{ $company->sns_channel }}"
-                                   class="bg-white border p-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white" >
+                                   class="bg-white border py-2 px-3 pl-4 h-9 border-gray-300 text-[#91919A] dark:text-white sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-gray-400 dark:text-white" >
                             @if ($errors->has('sns_channel'))
                                 <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('sns_channel') }}</span>
                             @endif

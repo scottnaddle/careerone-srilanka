@@ -655,4 +655,5 @@ return [
     'Monthly' => 'மாதாந்த',
     'Previous Month' => 'முந்தைய மாதம்',
     'Next Month' => 'அடுத்த மாதம்',
+    'no_institute' => 'நிறுவகம் இல்லை',
 ];

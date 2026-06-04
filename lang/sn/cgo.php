@@ -654,4 +654,5 @@ return [
     'Monthly' => 'මාසිකව',
     'Previous Month' => 'පෙර මාසය',
     'Next Month' => 'ලබන මාසයේ',
+    'no_institute' => 'ආයතනයක් නැත',
 ];

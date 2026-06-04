@@ -17,10 +17,9 @@ class EditSchoolKid extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        // Only hash password if it's changed (not empty)
-        if (isset($data['password']) && filled($data['password'])) {
-            $data['password'] = bcrypt($data['password']);
-        } else {
+        // Password is auto-hashed by SchoolKid::setPasswordAttribute mutator.
+        // Only unset if empty so the model doesn't re-hash an empty string.
+        if (!isset($data['password']) || !filled($data['password'])) {
             unset($data['password']);
         }
         return $data;

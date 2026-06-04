@@ -655,4 +655,5 @@ return [
     'Monthly' => 'Monthly',
     'Previous Month' => 'Previous Month',
     'Next Month' => 'Next Month',
+    'no_institute' => 'No Institute',
 ];

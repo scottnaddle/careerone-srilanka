@@ -550,7 +550,7 @@
                                     class="text-red-600 p-1 text-center">*</span></label>
                             <input type="text" name="title" id="title" value="{{ $qna->title }}"
                                 oninput="trimSpaces(this)"
-                                class="w-full p-3 pl-4 h-9 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:border-gray-500 dark:bg-[#1E1E1E] dark:placeholder-gray-400 dark:text-white">
+                                class="w-full py-2 px-3 pl-4 h-9 bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:border-gray-500 dark:bg-[#1E1E1E] dark:placeholder-gray-400 dark:text-white">
                         </div>
                         <div class="flex flex-col">
                             <label for="description"

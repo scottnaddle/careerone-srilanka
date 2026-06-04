@@ -51,6 +51,7 @@ class DatabaseSeeder extends Seeder
 //        $this->call(TraineeMatchSeeder::class);
 //        $this->call(OJTSeeder::class);
         $this->call(CareerTestSeeder::class);
+        $this->call(CounselingFieldSeeder::class);
 
 
          $this->call(PolicyCategorySeeder::class);

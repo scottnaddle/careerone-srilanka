@@ -48,7 +48,7 @@
                             <div class="flex flex-col">
                                 <div class="flex gap-4 items-center">
                                     <input type="text" name="nic" id="nic" pattern="\d{9}[VXvx]|\d{12}"
-                                           class="w-full p-3 pl-4 h-9 border border-gray-300 text-[#91919A] sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
+                                           class="w-full py-2 px-3 pl-4 h-9 border border-gray-300 text-[#91919A] sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
                                            value="{{ old('nic') }}" placeholder="XXXX XXXX XXXX" readonly required maxlength="10">
                                 </div>
                                 @error('nic_check_fail')
@@ -64,7 +64,7 @@
                             <div class="flex flex-col">
                                 <div class="flex gap-4 items-center">
                                     <input type="text" name="nic" id="nic" pattern="\d{9}[VXvx]|\d{12}"
-                                           class="w-full p-3 pl-4 h-9 border border-gray-300 text-[#91919A] sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
+                                           class="w-full py-2 px-3 pl-4 h-9 border border-gray-300 text-[#91919A] sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white"
                                            value="{{ old('nic') }}" placeholder="XXXX XXXX XXXX" required>
 {{--                                    <button type="button"--}}
 {{--                                            class="btn-check-nic text-white w-3/12 bg-[#4984F6] hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-full--}}
@@ -108,7 +108,7 @@
                                 class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <input type="text" name="first_name" id="first_name" value="{{ old('first_name') }}"
-                               class="border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-none block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white" placeholder="Your first name">
+                               class="border py-2 px-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-none block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white" placeholder="Your first name">
                         @if ($errors->has('first_name'))
                             <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('first_name') }}</span>
                         @endif
@@ -119,7 +119,7 @@
                                 class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <input type="text" name="last_name" id="last_name" value="{{ old('last_name') }}"
-                               class="border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-none block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white" placeholder="Your last name">
+                               class="border py-2 px-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-none block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white" placeholder="Your last name">
                         @if ($errors->has('last_name'))
                             <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('last_name') }}</span>
                         @endif
@@ -131,7 +131,7 @@
                         </label>
                         <input type="email" name="email" id="email" value="{{ old('email') }}"
                                placeholder="You@email.com"
-                               class="border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white">
+                               class="border py-2 px-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white">
                         @if ($errors->has('email'))
                             <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('email') }}</span>
                         @endif
@@ -143,7 +143,7 @@
                                 class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <input type="text" name="contact_address" id="contact_address" value="{{ old('contact_address') }}"
-                               class="border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-none block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white" placeholder="Your contact address">
+                               class="border py-2 px-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-none block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white" placeholder="Your contact address">
                         @if ($errors->has('contact_address'))
                             <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('contact_address') }}</span>
                         @endif
@@ -177,7 +177,7 @@
                         </label>
                         <div class="relative">
                             <input type="password" name="password" id="password" placeholder="********"
-                                   class="border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white">
+                                   class="border py-2 px-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white">
                             <span class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer dark:text-white"
                                   id="toggle-password">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -211,7 +211,7 @@
                         </label>
                         <div class="relative">
                             <input type="password" name="repassword" id="repassword" placeholder="{{trans('Retype your password')}}"
-                                   class="border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white">
+                                   class="border py-2 px-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white">
                             <span class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer dark:text-white"
                                   id="toggle-repassword">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -246,7 +246,7 @@
                         </label>
                         <input type="text" name="mobile" id="mobile" value="{{ old('mobile') }}"
                                placeholder="Eg: 075 555 5555"
-                               class="border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white" required>
+                               class="border py-2 px-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white" required>
                         @if ($errors->has('mobile'))
                             <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('mobile') }}</span>
                         @endif
