@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
+
 class District extends Model
 {
     use HasFactory;
@@ -76,9 +76,9 @@ class District extends Model
 //        return $this->counselings()->where($type, $code_id)->count();
 //    }
 
-    public function countCounselingFCodeId($code_id, $type, $startDate = null, $endDate = null)
+    public function countCounselingFCodeId($code_id, $type)
     {
-        $query = $this->counselings()
+        return $this->counselings()
             ->where($type, $code_id)
             ->where(function ($query) {
                 $query->where('status', '!=', \App\Enums\CgoCounselingStatusEnums::COMPLETED->value)
@@ -86,24 +86,11 @@ class District extends Model
                         $query->where('status', \App\Enums\CgoCounselingStatusEnums::COMPLETED->value)
                             ->whereNotNull('result');
                     });
-            });
-
-        // Thêm filter theo khoảng thời gian nếu có
-        if ($startDate && $endDate) {
-            $query->whereBetween('created_at', [
-                Carbon::parse($startDate)->startOfDay(),
-                Carbon::parse($endDate)->endOfDay()
-            ]);
-        }
-
-        return $query->count();
+            })
+            ->count();
     }
 
     public function institutes() {
         return $this->hasMany(Institute::class, 'dist_id')->orderBy('name', 'asc');
-    }
-
-    public function companies() {
-        return $this->hasMany(Company::class, 'district_id');
     }
 }

@@ -135,13 +135,11 @@ class JobInformationResource extends Resource
                 ->label(__('admin/dashboard.job_information.title'))
                 ->sortable()
                 ->limit(50)
-                ->searchable()
-                ->wrap(),
+                ->searchable(),
 
             TextColumn::make('sectors.name')
                 ->label(__('admin/dashboard.job_information.sector'))
-                ->sortable()
-                ->wrap(),
+                ->sortable(),
 
             TextColumn::make('skills')
                 ->label(__('admin/dashboard.job_information.skills_value'))
@@ -150,8 +148,7 @@ class JobInformationResource extends Resource
                     return collect($skills)->map(function ($skill) {
                         return "{$skill['text']} (Value: {$skill['value']})";
                     })->implode(', ');
-                })
-                ->wrap(),
+                }),
 
             TextColumn::make('knowledge')
                 ->label(__('admin/dashboard.job_information.knowledges_value'))
@@ -160,13 +157,11 @@ class JobInformationResource extends Resource
                     return collect($knowledges)->map(function ($knowledge) {
                         return "{$knowledge['text']} (Value: {$knowledge['value']})";
                     })->implode(', ');
-                })
-                ->wrap(),
+                }),
 
             TextColumn::make('expected_income_per_month')
                 ->label(__('admin/dashboard.job_information.expected_income_per_month'))
-                ->sortable()
-                ->wrap(),
+                ->sortable(),
         ])
             ->searchPlaceholder('Title')
             ->filters([

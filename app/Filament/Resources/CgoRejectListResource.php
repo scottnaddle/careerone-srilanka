@@ -60,7 +60,7 @@ class CgoRejectListResource extends Resource
                 Tables\Columns\TextColumn::make('institute.name')
                     ->label('Institution')
                     ->searchable()
-                    ->sortable()->wrap(),
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('fullName')
                     ->label('Name')
@@ -68,7 +68,7 @@ class CgoRejectListResource extends Resource
                         return $record->fullName ?? 'N/A';
                     })->searchable([
                         'first_name', 'last_name'
-                    ])->wrap()
+                    ])
                    
                     ,
 

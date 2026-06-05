@@ -3,20 +3,33 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CounselingListResource\Pages;
+use App\Filament\Resources\CounselingListResource\RelationManagers;
 use App\Models\CgoCounseling;
+use App\Models\CounselingList;
 use App\Models\District;
+use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Filament\Forms\Components\DatePicker;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Services\Admin\SearchComponentAdminService;
-
 class CounselingListResource extends Resource
 {
     protected static ?string $model = CgoCounseling::class;
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static $countContentList;
     protected static ?string $modelLabel = 'Career Guidance';
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+
+            ]);
+    }
 
     public static function table(Table $table): Table
     {
@@ -25,78 +38,66 @@ class CounselingListResource extends Resource
             new \App\Models\District(),
             new \App\Models\Sector()
         );
-        $customQuery = $searchService->searchCounseling([
+        $customQuery=$searchService->searchCounseling([
             'search' => request()->query('search', null),
+            'district'=>request()->query('district',null),
+            'search_time' => request()->query('search-time', null),
         ]);
-
+        self::$countContentList= $customQuery->count();
         return $table
-            ->query($customQuery)
+        ->query(
+            $customQuery
+        )
             ->columns([
-                TextColumn::make('index')
+                Tables\Columns\TextColumn::make('index')
                     ->label(__('admin/dashboard.content.no'))
                     ->rowIndex()
                     ->alignCenter(),
 
                 TextColumn::make('counseling_type')
-                    ->sortable()
-                    ->label(__('admin/dashboard.counseling.detail.type'))
-                    ->getStateUsing(function ($record) {
-                        return getCodeNameByCodeId('counselling_type', $record->counseling_type) ?? 'N/A';
-                    })
-                    ->wrap(),
-
+                ->sortable()
+                ->label(__('admin/dashboard.counseling.detail.type'))
+                ->getStateUsing(function ($record) {
+                    return getCodeNameByCodeId('counselling_type', $record->counseling_type) ?? 'N/A';
+                }),
                 TextColumn::make('counseling_field_id')
-                    ->label(__('admin/dashboard.counseling.detail.counseling_field'))
-                    ->getStateUsing(function ($record) {
-                        return getCodeNameByCodeId('counselling_field', $record->counseling_field_id) ?? 'N/A';
-                    })
-                    ->sortable()
-                    ->wrap(),
-
+                ->label(__('admin/dashboard.counseling.detail.counseling_field'))
+                ->getStateUsing(function ($record) {
+                    return getCodeNameByCodeId('counselling_field', $record->counseling_field_id) ?? 'N/A';
+                })
+                ->sortable(),
                 TextColumn::make('title')
-                    ->label(__('admin/dashboard.counseling.detail.title'))
-                    ->searchable()
-                    ->limit(50)
-                    ->sortable()
-                    ->wrap(),
-
+                ->label(__('admin/dashboard.counseling.detail.title'))
+                ->searchable()
+                ->limit(50)
+                ->sortable(),
                 TextColumn::make('registration_date')
-                    ->label(__('admin/dashboard.counseling.detail.registraton_date'))
-                    ->sortable()
-                    ->wrap(),
+                ->label(__('admin/dashboard.counseling.detail.registraton_date'))
 
+                ->sortable(),
                 TextColumn::make('available_time')
-                    ->label(__('admin/dashboard.counseling.detail.counseling_date'))
-                    ->sortable()
-                    ->wrap(),
-
+                ->label(__('admin/dashboard.counseling.detail.counseling_date'))
+                ->sortable(),
                 TextColumn::make('institute.name')
-                    ->label(__('admin/dashboard.counseling.detail.trainee_institute'))
-                    ->sortable()
-                    ->wrap(),
-
+                ->label(__('admin/dashboard.counseling.detail.trainee_institute'))
+                ->sortable(),
                 TextColumn::make('trainee_name.full_name')
-                    ->label(__('admin/dashboard.counseling.detail.trainee_name'))
-                    ->getStateUsing(function ($record) {
-                        if ($record->trainee_id == null) {
-                            return $record->trainee_offline_firstname . ' ' . $record->trainee_offline_lastname;
-                        }
+                ->label(__('admin/dashboard.counseling.detail.trainee_name'))
+                ->getStateUsing(function ($record) {
+                    if ($record->trainee_id == null) {
+                        return $record->trainee_offline_firstname . ' ' . $record->trainee_offline_lastname;
+                    }else{
                         return $record->traineeUser?->fullName;
-                    })
-                    ->wrap(),
-            ])
-            ->paginated([10, 25, 50, 100])
-            ->striped()
+                    }
+                }),
+
+
+            ])->paginated([10, 25, 50, 100])
             ->filters([
-                Tables\Filters\SelectFilter::make('district')
+                Tables\Filters\SelectFilter::make('location')
                     ->label('District')
                     ->options(District::pluck('name', 'id')->toArray())
-                    ->searchable()
-                    ->query(function ($query, $data) {
-                        if (!empty($data['value'])) {
-                            $query->where('institutes.dist_id', $data['value']);
-                        }
-                    }),
+                    ->searchable(),
                 Tables\Filters\SelectFilter::make('head_office')
                     ->label(__('admin/cgo_performance.institute_head_office'))
                     ->options(
@@ -108,36 +109,29 @@ class CounselingListResource extends Resource
                             ])
                             ->toArray()
                     )
-                    ->searchable()
-                    ->query(function ($query, $data) {
+                    ->query(function (Builder $query, array $data) {
                         if (!empty($data['value'])) {
                             $query->whereHas('institute.tvetType', function ($q) use ($data) {
                                 $q->where('head_office_code', $data['value']);
                             });
                         }
                     }),
-                Tables\Filters\Filter::make('created_at')
-                    ->form([
-                        DatePicker::make('date')
-                            ->label('Created Date')
-                            ->native(false),
-                    ])
-                    ->query(function ($query, array $data) {
-                        if (!empty($data['date'])) {
-                            $query->whereDate('created_at', $data['date']);
-                        }
-                    }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+
             ])
             ->defaultSort('updated_at', 'desc')
-            ->bulkActions([]);
+            ->reorderable('updated_at')
+            ->bulkActions([
+
+            ]);
     }
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            //
+        ];
     }
 
     public static function getPages(): array

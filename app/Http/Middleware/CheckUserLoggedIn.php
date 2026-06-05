@@ -16,7 +16,7 @@ class CheckUserLoggedIn
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::guard('company')->check() || Auth::guard('cgo')->check() || Auth::guard('trainee')->check() || Auth::guard('schoolkid')->check()) {
+        if (Auth::guard('company')->check() || Auth::guard('cgo')->check() || Auth::guard('trainee')->check()) {
             return $next($request);
         }
         return redirect('/choose-login');

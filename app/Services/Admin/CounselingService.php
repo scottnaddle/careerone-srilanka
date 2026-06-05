@@ -8,7 +8,6 @@ use App\Models\CgoUser;
 use App\Models\Institute;
 use App\Models\Job;
 use Carbon\Carbon;
-use \App\Enums\CgoCounselingStatusEnums;
 class CounselingService
 {
     protected object $model;
@@ -21,99 +20,43 @@ class CounselingService
         $this->model = $model;
     }
 
-//    public function getCounselings($page = 'cgo', $data = [])
-//{
-//    $counseling=CgoCounseling::query()
-//    ->selectRaw("
-//        DATE(cgo_counselings.created_at) as created_date,
-//        MAX(cgo_counselings.id) as id,
-//        COUNT(*) as content_count,
-//        SUM(CASE WHEN cgo_counselings.status = ".\App\Enums\CgoCounselingStatusEnums::REQUEST->value." THEN 1 ELSE 0 END) as status_request,
-//        SUM(CASE WHEN cgo_counselings.status = ".\App\Enums\CgoCounselingStatusEnums::CONFIRM->value." THEN 1 ELSE 0 END) as status_confirm,
-//        SUM(CASE WHEN cgo_counselings.status = ".\App\Enums\CgoCounselingStatusEnums::COMPLETED->value."  AND cgo_counselings.result IS NOT NULL THEN 1 ELSE 0 END) as status_completed,
-//        SUM(CASE WHEN cgo_counselings.status = ".\App\Enums\CgoCounselingStatusEnums::CANCELED->value." THEN 1 ELSE 0 END) as status_canceled
-//    ")
-//    ->whereNotNull('result')
-//    ->groupBy(\DB::raw("DATE(cgo_counselings.created_at)"));
-//    return $counseling ;
-//}
     public function getCounselings($page = 'cgo', $data = [])
-    {
-        $user = auth('admin')->user();
-        $isAdmin = $user->hasRole('admin');
-        $instituteIds = null;
-
-        // Nếu là admin, lấy danh sách institute IDs dưới quyền
-        if ($isAdmin) {
-            $instituteIds = $user->institutes()->pluck('institutes.id')->toArray();
-        }
-
-        $counseling = CgoCounseling::query()
-            ->selectRaw("
-            DATE(cgo_counselings.created_at) as created_date,
-            MAX(cgo_counselings.id) as id,
-            COUNT(*) as content_count,
-            SUM(CASE WHEN cgo_counselings.status = ? THEN 1 ELSE 0 END) as status_request,
-            SUM(CASE WHEN cgo_counselings.status = ? THEN 1 ELSE 0 END) as status_confirm,
-            SUM(CASE WHEN cgo_counselings.status = ? AND cgo_counselings.result IS NOT NULL THEN 1 ELSE 0 END) as status_completed,
-            SUM(CASE WHEN cgo_counselings.status = ? THEN 1 ELSE 0 END) as status_canceled
-        ", [
-                CgoCounselingStatusEnums::REQUEST->value,
-                CgoCounselingStatusEnums::CONFIRM->value,
-                CgoCounselingStatusEnums::COMPLETED->value,
-                CgoCounselingStatusEnums::CANCELED->value
-            ])
-            ->whereNotNull('result')
-            ->groupBy(\DB::raw("DATE(cgo_counselings.created_at)"));
-        // Nếu là admin, lọc theo institute
-        if ($isAdmin && !empty($instituteIds)) {
-            $counseling->whereHas('cgoUser', function ($query) use ($instituteIds) {
-                $query->whereIn('institute_id', $instituteIds);
-            });
-        }
-        return $counseling;
-    }
+{
+    $counseling=CgoCounseling::query()
+    ->selectRaw("
+        DATE(cgo_counselings.created_at) as created_date,
+        MAX(cgo_counselings.id) as id,
+        COUNT(*) as content_count,
+        SUM(CASE WHEN cgo_counselings.status = ".\App\Enums\CgoCounselingStatusEnums::REQUEST->value." THEN 1 ELSE 0 END) as status_request,
+        SUM(CASE WHEN cgo_counselings.status = ".\App\Enums\CgoCounselingStatusEnums::CONFIRM->value." THEN 1 ELSE 0 END) as status_confirm,
+        SUM(CASE WHEN cgo_counselings.status = ".\App\Enums\CgoCounselingStatusEnums::COMPLETED->value."  AND cgo_counselings.result IS NOT NULL THEN 1 ELSE 0 END) as status_completed,
+        SUM(CASE WHEN cgo_counselings.status = ".\App\Enums\CgoCounselingStatusEnums::CANCELED->value." THEN 1 ELSE 0 END) as status_canceled
+    ")
+    ->whereNotNull('result')
+    ->groupBy(\DB::raw("DATE(cgo_counselings.created_at)"));
+    return $counseling ;
+}
 
 
 
 
 public function getCounselingChart()
 {
-    $user = auth('admin')->user();
-    $isAdmin = $user->hasRole('admin');
-    $instituteIds = null;
-
-    // Nếu là admin, lấy danh sách institute IDs dưới quyền
-    if ($isAdmin) {
-        $instituteIds = $user->institutes()->pluck('institutes.id')->toArray();
-    }
-
     $jobQuery = CgoCounseling::query()
         ->selectRaw("
             DATE(created_at) as date,
-            COUNT(CASE WHEN status = ? THEN 1 END) as request_count,
-            COUNT(CASE WHEN status = ? THEN 1 END) as confirm_count,
-            COUNT(CASE WHEN status = ? AND cgo_counselings.result IS NOT NULL THEN 1 END) as completed_count
-        ", [
-            CgoCounselingStatusEnums::REQUEST->value,
-            CgoCounselingStatusEnums::CONFIRM->value,
-            CgoCounselingStatusEnums::COMPLETED->value
-        ])
+            COUNT(CASE WHEN status = " . \App\Enums\CgoCounselingStatusEnums::REQUEST->value . " THEN 1 END) as request_count,
+            COUNT(CASE WHEN status = " . \App\Enums\CgoCounselingStatusEnums::CONFIRM->value . " THEN 1 END) as confirm_count,
+            COUNT(CASE WHEN status = " . \App\Enums\CgoCounselingStatusEnums::COMPLETED->value . " AND cgo_counselings.result IS NOT NULL THEN 1 END) as completed_count
+        ")
         ->whereNotNull('result')
-        ->groupBy(\DB::raw('DATE(created_at)'));
-
-    // Nếu là admin, lọc theo institute
-    if ($isAdmin && !empty($instituteIds)) {
-        $jobQuery->whereHas('cgoUser', function ($query) use ($instituteIds) {
-            $query->whereIn('institute_id', $instituteIds);
-        });
-    }
-
-    return $jobQuery
+        ->groupBy(\DB::raw('DATE(created_at)'))
         ->orderBy('date', 'DESC')
-        // ->limit(5)
+//        ->limit(5)
         ->get()
         ->values();
+
+    return $jobQuery;
 }
 
 public function getGuidanceCGOPerformance($type, $data = [])

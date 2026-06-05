@@ -40,7 +40,6 @@ class CgoLoginController extends Controller
               $data = $request->except('_token');
         if (Auth::guard('cgo')->attempt($data)) {
             $user = Auth::guard('cgo')->user();
-            $user->update(['last_login_at' => now()]);
             if ($user->active == false) {
                 $token = base64_encode($user->id);
                 $u_type = 'cgo';

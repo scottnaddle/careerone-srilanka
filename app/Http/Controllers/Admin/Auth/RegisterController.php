@@ -53,20 +53,14 @@ class RegisterController extends Controller
         $admin_user->email = $request->email;
         $admin_user->password = bcrypt($request->password);
         $admin_user->phone = $request->phone;
-        if ($admin_user->tvet_type == 'NAITA') {
-            $admin_user->role = 'naita-admin';
-            $admin_user->assignRole('naita-admin');
-        }else {
-            $admin_user->role = 'admin';
-            $admin_user->assignRole('admin');
-        }
+        $admin_user->role = 'admin';
         // $admin_user->tvet_headquater_id = $request->tvet_headquater;
         $admin_user->tvet_type = $request->tvet_type;
         $admin_user->active = false;
         // $admin_user->district_id = $request->district;
         // $admin_user->institute_id = $request->institute;
         $admin_user->save();
-
+        $admin_user->assignRole('admin');
         $token = base64_encode($request->email);
         switch ($verification_type) {
             case Constant::email:
@@ -76,7 +70,7 @@ class RegisterController extends Controller
                 $admin_user->sendSMSVerify($token);
                 break;
         }
-        return redirect()->route('verification.verify', ['u_type' => 'admin', 'token' => $token, 'verification_method' => $verification_type])->with('message', 'Verification code has been sent');
+        return redirect()->route('verification.verify', ['u_type' => 'admin', 'token' => $token, 'verification_method' => $verification_type])->with('message', 'Sent');
 
     }
 
@@ -105,7 +99,10 @@ class RegisterController extends Controller
     public function checkNIC(Request $request)
     {
         return response()->json([
-            'success' => 'NIC confirmed!',
+            'success' => 'NIC confirmed!'
+        ]);
+        return response()->json([
+            'error' => 'NIC confirm fail!'
         ]);
     }
 

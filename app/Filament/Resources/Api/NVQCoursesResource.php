@@ -43,34 +43,28 @@ class NVQCoursesResource extends Resource
             TextColumn::make('course_id')
                 ->label(__('admin/dashboard.nvqCourse.course_id'))
                 ->sortable()
-                ->searchable()
-                ->wrap(),
+                ->searchable(),
         
             TextColumn::make('course_name')
                 ->label(__('admin/dashboard.nvqCourse.course_name'))
                 ->sortable()
-                ->searchable()
-                ->wrap(),
+                ->searchable(),
         
             TextColumn::make('level')
                 ->label(__('admin/dashboard.nvqCourse.level'))
-                ->sortable()
-                ->wrap(),
+                ->sortable(),
         
             TextColumn::make('ncs_code')
                 ->label(__('admin/dashboard.nvqCourse.ncs_code'))
-                ->sortable()
-                ->wrap(),
+                ->sortable(),
         
             TextColumn::make('ncs_name')
                 ->label(__('admin/dashboard.nvqCourse.ncs_name'))
-                ->sortable()
-                ->wrap(),
+                ->sortable(),
         
             TextColumn::make('reg_no')
                 ->label(__('admin/dashboard.nvqCourse.reg_no'))
-                ->sortable()
-                ->wrap(),
+                ->sortable(),
         ])
         ->paginated([10, 25, 50, 100])
         ->searchPlaceholder('Course name')

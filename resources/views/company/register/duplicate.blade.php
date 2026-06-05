@@ -1,4 +1,4 @@
-@extends('auth.layouts.master')
+@extends('company.auth.layouts.master')
 
 @section('title', 'Duplicated company information')
 

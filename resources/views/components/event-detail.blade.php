@@ -74,9 +74,7 @@
                                 </div>
                             </div>
                             <div class="ml-4 flex-shrink-0">
-{{--                                <a href="{{ route('informations.events.download', ['id' => $item->id]) }}"--}}
-{{--                                   class="font-medium text-primary hover:text-blue-600 hover:underline">{{ trans('system.information.event.download') }}</a>--}}
-                                <a href="{{ route('informations.events.attachments.preview', ['id' => $item->id]) }}" download
+                                <a href="{{ route('informations.events.download', ['id' => $item->id]) }}"
                                    class="font-medium text-primary hover:text-blue-600 hover:underline">{{ trans('system.information.event.download') }}</a>
                             </div>
                         </li>

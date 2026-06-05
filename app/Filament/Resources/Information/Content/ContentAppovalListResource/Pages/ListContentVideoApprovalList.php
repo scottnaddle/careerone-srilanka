@@ -26,7 +26,7 @@ class ListContentVideoApprovalList extends ListRecords
         $query = Content::where('content_type', 'video')
         ->where('status', \App\Enums\StatusEnumsManagement::PENDING_APPROVAL);
         if (!empty($searchQuery)) {
-            $query->where('title', 'like', '%' . $searchQuery . '%');
+            $query->where('title', 'ilike', '%' . $searchQuery . '%');
         }
         if (!empty($searchTime)) {
             if ($searchTime === 'all') {

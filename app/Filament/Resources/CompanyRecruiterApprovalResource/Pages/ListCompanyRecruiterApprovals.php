@@ -9,10 +9,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListCompanyRecruiterApprovals extends ListRecords
 {
     protected static string $resource = CompanyRecruiterApprovalResource::class;
-//    public function getBreadcrumb(): string
-//    {
-//        return trans('admin/performance.Company Recruiters Approval List');
-//    }
+    protected static ?string $breadcrumb = 'Company Recruiter Approval List';
     protected function getHeaderActions(): array
     {
         return [

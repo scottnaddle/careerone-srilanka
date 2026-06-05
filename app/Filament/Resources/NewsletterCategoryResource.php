@@ -58,14 +58,12 @@ class NewsletterCategoryResource extends Resource
                     ->label(__('admin/dashboard.new_letter.name'))
                     ->sortable()
                     ->limit(50)
-                    ->searchable()
-                    ->wrap(),
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make('description')
                     ->label(__('admin/dashboard.new_letter.description'))
                     ->limit(50)
-                    ->sortable()
-                    ->wrap(),
+                    ->sortable(),
             ])->searchPlaceholder(__('admin/dashboard.new_letter.name'))
             ->filters([
                 //

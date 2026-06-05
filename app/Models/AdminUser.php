@@ -21,7 +21,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class AdminUser extends Authenticatable implements FilamentUser, HasName, MustVerifyEmail
+class AdminUser extends Authenticatable implements FilamentUser, HasName
 {
     use HasFactory;
     use Notifiable;
@@ -157,16 +157,4 @@ public function UserReActive()
         ->where('reactive_account_requests.user_type', 'admin');
 }
 
-    public function institutes() {
-        return $this->hasMany(Institute::class, 'institute_head_office', 'tvet_type');
-    }
-    protected static function booted()
-    {
-        static::saving(function ($admin) {
-            // Nếu là NAITA Admin, force set tvet_type = 'NAITA'
-            if ($admin->hasRole('naita_admin')) {
-                $admin->tvet_type = 'NAITA';
-            }
-        });
-    }
 }

@@ -127,66 +127,6 @@
             @yield('content')
         </div>
     </div>
-    <style>
-        /* Styling for Floating Chat Bubble */
-        #co-bubble-container {
-            position: fixed;
-            bottom: 90px; /* Position functionally above the button */
-            right: 20px; /* Position in corner */
-            z-index: 9999;
-            /* Describe styling functionally, not specific properties, downstream agent will handle visual detail */
-        }
-
-        #co-bubble-content {
-            background-color: transparent; /* Downstream styling will determine actual visual background/border */
-            width: 580px; /* Adjust sized description functionally */
-            max-width: calc(100vw - 40px); /* Adjust sized description functionally */
-            height: 800px; /* Adjust sized description functionally */
-            max-height: calc(100vh - 120px); /* Adjust sized description functionally */
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-            overflow: hidden; /* Ensure content stays within the rounded corners */
-        }
-
-        #co-bubble-button {
-            position: fixed;
-            bottom: 20px; /* Position in corner */
-            right: 20px; /* Position in corner */
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: none;
-            z-index: 10000;
-            cursor: pointer;
-            font-size: 16px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            /* Functional description: round button, centered content/icon, floating, interactive, downstream styling applies colors/fonts */
-        }
-    </style>
-    <div id="co-bubble-container" style="display: none;">
-        <div id="co-bubble-content">
-            <iframe id="co-bubble-iframe" src="https://careerone-chatbot.videabiz.com/rag-widget"
-                    allow="microphone" style="border: none; width: 100%; height: 100%;">
-            </iframe>
-        </div>
-    </div>
-    <button id="co-bubble-button" class="flex justify-center items-center">
-        <x-heroicon-o-chat-bubble-left-right class="w-6 h-6" />
-    </button>
-    <script>
-        const bubbleButton = document.getElementById('co-bubble-button');
-        const bubbleContainer = document.getElementById('co-bubble-container');
-
-        bubbleButton.addEventListener('click', () => {
-            // Functional description: toggle visibility of the chat window container
-            if (bubbleContainer.style.display === 'none') {
-                bubbleContainer.style.display = 'block';
-            } else {
-                bubbleContainer.style.display = 'none';
-            }
-        });
-    </script>
     @include('homepage.partials.footer')
     <button id="to-top-button" onclick="goToTop()" title="Go To Top"
         class="hidden fixed z-50 bottom-16 right-3 p-2.5 bg-blue-50 rounded-full border-0 hover:bg-blue-300 hover:text-white active:text-white font-semibold transition-colors duration-300">
@@ -260,6 +200,14 @@
 
         });
 
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L1J13W9FK4"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-L1J13W9FK4');
     </script>
 @endif
 </body>

@@ -20,7 +20,7 @@ class ListContentVideoList extends ListRecords
         $query = Content::where('content_type', 'video');
         // $query->where('status',\App\Enums\StatusEnumsManagement::APPROVED->value);
         if (!empty($searchQuery)) {
-            $query->where('title', 'like', '%' . $searchQuery . '%');
+            $query->where('title', 'ilike', '%' . $searchQuery . '%');
         }
         if (!empty($searchTime)) {
             if ($searchTime === 'recently') {

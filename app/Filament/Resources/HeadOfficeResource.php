@@ -47,13 +47,11 @@ class HeadOfficeResource extends Resource
                 TextColumn::make('head_office_code')
                 ->label(__('admin/dashboard.head_office.head_office_code'))
                 ->sortable()
-                ->searchable()
-                ->wrap(),
+                ->searchable(),
                 TextColumn::make('head_office_name')
                 ->label(__('admin/dashboard.head_office.head_office_name'))
                 ->searchable()
                 ->sortable()
-                ->wrap()
             ])->searchPlaceholder('Head office name')->paginated([10, 25, 50, 100])
 //            ->defaultSort('updated_at', 'desc')
 //            ->reorderable('updated_at')

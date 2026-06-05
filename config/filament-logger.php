@@ -17,8 +17,7 @@ return [
 
     'access' => [
         'enabled' => true,
-//        'logger' => \Z3d0X\FilamentLogger\Loggers\AccessLogger::class,
-        'logger' => \App\Loggers\CustomAccessLogger::class,
+        'logger' => \Z3d0X\FilamentLogger\Loggers\AccessLogger::class,
         'color' => 'danger',
         'log_name' => 'Access',
     ],

@@ -36,7 +36,7 @@ class FrontpageMenu extends Component
         switch (activeGuard()) {
             case '':
                 $this->items = [
-                    ['label' => trans('system.menu.home'), 'link' => '/'],
+                    ['label' => 'Home', 'link' => '/'],
                     [
                         'label' => trans('system.menu.about_us'),
                         'children' => [
@@ -81,46 +81,9 @@ class FrontpageMenu extends Component
                     ],
                 ];
                 break;
-            case 'schoolkid':
-                $this->items = [
-                    ['label' => 'Home', 'link' => '/'],
-                    [
-                        'label' => trans('system.menu.about_us'),
-                        'children' => [
-                            ['label' => trans('system.menu.about_career_platform'), 'link' => route('homepage.about-us')],
-                            ['label' => trans('system.menu.contact_us'), 'link' => route('homepage.contact-us')],
-                        ],
-                    ],
-                    [
-                        'label' => trans('cgo.menu.career_guidance.root'),
-                        'children' => [
-                            ['label' => trans('trainee.menu.career_guidance.career_test'), 'link' => route('schoolkid.career-guidance.career-test.list')],
-                            [
-                                'label' => trans('cgo.menu.career_guidance.employment.root'),
-                                'children' => [
-                                    ['label' => trans('cgo.menu.career_guidance.employment.employment_policy'), 'link' => route('career-guidance.employment.employment-policy')],
-                                    ['label' => trans('cgo.menu.career_guidance.employment.news_letter'), 'link' => route('career-guidance.employment.newsletter')],
-                                ]
-                            ],
-                            [
-                                'label' => trans('cgo.menu.career_guidance.job_information.root'),
-                                'children' => $jobInfoChildren
-                            ],
-                        ],
-                    ],
-                    [
-                        'label' => trans('system.menu.information.root'),
-                        'children' => [
-                            ['label' => trans('system.menu.information.event'), 'link' => route('get-public-event')],
-                            ['label' => trans('system.menu.information.qna'), 'link' => route('informations.qnas.list')],
-                            ['label' => trans('system.menu.information.notice.notice'), 'link' => route('notices.index', ['#notice'])],
-                        ],
-                    ],
-                ];
-                break;
             case 'cgo':
                 $this->items = [
-                    ['label' => trans('system.menu.home'), 'link' => '/'],
+                    ['label' => 'Home', 'link' => '/'],
                     [
                         'label' => trans('system.menu.about_us'),
                         'children' => [
@@ -184,7 +147,7 @@ class FrontpageMenu extends Component
                 break;
             case 'company':
                 $this->items = [
-                    ['label' => trans('system.menu.home'), 'link' => '/'],
+                    ['label' => 'Home', 'link' => '/'],
                     [
                         'label' => trans('system.menu.about_us'),
                         'children' => [
@@ -230,7 +193,7 @@ class FrontpageMenu extends Component
                 break;
             case 'trainee':
                 $this->items = [
-                    ['label' => trans('system.menu.home'), 'link' => '/'],
+                    ['label' => 'Home', 'link' => '/'],
                     [
                         'label' => trans('system.menu.about_us'),
                         'children' => [

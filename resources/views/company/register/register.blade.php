@@ -1,4 +1,4 @@
-@extends('auth.layouts.master')
+@extends('company.auth.layouts.master')
 
 @section('title', 'Register new company')
 <link href="{{ asset('css/select2/select2.css') }}" rel="stylesheet" />
@@ -17,24 +17,24 @@
         .select2-container--default .select2-selection--single .select2-selection__rendered:is(.dark *) {
             color: #fff !important;
         }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 20px !important;
+        }
         .select2-container--default .select2-selection--single{
-            background-color: #f9fafb;
-            height: 3rem !important;
-            font-size: 12px !important;
+            background-color: #fff;
+            height: 2.25rem !important;
+            font-size: 14px !important;
             padding-top: 0 !important;
             padding-bottom: 0!important;
-            border-radius: 0.75rem; border-width: 2px !important; border-color: #e5e7eb !important;
+            border-radius: 10px;
         }
         .select2-selection__rendered {
             color: #000000 !important;
             height: 100% !important;
         }
         .select2-container .select2-selection--single .select2-selection__rendered {
-            padding-top: 0.75rem !important;
-            padding-bottom: 0.75rem !important;
-            padding-left: 1rem !important;
-            font-size: 12px !important;
-            line-height: 20px !important;
+            padding-top: 0.5rem !important;
+            padding-left: 0.5rem !important;
         }
         .select2-selection__arrow {
             height: 100% !important;
@@ -59,8 +59,8 @@
                 <form class="space-y-6 leading-5" action="{{ route('company.register.post-register') }}" method="POST" enctype="multipart/form-data" autocomplete="off">
                     @csrf
                     <div>
-                        <label for="type_of_enterprise" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-                            {{__('auth.Company information')}}<span class="text-red-500 ml-0.5">*</span>
+                        <label for="type_of_enterprise" class="font-medium text-[#706F81] block mb-1.5 dark:text-gray-300">
+                            {{__('auth.Company information')}}<span class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <select class="select2 mb-0 bg-white" id="enterpriseSelect" name="company_information" style="width: 100%" data-placeholder="{{__('auth.Please select one')}}" required>
                             <option></option>
@@ -72,91 +72,91 @@
                             @endforelse
                         </select>
                         @if ($errors->has('company_information'))
-                            <span class="mt-1 text-xs text-red-500">{{ $errors->first('company_information') }}</span>
+                            <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('company_information') }}</span>
                         @endif
                     </div>
 
                     <!-- Ministry Fields -->
                     <div id="ministry_name_container" class="hidden">
-                        <label for="ministry_name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-                            {{__('auth.Ministry name')}}<span class="text-red-500 ml-0.5">*</span>
+                        <label for="ministry_name" class="font-medium text-[#706F81] block mb-1.5 dark:text-gray-300">
+                            {{__('auth.Ministry name')}}<span class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <input type="text" name="ministry_name" id="ministry_name" value="{{ old('ministry_name') }}" placeholder="{{__('auth.Ministry of Education, Higher Education and Vocational Education')}}"
-                               class="block w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-2 border-gray-200 rounded-xl placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
+                               class="bg-white border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white mb-1">
                         @if ($errors->has('ministry_name'))
-                            <span class="mt-1 text-xs text-red-500">{{ $errors->first('ministry_name') }}</span>
+                            <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('ministry_name') }}</span>
                         @endif
                     </div>
 
                     <div id="name_of_organisation_container" class="hidden">
-                        <label for="name_of_organisation" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
+                        <label for="name_of_organisation" class="font-medium text-[#706F81] block mb-1.5 dark:text-gray-300">
                             {{__('auth.Name of organisation under the Ministry (if applicable)')}}
                         </label>
                         <input type="text" name="organisation_name" id="name_of_organisation" value="{{ old('organisation_name') }}" placeholder="{{__('auth.Tertiary and Vocational Education Commission (TVEC)')}}"
-                               class="block w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-2 border-gray-200 rounded-xl placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
+                               class="bg-white border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white mb-1">
                         @if ($errors->has('organisation_name'))
-                            <span class="mt-1 text-xs text-red-500">{{ $errors->first('organisation_name') }}</span>
+                            <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('organisation_name') }}</span>
                         @endif
                     </div>
                     <!-- Business Registration Numbers -->
                     <div class="flex flex-col hidden" id="business_registration_number_container">
-                        <label for="business_registration_number" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-                            {{__('auth.Business Registration Number')}} <span class="text-red-500 ml-0.5">*</span>
+                        <label for="business_registration_number" class="font-medium text-gray-600 block dark:text-gray-300 mb-2">
+                            {{__('auth.Business Registration Number')}} <span class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <div class="flex gap-4 mb-1">
                             <input type="text" name="business_registration_number" id="business_registration_number" value="{{ old('business_registration_number') }}"
                                    placeholder="XXXX XXXX XXXX"
-                                   class="block w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-2 border-gray-200 rounded-xl placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
+                                   class="w-full p-3 pl-4 h-9 bg-white border border-[#EDEDED] text-[#91919A] sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                         </div>
                         @if ($errors->has('business_registration_number'))
-                            <span class="mt-1 text-xs text-red-500">{{ $errors->first('business_registration_number') }}</span>
+                            <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('business_registration_number') }}</span>
                         @endif
                     </div>
                     <!-- Company Fields -->
                     <div id="company_name_container" class="hidden">
-                        <label for="name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-                            {{__('auth.Company name')}}<span class="text-red-500 ml-0.5">*</span>
+                        <label for="name" class="font-medium text-[#706F81] block mb-1.5 dark:text-gray-300">
+                            {{__('auth.Company name')}}<span class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <input type="text" name="name" id="name" value="{{ old('name') }}" placeholder="{{__('auth.Type the company name')}}"
-                               class="block w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-2 border-gray-200 rounded-xl placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
+                               class="bg-white border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white mb-1">
 {{--                        <span class="text-xs italic dark:text-white">{{__('auth.Enter the exact company name mentioned in the business registration certificate')}}</span>--}}
                         @if ($errors->has('name'))
-                            <span class="mt-1 text-xs text-red-500">{{ $errors->first('name') }}</span>
+                            <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('name') }}</span>
                         @endif
                     </div>
 
 
 
                     <div class="flex flex-col hidden" id="business_registration_number_container_1">
-                        <label for="business_registration_number_1" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
+                        <label for="business_registration_number_1" class="font-medium text-gray-600 block dark:text-gray-300 mb-2">
                             {{__('auth.Registration number (if applicable)')}}
                         </label>
                         <div class="flex gap-4 mb-1">
                             <input type="text" name="business_registration_number_1" id="business_registration_number_1" value="{{ old('business_registration_number_1') }}"
                                    placeholder="{{trans('auth.Type the registration number if applicable')}}"
-                                   class="block w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-2 border-gray-200 rounded-xl placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
+                                   class="w-full p-3 pl-4 h-9 bg-white border border-[#EDEDED] text-[#91919A] sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                         </div>
                         @if ($errors->has('business_registration_number_1'))
-                            <span class="mt-1 text-xs text-red-500">{{ $errors->first('business_registration_number_1') }}</span>
+                            <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('business_registration_number_1') }}</span>
                         @endif
                     </div>
 
                     <!-- Field of Operations -->
                     <div id="field_of_operations_container" class="hidden">
-                        <label for="co_business" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-                            {{__('auth.Field of operations')}}<span class="text-red-500 ml-0.5">*</span>
+                        <label for="co_business" class="font-medium text-[#706F81] block mb-1.5 dark:text-gray-300">
+                            {{__('auth.Field of operations')}}<span class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <input type="text" name="co_business" id="co_business" value="{{ old('co_business') }}" placeholder="{{__('auth.Environment conservation')}}"
-                               class="block w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-2 border-gray-200 rounded-xl placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
+                               class="bg-white border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white mb-1">
                         @if ($errors->has('co_business'))
-                            <span class="mt-1 text-xs text-red-500">{{ $errors->first('co_business') }}</span>
+                            <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('co_business') }}</span>
                         @endif
                     </div>
 
                     <!-- Office Type -->
                     <div id="office_type_container" class="hidden">
-                        <label for="office_type" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-                            {{__('auth.Office Type')}}<span class="text-red-500 ml-0.5">*</span>
+                        <label for="office_type" class="font-medium text-[#706F81] block mb-1.5 dark:text-gray-300">
+                            {{__('auth.Office Type')}}<span class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <div class="flex gap-6">
                             @foreach(getCodeList('office_type') as $office_type)
@@ -171,14 +171,14 @@
                             @endforeach
                         </div>
                         @if ($errors->has('office_type'))
-                            <span class="mt-1 text-xs text-red-500">{{ $errors->first('office_type') }}</span>
+                            <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('office_type') }}</span>
                         @endif
                     </div>
 
                     <!-- Headquarter -->
                     <div class="hidden" id="input_headquarter">
-                        <label for="headquarter" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-                            {{__('auth.Headquarter')}}<span class="text-red-500 ml-0.5">*</span>
+                        <label for="headquarter" class="font-medium text-[#706F81] block mb-1.5 dark:text-gray-300">
+                            {{__('auth.Headquarter')}}<span class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <select class="select2 mb-0 bg-white" id="headquarter" name="headquarter_id" style="width: 100%" data-placeholder="{{__('auth.Please select one')}}">
                             <option></option>
@@ -190,14 +190,14 @@
                             @endforelse
                         </select>
                         @if ($errors->has('headquarter_id'))
-                            <span class="mt-1 text-xs text-red-500">{{ $errors->first('headquarter_id') }}</span>
+                            <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('headquarter_id') }}</span>
                         @endif
                     </div>
 
                     <!-- Date of Establishment -->
                     <div id="date_of_establishment_container" class="hidden">
-                        <label for="default-datepicker" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-                            {{__('auth.Date Of Establishment')}}<span class="text-red-500 ml-0.5">*</span>
+                        <label for="default-datepicker" class="font-medium text-[#706F81] block mb-1.5 dark:text-gray-300">
+                            {{__('auth.Date Of Establishment')}}<span class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <div class="relative w-full">
                             <div class="absolute inset-y-0 start-0 flex items-center pe-3.5 pointer-events-none justify-end right-0">
@@ -205,22 +205,22 @@
                                     <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
                                 </svg>
                             </div>
-                            <input id="dateOfEstablishment" name="date_of_establishment" type="text" class="block w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-2 border-gray-200 rounded-xl placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400" value="{{ old('date_of_establishment') }}">
+                            <input id="dateOfEstablishment" name="date_of_establishment" type="text" class="bg-white dark:bg-[#1E1E1E] border border-gray-300 text-gray-900 text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{ old('date_of_establishment') }}">
                         </div>
                         @if ($errors->has('date_of_establishment'))
-                            <span class="mt-1 text-xs text-red-500">{{ $errors->first('date_of_establishment') }}</span>
+                            <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('date_of_establishment') }}</span>
                         @endif
                     </div>
 
                     <!-- Number of Workers -->
                     <div id="number_workers_container" class="hidden">
-                        <label for="number_workers" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-                            {{__('auth.The number of workers')}}<span class="text-red-500 ml-0.5">*</span>
+                        <label for="number_workers" class="font-medium text-[#706F81] block mb-1.5 dark:text-gray-300">
+                            {{__('auth.The number of workers')}}<span class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <input type="text" name="number_workers" id="number_workers" value="{{ old('number_workers') }}"
-                               class="block w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-2 border-gray-200 rounded-xl placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
+                               class="bg-white border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                         @if ($errors->has('number_workers'))
-                            <span class="mt-1 text-xs text-red-500">{{ $errors->first('number_workers') }}</span>
+                            <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('number_workers') }}</span>
                         @endif
                     </div>
 
@@ -237,16 +237,16 @@
                         </label>
 
                         <input type="email" name="email" id="email" value="{{ old('email') }}" placeholder="organisation@email.com"
-                               class="block w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-2 border-gray-200 rounded-xl placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
+                               class="bg-white border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                         @if ($errors->has('email'))
-                            <span class="mt-1 text-xs text-red-500">{{ $errors->first('email') }}</span>
+                            <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('email') }}</span>
                         @endif
                     </div>
 
                     <!-- District -->
                     <div>
-                        <label for="district_id" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-                            {{__('auth.District')}}<span class="text-red-500 ml-0.5">*</span>
+                        <label for="district_id" class="font-medium text-[#706F81] block mb-1.5 dark:text-gray-300">
+                            {{__('auth.District')}}<span class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <select class="select2 mb-0" id="districtSelect" name="district" style="width: 100%" data-placeholder="{{__('auth.Please select one')}}" required>
                             <option></option>
@@ -258,19 +258,19 @@
                             @endforelse
                         </select>
                         @if ($errors->has('district'))
-                            <span class="mt-1 text-xs text-red-500">{{ $errors->first('district') }}</span>
+                            <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('district') }}</span>
                         @endif
                     </div>
 
                     <!-- Address -->
                     <div>
-                        <label for="address" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
-                            {{__('auth.Address')}}<span class="text-red-500 ml-0.5">*</span>
+                        <label for="address" class="font-medium text-[#706F81] block mb-1.5 dark:text-gray-300">
+                            {{__('auth.Address')}}<span class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <input type="text" name="address" id="address" value="{{ old('address') }}"
-                               class="block w-full px-4 py-3 text-sm text-gray-900 bg-gray-50 border-2 border-gray-200 rounded-xl placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400" required>
+                               class="bg-white border p-3 pl-4 h-9 border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required>
                         @if ($errors->has('address'))
-                            <span class="mt-1 text-xs text-red-500">{{ $errors->first('address') }}</span>
+                            <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('address') }}</span>
                         @endif
                     </div>
 
@@ -282,9 +282,9 @@
                         <label for="attached_file" class="font-medium text-[#706F81] block mb-1.5 dark:text-gray-300 hidden" id="attachment-label-non-government">
                             {{__('auth.Attached file (Certificate)')}}
                         </label>
-                        <input class="block w-full cursor-pointer rounded-xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-500 file:mr-4 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-primary/90 transition-all dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400"
+                        <input class="relative bg-white m-0 block w-full min-w-0 flex-auto cursor-pointer rounded-xl border border-gray-300 bg-transparent bg-clip-padding px-3 py-[0.32rem] text-xs font-normal text-surface transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:me-3 file:cursor-pointer file:overflow-hidden file:rounded-none file:border-0 file:border-e file:border-solid file:border-inherit file:bg-transparent file:px-3 file:py-[0.32rem] file:text-surface focus:border-primary focus:text-gray-700 focus:shadow-inset focus:outline-none dark:border-white/70 dark:text-white file:dark:text-white"
                                id="attached_file" type="file" name="attached_file[]" accept=".pdf, image/*" multiple />
-                        <span class="mt-1 text-xs text-red-500" id="attached_file_error">{{ $errors->first('attached_file') }}</span>
+                        <span class="text-red-600 text-xs p-0 m-0" id="attached_file_error">{{ $errors->first('attached_file') }}</span>
                     </div>
 
                     <button type="submit" id="signup-button" disabled

@@ -17,24 +17,16 @@
     'javascript:void(1)' => 'Company',
     'javascript:void(2)' => 'Company List',
 ]" />
-    <div class="flex items-center justify-between">
-        <h1 class="fi-header-heading text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl">
-            Company List
-        </h1>
-
-        {{-- Thêm nút Create ở đây nếu cần --}}
-        @if($this->getCreateAction())
-            <div>
-                {{ $this->getCreateAction() }}
-            </div>
-        @endif
-    </div>
-
+             <h1 class="fi-header-heading text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl">
+                Company List
+             </h1>
     {{-- <div class="flex items-center">
         <label for="status" class="text-lg font-semibold text-[#464559]">{{ __('admin/company.company') }}</label>
     </div> --}}
 
     <!-- Add the table rendering here -->
-        {{ $this->table }}
+    <div>
+            {{ $this->table }}
+    </div>
 
 </div>

@@ -181,14 +181,6 @@ class JobResource extends Resource
             //         'status' => request()->query('status', null)
             //     ])
             // )
-            ->modifyQueryUsing(function ($query) {
-                $admin = auth('admin')->user();
-                if ($admin && $admin->hasRole('naita_admin')) {
-                    $query->whereHas('company', function ($q) {
-                        $q->where('is_belongs_to_naita', true);
-                    });
-                }
-            })
             ->columns([
                 Tables\Columns\TextColumn::make('index')
                     ->label(__('admin/dashboard.content.no'))
@@ -197,8 +189,8 @@ class JobResource extends Resource
 
                 Tables\Columns\TextColumn::make('company.name')
                     ->label(__('admin/dashboard.compnay_job.company_name'))
-                    ->sortable()->wrap(),
-                Tables\Columns\TextColumn::make('title')->label(__('admin/dashboard.job.job_title'))->sortable()->searchable()->limit(50)->wrap(),
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('title')->label(__('admin/dashboard.job.job_title'))->sortable()->searchable()->limit(50),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('admin/dashboard.ojt.registration_date'))
                     ->date('Y-m-d')
@@ -255,7 +247,7 @@ class JobResource extends Resource
                     ->label(__('admin/dashboard.job.shortlistee'))
                     ->alignCenter()
                     ->getStateUsing(fn($record) => $record->shortlist()->count()),
-            ])->searchPlaceholder(__('admin/dashboard.job.job_title'))
+            ])->searchPlaceholder('Job Title')
             ->filters([
                 Tables\Filters\Filter::make('advanced')
                     ->form([
@@ -271,21 +263,9 @@ class JobResource extends Resource
                             ->label('Company name')
                             ->options(function (callable $get) {
                                 $district = $get('district');
-                                $admin = auth('admin')->user();
-
-                                $query = $district
-                                    ? Company::where('district_id', $district)
-                                    : Company::query();
-
-                                $query->whereNotNull('verified_by')
-                                    ->whereNotNull('verified_at')
-                                    ->where('active', true);
-
-                                if ($admin && $admin->hasRole('naita_admin')) {
-                                    $query->where('is_belongs_to_naita', true);
-                                }
-
-                                return $query->pluck('name', 'id');
+                                return $district
+                                    ? Company::where('district_id', $district)->pluck('name', 'id')
+                                    : Company::pluck('name', 'id');
                             })
                             ->preload()
                             ->searchable()
@@ -304,18 +284,7 @@ class JobResource extends Resource
 
                 Tables\Filters\SelectFilter::make('sector_id')
                     ->label(__('admin/dashboard.job.sector'))
-                    ->options(function () {
-                        $admin = auth('admin')->user();
-                        $sectorQuery = Sector::query();
-
-                        if ($admin && $admin->hasRole('naita_admin')) {
-                            $sectorQuery->whereHas('jobCompanies.company', function ($q) {
-                                $q->where('is_belongs_to_naita', true);
-                            });
-                        }
-
-                        return $sectorQuery->pluck('name', 'id');
-                    })
+                    ->options(Sector::pluck('name', 'id'))
                     ->searchable(),
 
                 Tables\Filters\SelectFilter::make('status')

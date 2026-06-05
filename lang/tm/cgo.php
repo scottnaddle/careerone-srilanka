@@ -334,9 +334,9 @@ return [
         'company_list' => [
             'root' => 'கம்பனி பட்டியல்',
             'search' => 'தேடுக',
-            'filterResults' => 'முடிவுகள்',
-            'no_record' => 'பதிவுகள் எதுவும் இல்லை!',
-            'not_limitation' => 'கட்டுப்பாடு இல்லை',
+            'filterResult' => ' filterResult ',
+            'searchPlaceholder' => ' searchPlaceholder ',
+            'no_record' => 'No record!',
             'filter' => [
                 'district' => 'மாவட்டம்',
                 'recently' => 'சமீபத்திய',
@@ -488,7 +488,7 @@ return [
             'candidate_list' => [
                 'title' => 'தேர்வுநாடி பட்டியல்',
                 'search' => 'தேடுக',
-                'filterResult' => 'முடிவுகள்',
+                'filterResult' => ' filterResult ',
                 'no_record' => 'பதிவு இல்லை',
                 'filter' => [
                     'all_type' => 'எல்லா வகைகள்',
@@ -505,7 +505,7 @@ return [
         'ojt_list' => [
             'root' => 'OJT பட்டியல்',
             'search' => 'தேடுக',
-            'filterResults' => 'முடிவுகள் ',
+            'filterResults' => ' filterResults ',
             'no_record' => 'பதிவு இல்லை!',
             'not_limitation' => 'வரம்பில்லை',
             'filter' => [
@@ -655,4 +655,20 @@ return [
     'Monthly' => 'மாதாந்த',
     'Previous Month' => 'முந்தைய மாதம்',
     'Next Month' => 'அடுத்த மாதம்',
+    'Trainee Report Viewer' => 'பயிலுநர் அறிக்கை பார்வையாளர்',
+    'Export Report' => 'அறிக்கையை பதிவிறக்குக',
+    'All' => 'அனைத்து',
+    'With Portfolio' => 'Portfolio உடன்',
+    'Without Portfolio' => 'Portfolio இல்லாமல்',
+    'NIC' => 'தே.அ.அ',
+    'Mobile' => 'செல்லிடைப்பேசி',
+    'Portfolio' => 'Portfolio',
+    'Career Tests' => 'தொழில் சோதனைகள்',
+    'Counselings' => 'ஆலோசனைகள்',
+    'Yes' => 'ஆம்',
+    'No' => 'இல்லை',
+    'Loading...' => 'ஏற்றப்படுகிறது...',
+    'name' => 'பெயர்',
+    'email' => 'மின்னஞ்சல்',
+    'nvq_levels' => 'NVQ நிலைகள்',
 ];

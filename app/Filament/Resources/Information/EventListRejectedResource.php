@@ -95,7 +95,7 @@ class EventListRejectedResource extends Resource
 
                 Tables\Columns\TextColumn::make('system')
                     ->sortable()
-                    ->label('Member')->wrap(),
+                    ->label('Member'),
 
                 Tables\Columns\TextColumn::make('approval')
                     ->label('Approval')

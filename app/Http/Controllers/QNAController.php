@@ -10,7 +10,6 @@ use App\Models\Company;
 use App\Models\CompanyRecruiter;
 use App\Models\QNA;
 use App\Models\QnaAttachment;
-use App\Models\SchoolKid;
 use App\Models\TraineeUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,9 +41,6 @@ class QNAController extends Controller
                 break;
             case 'trainee':
                 $user = TraineeUser::where(['id' => $id])->first();
-                break;
-            case 'schoolkid':
-                $user = SchoolKid::where(['id' => $id])->first();
                 break;
         }
         return $user;

@@ -139,14 +139,7 @@ class CareerTestLists extends ListRecords
                             }
                             return $option;
                         })
-                        ->searchable()
-                        ->query(function (Builder $query, array $data) {
-                            if (!empty($data['value'])) {
-                                $query->whereHas('careerTest', function ($q) use ($data) {
-                                    $q->where('test_type', $data['value']);
-                                });
-                            }
-                        }),
+                        ->searchable(),
 //                    Tables\Filters\SelectFilter::make('institute')
 //                    ->preload()
 //                    ->relationship('institute', 'name')

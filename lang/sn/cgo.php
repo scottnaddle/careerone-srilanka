@@ -335,7 +335,7 @@ return [
             'search' => 'සෙවීම',
             'filterResult' => 'ප්‍රතිඵල',
             'searchPlaceholder' => 'සෙවීම',
-            'no_record' => 'වාර්තා හමු නොවීය!',
+            'no_record' => 'No record!',
             'filter' => [
                 'district' => 'දිස්ත්‍රික්කය',
                 'recently' => 'මෑතකදී',
@@ -485,28 +485,28 @@ return [
                 'not_limitation' => 'සීමා නැත',
             ],
             'candidate_list' => [
-                'title' => 'අපේක්ෂක ලැයිස්තුව',
-                'search' => 'සොයන්න',
-                'filterResult' => 'ප්‍රතිඵල',
-                'no_record' => 'වාර්තා හමු නොවීය!',
+                'title' => 'Candidate list',
+                'search' => 'Search',
+                'filterResult' => 'Results',
+                'no_record' => 'No record!',
                 'filter' => [
-                    'all_type' => 'වර්ගය',
-                    'candidate' => 'අපේක්ෂකයා',
-                    'job_match' => 'ගැලපෙන රැකියා'
+                    'all_type' => 'Type',
+                    'candidate' => 'Candidate',
+                    'job_match' => 'Job match'
                 ],
                 'modal' => [
-                    'title' => 'සාරාංශය (Resume)',
+                    'title' => 'Resume',
                 ],
-                'updated' => 'යාවත්කාලීන කරන ලදී',
-                'job_title' => 'තනතුර'
+                'updated' => 'Updated',
+                'job_title' => 'Job title'
             ],
         ],
         'ojt_list' => [
             'root' => 'OJT තොරතුරු',
             'search' => 'සෙවීම',
-            'filterResults' => 'ප්‍රතිඵල',
-            'no_record' => 'වාර්තා හමු නොවීය!',
-            'not_limitation' => 'සීමාවක් නොමැත',
+            'filterResults' => 'Results',
+            'no_record' => 'No record!',
+            'not_limitation' => 'Not limit',
             'filter' => [
                 'nvq_level' => 'NVQ මට්ටම',
                 'district' => 'දිස්ත්‍රික්කය',
@@ -654,4 +654,20 @@ return [
     'Monthly' => 'මාසිකව',
     'Previous Month' => 'පෙර මාසය',
     'Next Month' => 'ලබන මාසයේ',
+    'Trainee Report Viewer' => 'පුහුණුකරු වාර්තා දර්ශකය',
+    'Export Report' => 'වාර්තාව බාගත කරන්න',
+    'All' => 'සියලුම',
+    'With Portfolio' => 'Portfolio සහිත',
+    'Without Portfolio' => 'Portfolio රහිත',
+    'NIC' => 'ජා.හැ.ප.',
+    'Mobile' => 'ජංගම දුරකථනය',
+    'Portfolio' => 'Portfolio',
+    'Career Tests' => 'වෘත්තීය පරීක්ෂණ',
+    'Counselings' => 'උපදේශන',
+    'Yes' => 'ඔව්',
+    'No' => 'නැත',
+    'Loading...' => 'පූරණය වෙමින්...',
+    'name' => 'නම',
+    'email' => 'විද්‍යුත් තැපෑල',
+    'nvq_levels' => 'NVQ මට්ටම්',
 ];

@@ -58,10 +58,6 @@ return [
             'driver' => 'session',
             'provider' => 'trainees',
         ],
-        'schoolkid' => [
-            'driver' => 'session',
-            'provider' => 'schoolkids',
-        ],
     ],
 
     /*
@@ -101,10 +97,6 @@ return [
         'trainees' => [
             'driver' => 'eloquent',
             'model' => App\Models\TraineeUser::class,
-        ],
-        'schoolkids' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\SchoolKid::class,
         ],
         // 'users' => [
         //     'driver' => 'database',
@@ -162,12 +154,6 @@ return [
 
         'trainees' => [
             'provider' => 'trainees',
-            'table' => 'password_reset_tokens',
-            'expire' => 60,
-            'throttle' => 60,
-        ],
-        'schoolkids' => [
-            'provider' => 'schoolkids',
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,

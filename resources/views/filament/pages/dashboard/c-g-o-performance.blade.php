@@ -96,20 +96,13 @@
         </div>
     </div> --}}
     <x-filament-panels::page>
-        @php
-            $user = auth('admin')->user();
-        @endphp
         <div class="flex w-full justify-end">
             <select name="head_office" id="head_office" class="fi-input rounded-xl border border-gray-300">
-                @if($user->hasRole('super_admin'))
-                    <option value="">{{__('admin/cgo_performance.institute_head_office')}}</option>
-                    @forelse($this->head_offices as $head_office)
-                    <option value="{{$head_office->head_office_code}}" @selected(request('head_office')==$head_office->head_office_code)>{{$head_office->head_office_name}} ({{$head_office->head_office_code}})</option>
-                    @empty
-                    @endforelse
-                @else
-                    <option value="{{$user->tvet_type}}" selected>{{$user->tvet_type}} </option>
-                @endif
+                <option value="">{{__('admin/cgo_performance.institute_head_office')}}</option>
+                @forelse($this->head_offices as $head_office)
+                <option value="{{$head_office->head_office_code}}" @selected(request('head_office')==$head_office->head_office_code)>{{$head_office->head_office_name}} ({{$head_office->head_office_code}})</option>
+                @empty
+                @endforelse
             </select>
         </div>
         <script src="{{asset('/js/jquery-3.7.1.min.js')}}"></script>

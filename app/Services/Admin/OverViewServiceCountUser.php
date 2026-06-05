@@ -37,25 +37,9 @@ class OverViewServiceCountUser
     }
     public function countUnverifiedUsers(): array
     {
-        $admin = auth('admin')->user();
         try {
-            if (auth('admin')->user()->hasRole('super_admin')) {
-                $unverifiedCgoCount = CgoUser::where('active',true)->whereNotNull('verify_at')->whereNotNull('verify_by')->count() ?? 0;
-                $unverifiedTraineeCount = TraineeUser::where('active', true)->count() ?? 0;
-            }else {
-                $cgoQuery = CgoUser::where('active',true)->whereNotNull('verify_at')->whereNotNull('verify_by');
-                $cgoQuery->whereHas('institute', function ($query) use ($admin) {
-                    $query->where('institute_head_office', $admin->tvet_type);
-                });
-                $unverifiedCgoCount = $cgoQuery->count() ?? 0;
-
-                $traineeQuery = TraineeUser::where('active', true);
-                $traineeQuery->whereHas('institutes', function ($q) use ($admin) {
-                    $q->where('institute_head_office', $admin->tvet_type);
-                });
-                $unverifiedTraineeCount = $traineeQuery->count() ?? 0;
-            }
-
+            $unverifiedCgoCount = CgoUser::where('active',true)->whereNotNull('verify_at')->whereNotNull('verify_by')->count() ?? 0;
+            $unverifiedTraineeCount = TraineeUser::where('active', true)->count() ?? 0;
             $unverifiedJobCount = Job::count() ?? 0;
             $unverifiedCompanyCountRecruiter = CompanyRecruiter::where('active',true)->whereNotNull('verify_at')->whereNotNull('verify_by')->count() ?? 0;
             $unverifiedCompanyCount = Company::where('active',true)->whereNotNull('verified_at')->whereNotNull('verified_by')->count() ?? 0;

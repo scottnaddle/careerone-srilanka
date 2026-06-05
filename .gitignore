@@ -18,14 +18,3 @@ yarn-error.log
 /.idea
 /.vscode
 /app/Policies
-.DS_Store
-*.log
-.hs_err_*
-.rnd
-table
-/public/files/*.pdf
-/public/portfolio/
-/storage/app/firebase_credentials.json
-/storage/framework/cache/data/*
-vite.config.js.timestamp-*
-/.hermes/

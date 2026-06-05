@@ -41,46 +41,37 @@ class REQCoursesResource extends Resource
         
             TextColumn::make('institute_reg_no')
                 ->label(__('admin/dashboard.regcourse.institute_reg_no'))
-                ->sortable()
-                ->wrap(),
+                ->sortable(),
         
             TextColumn::make('institute_name')
                 ->label(__('admin/dashboard.regcourse.institute_name'))
                 ->sortable()
-                ->searchable()
-                ->wrap(),
+                ->searchable(),
         
             TextColumn::make('district_code')
-                ->label(__('admin/dashboard.regcourse.district_code'))
-                ->wrap(),
+                ->label(__('admin/dashboard.regcourse.district_code')),
         
             TextColumn::make('course_id')
                 ->label(__('admin/dashboard.regcourse.course_id'))
-                ->sortable()
-                ->wrap(),
+                ->sortable(),
         
             TextColumn::make('course_name')
                 ->label(__('admin/dashboard.regcourse.course_name'))
                 ->sortable()
-                ->searchable()
-                ->wrap(),
+                ->searchable(),
         
             TextColumn::make('course_duration')
-                ->label(__('admin/dashboard.regcourse.course_duration'))
-                ->wrap(),
+                ->label(__('admin/dashboard.regcourse.course_duration')),
         
             TextColumn::make('course_mode')
-                ->label(__('admin/dashboard.regcourse.course_mode'))
-                ->wrap(),
+                ->label(__('admin/dashboard.regcourse.course_mode')),
         
             TextColumn::make('course_medium')
-                ->label(__('admin/dashboard.regcourse.course_medium'))
-                ->wrap(),
+                ->label(__('admin/dashboard.regcourse.course_medium')),
         
             TextColumn::make('entry_qualification')
                 ->label(__('admin/dashboard.regcourse.entry_qualification'))
-                ->sortable()
-                ->wrap(),
+                ->sortable(),
         ])
         ->paginated([10, 25, 50, 100])
         ->searchPlaceholder('Course name')

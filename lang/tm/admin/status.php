@@ -9,7 +9,4 @@ return [
     'rejected_by_tvec' => 'TVEC மூலம் நிராகரிக்கப்பட்டது',
     'approved_by_association' => 'சங்கம் மூலம் அங்கீகரிக்கப்பட்டது',
     'rejected_by_association' => 'சங்கம் மூலம் நிராகரிக்கப்பட்டது',
-    'rejected' => 'நிராகரிக்கப்பட்டது',
-    'inactive' => 'செயலற்றது',
-    'requested' => 'கோரப்பட்டது',
 ];

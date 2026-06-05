@@ -22,26 +22,9 @@ use Illuminate\Support\Facades\Hash;
 class CompanyRecruiterApprovalResource extends Resource
 {
     protected static ?string $model = CompanyRecruiter::class;
-    protected static ?string $modelLabel = null;
-    public static function getModelLabel(): string
-    {
-        return trans('admin/performance.Company Recruiters Approval List');
-    }
+    protected static ?string $modelLabel = 'Company Recruiters Approval List';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     public static $totalCompany;
-    public static function getEloquentQuery(): Builder
-    {
-        $query = parent::getEloquentQuery();
-
-        // Nếu là naita_admin, chỉ lấy company users của các company có is_belongs_naita = true
-        if (auth('admin')->user()?->hasRole('naita_admin')) {
-            $query->whereHas('company', function (Builder $q) {
-                $q->where('is_belongs_to_naita', true);
-            });
-        }
-
-        return $query;
-    }
     public static function form(Form $form): Form
     {
         return $form
@@ -57,7 +40,7 @@ class CompanyRecruiterApprovalResource extends Resource
                     ->columnSpan('full')
                     ->placeholder('Select a company'),
                 Forms\Components\TextInput::make('first_name')
-                    ->label(trans('cgo.first_name'))
+                    ->label('First Name')
                     ->columnSpan('full')
                     ->required(),
 //                Forms\Components\TextInput::make('username')
@@ -66,7 +49,7 @@ class CompanyRecruiterApprovalResource extends Resource
 //                    ->required(),
 
                 Forms\Components\TextInput::make('last_name')
-                    ->label(trans('cgo.last_name'))
+                    ->label('Last Name')
                     ->columnSpan('full')
                     ->required(),
 
@@ -85,7 +68,7 @@ class CompanyRecruiterApprovalResource extends Resource
                     ->visible(fn ($record) => $record === null)
                     ->dehydrateStateUsing(fn($state) => Hash::make($state)),
                 Forms\Components\TextInput::make('telephone')
-                    ->label(trans('system.form.telephone'))
+                    ->label('Telephone')
                     ->tel()
                     ->columnSpan('full')
                     ->required(),
@@ -103,11 +86,6 @@ class CompanyRecruiterApprovalResource extends Resource
             'company_id' => request()->query('company_id', null),
             'check_approval'=>true
         ]);
-        if (auth('admin')->user()?->hasRole('naita_admin')) {
-            $query->whereHas('company', function (Builder $q) {
-                $q->where('is_belongs_to_naita', true);
-            });
-        }
         self::$totalCompany = $query->count();
 
         return $table
@@ -127,17 +105,17 @@ class CompanyRecruiterApprovalResource extends Resource
                         return $record->first_name . ' ' . $record->last_name ?? 'N/A';
                     })
                     ->sortable(['first_name', 'last_name'])
-                    ->searchable(['first_name', 'last_name'])->wrap(),
+                    ->searchable(['first_name', 'last_name']),
 
                 Tables\Columns\TextColumn::make('district_name')
                     ->label(__('admin/dashboard.company_recruiter_user.district'))
                     ->sortable(['first_name', 'last_name'])
                     ->getStateUsing(function ($record) {
                         return $record->company->district->name ?? 'N/A';
-                    })->wrap(),
+                    }),
                     Tables\Columns\TextColumn::make('company.name')
                     ->label(__('admin/dashboard.company_recruiter_user.company'))
-                    ->sortable()->wrap(),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('recommended_by')
                     ->label(trans('general.Recommended by'))
                     ->getStateUsing(function ($record) {
@@ -154,7 +132,7 @@ class CompanyRecruiterApprovalResource extends Resource
                             $recommendedBy = strtoupper($record->recommended_by_user_system) .' - '. $user?->fullName. ' ('. $headOffice.')';
                         }
                         return $recommendedBy;
-                    })->wrap(),
+                    }),
 //                    Tables\Columns\TextColumn::make('approval')
 //                    ->label(__('admin/dashboard.company_recruiter_user.approval'))
 //                    ->getStateUsing(function ($record) {
@@ -168,28 +146,7 @@ class CompanyRecruiterApprovalResource extends Resource
 //                    ->html(),
 
             ])->searchPlaceholder(__('admin/dashboard.company_recruiter_user.name'))
-            ->filters([
-                Tables\Filters\SelectFilter::make('company_id')
-                    ->label(__('admin/dashboard.company_recruiter_user.company'))
-                    ->options(function () {
-                        $query = Company::whereNotNull('verified_by')
-                            ->whereNotNull('verified_at')
-                            ->where('active', true);
-
-                        if (auth('admin')->user()?->hasRole('naita_admin')) {
-                            $query->where('is_belongs_to_naita', true);
-                        }
-
-                        return $query->pluck('name', 'id');
-                    })
-                    ->preload()
-                    ->searchable()
-                    ->query(function (Builder $query, array $data) {
-                        if (isset($data['value']) && !empty($data['value'])) {
-                            $query->where('company_id', $data['value']);
-                        }
-                    }),
-            ])
+            ->filters([])
             ->actions([
                 Tables\Actions\ViewAction::make()->label(__('admin/dashboard.view_more'))->color('primary'),
             ])

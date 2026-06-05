@@ -39,6 +39,7 @@ Route::group(['prefix' => 'cgo', 'as' => 'cgo.'], function () {
         Route::post('/personal-information', [MyPageController::class, 'postPersonalInformation'])->name('personal-information.post');
         Route::post('/verify-password', [MyPageController::class, 'verifyPassword'])->name('verify-password');
         Route::get('/deactive-account', [MyPageController::class, 'deActiveAccount'])->name('deactive-account');
+        Route::get('/trainee-report/export', [MyPageController::class, 'exportTraineeReport'])->name('trainee-report.export');
     });
 
     Route::group(['prefix' => 'informations', 'as' => 'informations.'], function () {

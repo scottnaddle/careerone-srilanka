@@ -291,53 +291,41 @@ class OJTResource extends Resource
                     'end' => request()->query('end', null),
                     'status' => request()->query('status', null)
                 ])
-            )
-            ->modifyQueryUsing(function ($query) {
-                $admin = auth('admin')->user();
-                if ($admin && $admin->hasRole('naita_admin')) {
-                    $query->whereHas('company', function ($q) {
-                        $q->where('is_belongs_to_naita', true);
-                    });
-                }
-            })
-            ->searchPlaceholder(__('admin/dashboard.ojt.ojt_title'))
+            )->searchPlaceholder('OJT title')
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('admin/dashboard.ojt.ojt_title'))
                     ->sortable()
                     ->limit(50)
                     ->searchable()
-                    ->url(fn($record) => url('admin/o-j-t-s/' . $record->id . '/view'))
-                    ->wrap(),
+                    ->url(fn($record) => url('admin/o-j-t-s/' . $record->id . '/view')),
 
                 Tables\Columns\TextColumn::make('company.name')
                     ->label(__('admin/dashboard.compnay_job.company_name'))
-                    ->sortable()
-                    ->wrap(),
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('admin/dashboard.ojt.registration_date'))
                     ->date('Y-m-d')
                     ->sortable()
-                    ->alignCenter()
-                    ->wrap(),
+                    ->alignCenter(),
 
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('admin/dashboard.ojt.status'))
                     ->getStateUsing(function ($record) {
                         if ($record->status == \App\Enums\JobStatusEnum::COMPLETED->value) {
-                            return __('cgo.completed');
+                            return 'Completed';
                         } elseif ($record->status == \App\Enums\JobStatusEnum::CANCEL->value) {
-                            return __('company.cancel');
+                            return 'Cancelled';
                         } else {
-                            return __('company.progress');
+                            return 'In Progress';
                         }
                     })
                     ->badge()
                     ->color(fn($state) => match($state) {
-                        __('company.progress') => 'info',
-                        __('company.cancel') => 'danger',
-                        __('cgo.completed') => 'success',
+                        'In Progress' => 'info',
+                        'Cancelled' => 'danger',
+                        'Completed' => 'success',
                     })
                     ->alignCenter(),
 
@@ -363,7 +351,7 @@ class OJTResource extends Resource
             ])
             ->actions([
                 ViewAction::make('view-more')
-                    ->label(trans('cgo.view_more'))->color('primary')
+                    ->label('View more')->color('primary')
                     ->url(fn($record) => url('admin/o-j-t-s/' . $record->id . '/view-list-trainee')),
             ])
             ->emptyStateHeading('No OJT found')
@@ -382,21 +370,9 @@ class OJTResource extends Resource
                             ->label('Company name')
                             ->options(function (callable $get) {
                                 $district = $get('district');
-                                $admin = auth('admin')->user();
-
-                                $query = $district
-                                    ? Company::where('district_id', $district)
-                                    : Company::query();
-
-                                $query->whereNotNull('verified_by')
-                                    ->whereNotNull('verified_at')
-                                    ->where('active', true);
-
-                                if ($admin && $admin->hasRole('naita_admin')) {
-                                    $query->where('is_belongs_to_naita', true);
-                                }
-
-                                return $query->pluck('name', 'id');
+                                return $district
+                                    ? Company::where('district_id', $district)->pluck('name', 'id')
+                                    : Company::pluck('name', 'id');
                             })
                             ->preload()
                             ->searchable()

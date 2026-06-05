@@ -18,7 +18,7 @@ class ListContentVideoRejected extends ListRecords
         $query = Content::where('type', 'video')
         ->where('status', \App\Enums\StatusEnumsManagement::NON_APPROVAL->value);
         if (!empty($searchQuery)) {
-            $query->where('title', 'like', '%' . $searchQuery . '%');
+            $query->where('title', 'ilike', '%' . $searchQuery . '%');
         }
         if (!empty($searchTime)) {
             if ($searchTime === 'recently') {

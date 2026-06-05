@@ -17,7 +17,6 @@ use Filament\Models\Contracts\HasName;
 
 class TraineeUser extends Authenticatable implements HasName
 {
-    use \App\Models\Traits\HasMagicLink;
     use HasApiTokens, HasFactory, Notifiable, HasGenerateCode;
 
     protected $table = 'trainee_users';
@@ -79,7 +78,6 @@ class TraineeUser extends Authenticatable implements HasName
     {
         return $this->belongsToMany(NVQLevel::class, TraineeNVQ::class, 'trainee_id', 'nvq_id');
     }
-
     public function institutes() {
         return $this->belongsToMany(Institute::class, TraineeInstitute::class, 'trainee_id', 'institute_id')->orderBy('name', 'asc');
     }
@@ -203,8 +201,4 @@ class TraineeUser extends Authenticatable implements HasName
     {
         return $this->hasMany(OjtTraineeApply::class, 'trainee_id', 'id')->where('ojt_id',$ojt_id);
     }
-    public function traineeInstitutes() {
-        return $this->hasMany(TraineeInstitute::class, 'trainee_id');
-    }
-
 }

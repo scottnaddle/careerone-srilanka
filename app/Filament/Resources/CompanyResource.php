@@ -13,27 +13,24 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Services\Admin\SearchComponentAdminService;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Placeholder;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
+use Filament\Forms\Components\Select;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CompanyResource extends Resource
 {
     protected static ?string $model = Company::class;
 
-    protected static ?string $navigationLabel = 'Company';
+    protected static ?string $navigationLabel = 'Company ';
     protected static ?string $navigationGroup = 'Company';
     protected static ?int $navigationSort = 1;
     public static $totalCompany;
@@ -41,135 +38,122 @@ class CompanyResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Company Information')
-                    ->columns(2)
-                    ->schema([
-                        Select::make('company_information')
-                            ->label(__('auth.Company information'))
-                            ->columnSpan('full')
-                            ->options(fn () => collect(getCodeList('company_information'))
-                                ->mapWithKeys(fn ($item) => [$item['code_id'] => $item['code_name']])
-                                ->toArray()
-                            )
-                            ->required(),
-                        TextInput::make('name')
-                            ->label(__('company.name'))
-                            ->columnSpan('full')
-                            ->required(),
-                        TextInput::make('business_registration_number')
-                            ->label(__('company.Registration number'))
-                            ->columnSpan('full'),
-                        TextInput::make('email')
-                            ->label('Email')
-                            ->columnSpan('full'),
-                        Select::make('office_type')
-                            ->label('Office Type')
-                            ->columnSpan('full')
-                            ->options(fn () => collect(getCodeList('office_type'))->pluck('code_name', 'code_id')->toArray()),
-                        DatePicker::make('date_of_establishment')
-                            ->label('Date of Establishment')
-                            ->columnSpan('full'),
-                        TextInput::make('enterprise_id')
-                            ->label('Enterprise ID')
-                            ->columnSpan('full'),
-                        TextInput::make('co_business')
-                            ->label('Co-Business')
-                            ->columnSpan('full'),
-                    ]),
-                Section::make('Contact & Location')
-                    ->columns(2)
-                    ->schema([
-                        Select::make('district_id')
-                            ->label('District')
-                            ->relationship('district', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->required()
-                            ->columnSpan('full')
-                            ->placeholder('Select a district'),
-                        Select::make('ds_id')
-                            ->label('Divisional Secretariat')
-                            ->relationship('ds', 'ds_name')
-                            ->searchable()
-                            ->preload()
-                            ->columnSpan('full')
-                            ->placeholder('Select Divisional Secretariat'),
-                        TextInput::make('address')
-                            ->label('Address')
-                            ->columnSpan('full')
-                            ->required(),
-                        TextInput::make('hotline')
-                            ->label('Hotline')
-                            ->columnSpan('full'),
-                        TextInput::make('website')
-                            ->label('Website')
-                            ->columnSpan('full'),
-                        TextInput::make('sns_channel')
-                            ->label('SNS Channel')
-                            ->columnSpan('full'),
-                    ]),
-                Section::make('Additional Info')
-                    ->columns(2)
-                    ->schema([
-                        TextInput::make('name_of_representation')
-                            ->label('Name of Representative')
-                            ->columnSpan('full'),
-                        TextInput::make('number_workers')
-                            ->label('Number of Workers')
-                            ->numeric()
-                            ->columnSpan('full'),
-                        FileUpload::make('logo')
-                            ->label('Logo')
-                            ->columnSpan('full'),
-                        Textarea::make('services')
-                            ->label('Services')
-                            ->columnSpan('full'),
-                        Textarea::make('short_bio')
-                            ->label('Short Bio')
-                            ->columnSpan('full'),
-                        Placeholder::make('attachment_details')
-                            ->label('Attachment Details')
-                            ->content(function ($record) {
-                                if (!$record || empty($record->attachment_details)) {
-                                    return new HtmlString(
-                                        '<div style=" font-size: 14px; color: #999;">No attachment available.</div>'
-                                    );
-                                }
+                Select::make('company_information')
+                ->label(__('auth.Company information'))
+                ->columnSpan('full')
+                    ->options(fn () => collect(getCodeList('company_information'))
+                        ->mapWithKeys(fn ($item) => [$item['code_id'] => $item['code_name']])
+                        ->toArray()
+                    )
 
-                                $file = json_decode($record->attachment_details, true);
+                ->required(),
 
-                                if (empty($file) || !isset($file['1']['path'])) {
-                                    return new HtmlString(
-                                        '<div style=" font-size: 14px; color: #999;">No attachment available.</div>'
-                                    );
-                                }
+                TextInput::make('name')
+                    ->label(__('company.name'))
+                    ->columnSpan('full')
+                    ->required(),
+                TextInput::make('business_registration_number')
+                    ->label(__('company.Registration number'))
+                    ->columnSpan('full'),
+                TextInput::make('email')
+                    ->label('Email')
+                    ->columnSpan('full'),
+                Select::make('office_type')
+                    ->label('Office Type')
+                    ->columnSpan('full')
+                    ->options(fn () => collect(getCodeList('office_type'))->pluck('code_name', 'code_id')->toArray()),
 
-                                $path = asset($file['1']['path']);
-                                $extension = pathinfo($file['1']['path'], PATHINFO_EXTENSION);
-                                $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+//                    Select::make('headquarter_id')
+//                    ->label('Headquarter')
+//                    ->columnSpan('full')
+//                    ->options(fn (callable $get) =>
+//                        Company::query()
+//                            ->whereNotNull('verified_at')
+//                            ->whereNotNull('verified_by')
+//                            ->where('active', true)
+//                            ->orderBy('name', 'asc')
+//                            ->when($get('id'), fn ($query, $id) => $query->where('id', '!=', $id))
+//                            ->pluck('name', 'id')
+//                    )
+//
+//
+//                    ->default(auth()->user()->company_id ?? null),
 
-                                if (in_array(strtolower($extension), $imageExtensions)) {
-                                    return new HtmlString(
-                                        '<div style="text-align: center; margin: 10px 0;">
-                                            <a href="' . e($path) . '" download style="text-decoration: none; color: #4984F6;">
-                                                <img src="' . e($path) . '" alt="Attachment" style="max-width: 150px; height: auto; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px;">
-                                                <div style="font-size: 14px; font-weight: bold; margin-top: 5px;">Download Attachment</div>
-                                            </a>
-                                         </div>'
-                                    );
-                                }
+//                TextInput::make('number_workers')
+//                    ->label('Number of Workers')
+//                    ->columnSpan('full')
+//                    ->numeric()
+//                    ->required(),
+//
+//                    Select::make('company_information')
+//                    ->label('Company Information')
+//                    ->columnSpan('full')
+//                    ->options(collect(getCodeList('company_information'))
+//                        ->mapWithKeys(fn ($item) => [$item['code_id'] => $item['code_name']])
+//                        ->toArray()
+//                    )
+//
+//                    ->required(),
 
-                                return new HtmlString(
-                                    '<div style="text-align: center; margin: 10px 0;">
-                                        <a href="' . e($path) . '" download style="text-decoration: none; color: #4984F6;">
-                                            <div style="font-size: 16px; font-weight: bold; color: #333;">' . e($file['1']['name'] ?? 'Unnamed File') . '</div>
-                                            <div style="font-size: 14px; color: #888;">File Type: ' . e(strtoupper($extension)) . '</div>
-                                            <div style="margin-top: 10px; background: #4984F6; color: white; padding: 8px 12px; border-radius: 5px; display: inline-block;">Download File</div>
-                                        </a>
-                                     </div>'
-                                );
-                            }),
-                    ]),
+
+                Select::make('district_id')
+                    ->label('District')
+                    ->relationship('district', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required()
+                    ->columnSpan('full')
+                    ->placeholder('Select a district'),
+                TextInput::make('address')
+                    ->label('Address')
+                    ->columnSpan('full')
+                    ->required(),
+//                    TextInput::make('website')
+//                    ->label('Website')
+//                    ->columnSpan('full')
+//                    ->required(),
+                Placeholder::make('attachment_details')
+                    ->label('Attachment Details')
+                    ->content(function ($record) {
+                        if (!$record || empty($record->attachment_details)) {
+                            return new HtmlString(
+                                '<div style=" font-size: 14px; color: #999;">No attachment available.</div>'
+                            );
+                        }
+
+                        $file = json_decode($record->attachment_details, true);
+
+                        if (empty($file) || !isset($file['1']['path'])) {
+                            return new HtmlString(
+                                '<div style=" font-size: 14px; color: #999;">No attachment available.</div>'
+                            );
+                        }
+
+                        $path = asset($file['1']['path']);
+                        $extension = pathinfo($file['1']['path'], PATHINFO_EXTENSION);
+                        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+
+                        if (in_array(strtolower($extension), $imageExtensions)) {
+                            return new HtmlString(
+                                '<div style="text-align: center; margin: 10px 0;">
+                                    <a href="' . e($path) . '" download style="text-decoration: none; color: #4984F6;">
+                                        <img src="' . e($path) . '" alt="Attachment" style="max-width: 150px; height: auto; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px;">
+                                        <div style="font-size: 14px; font-weight: bold; margin-top: 5px;">Download Attachment</div>
+                                    </a>
+                                 </div>'
+                            );
+                        }
+
+                        return new HtmlString(
+                            '<div style="text-align: center; margin: 10px 0;">
+                                <a href="' . e($path) . '" download style="text-decoration: none; color: #4984F6;">
+                                    <div style="font-size: 16px; font-weight: bold; color: #333;">' . e($file['1']['name'] ?? 'Unnamed File') . '</div>
+                                    <div style="font-size: 14px; color: #888;">File Type: ' . e(strtoupper($extension)) . '</div>
+                                    <div style="margin-top: 10px; background: #4984F6; color: white; padding: 8px 12px; border-radius: 5px; display: inline-block;">Download File</div>
+                                </a>
+                             </div>'
+                        );
+                    }),
             ]);
     }
 
@@ -188,13 +172,11 @@ class CompanyResource extends Resource
                     ->label(__('admin/dashboard.company.name'))
                     ->searchable('companies.name')
                     ->limit(50)
-                    ->url(fn($record) => route('filament.admin.resources.company-recruiters.index', ['company_id' => $record->id]), true)
-                    ->sortable()
-                    ->wrap(),
+                    ->url(fn($record) => route('filament.admin.resources.comapny-user-lists.index', ['company_id' => $record->id]), true)
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('district.name')
                     ->label(__('admin/dashboard.company.district'))
-                    ->sortable()
-                    ->wrap(),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('approval')
                     ->label(__('admin/dashboard.company.approval'))
                     ->getStateUsing(function ($record) {
@@ -211,12 +193,7 @@ class CompanyResource extends Resource
                     ->sortable()
                     ->badge()
                     ->formatStateUsing(fn($state) => $state ? 'Active' : 'Inactive')
-                    ->color(fn($state) => $state ? 'success' : 'danger'),
-
-                Tables\Columns\TextColumn::make('recruiters_count')
-                    ->label('Recruiters')
-                    ->counts('recruiters')
-                    ->alignCenter(),
+                    ->color(fn($state) => $state ? 'success' : 'danger')
 
             ])->searchPlaceholder(__('admin/dashboard.company.search_title'))
             ->filters([
@@ -240,8 +217,8 @@ class CompanyResource extends Resource
                     ->form([
                         Forms\Components\Select::make('approval')
                             ->options([
-                                '1' => 'Verified',
-                                '2' => 'Pending',
+                                '1' => 'Approved',
+                                '2' => 'Pending Approval',
                                 '3' => 'Rejected'
                             ])
                             ->preload()
@@ -263,74 +240,12 @@ class CompanyResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->icon('heroicon-o-eye')
-                    ->iconButton()
-                    ->tooltip('View'),
-                Tables\Actions\EditAction::make()
-                    ->iconButton()
-                    ->tooltip('Edit')
-                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
-
-                Action::make('approve')
-                    ->label(__('Approve'))
-                    ->icon('heroicon-o-check-badge')
-                    ->color('success')
-                    ->iconButton()
-                    ->tooltip('Approve')
-                    ->requiresConfirmation()
-                    ->modalHeading('Approve Company')
-                    ->modalSubheading(fn ($record) => $record->recruiters()->count() > 0
-                        ? "This company has {$record->recruiters()->count()} recruiter(s). They will remain pending until individually approved."
-                        : 'No recruiters registered for this company yet.')
-                    ->action(function ($record) {
-                        $record->update([
-                            'verified_at' => now(),
-                            'verified_by' => auth('admin')->id(),
-                        ]);
-
-                        $pendingCount = $record->recruiters()->whereNull('verify_by')->count();
-                        if ($pendingCount > 0) {
-                            \Filament\Notifications\Notification::make()
-                                ->title('Company Approved')
-                                ->body("Company approved. {$pendingCount} recruiter(s) still pending approval.")
-                                ->info()
-                                ->send();
-                        }
-                    })
-                    ->hidden(fn($record) => $record->verified_at !== null)
-                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
-
-                Action::make('reject')
-                    ->label(__('Reject'))
-                    ->icon('heroicon-o-x-circle')
-                    ->color('gray')
-                    ->iconButton()
-                    ->tooltip('Reject')
-                    ->requiresConfirmation()
-                    ->modalHeading('Reject Company')
-                    ->form([
-                        \Filament\Forms\Components\Textarea::make('reason')
-                            ->label('Rejection Reason')
-                            ->required()
-                            ->maxLength(500),
-                    ])
-                    ->action(function ($record, array $data) {
-                        $record->update([
-                            'verified_at' => null,
-                            'verified_by' => auth('admin')->id(),
-                            'reason' => $data['reason'],
-                        ]);
-                    })
-                    ->hidden(fn($record) => $record->verified_at === null)
-                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
-
+                Tables\Actions\ViewAction::make()->label('View more')->color('primary'),
+                Tables\Actions\EditAction::make()->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
                 Action::make('deactivate')
                     ->label(__('Deactivate'))
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
-                    ->iconButton()
-                    ->tooltip('Deactivate')
                     ->requiresConfirmation()
                     ->action(function ($record) {
                         $record->update(['active' => false]);
@@ -341,19 +256,11 @@ class CompanyResource extends Resource
                     ->label(__('Activate'))
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->iconButton()
-                    ->tooltip('Activate')
                     ->requiresConfirmation()
                     ->action(function ($record) {
                         $record->update(['active' => true]);
                     })
                     ->hidden(fn($record) => $record->active === true)
-                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
-
-                Tables\Actions\DeleteAction::make()
-                    ->iconButton()
-                    ->tooltip('Delete')
-                    ->requiresConfirmation()
                     ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
             ])
             ->headerActions([
@@ -446,7 +353,6 @@ class CompanyResource extends Resource
 
             ])
             ->paginated([10, 25, 50, 100])
-            ->striped()
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
             ->bulkActions([
@@ -460,7 +366,7 @@ class CompanyResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \App\Filament\Resources\CompanyResource\RelationManagers\RecruitersRelationManager::class,
+            //
         ];
     }
 
@@ -476,7 +382,7 @@ class CompanyResource extends Resource
 
     protected static function generateTemplate()
     {
-        // Remove asterisks from headers to avoid Excel key recognition issues
+        // Bỏ dấu * trực tiếp tại Header để tránh lỗi nhận diện Key từ Laravel-Excel
         $headers = [
             'company_name',
             'business_registration_number',
@@ -585,7 +491,7 @@ class CompanyResource extends Resource
             $districtValidation->setPromptTitle('Select District');
             $districtValidation->setPrompt('Select a  valid.');
 
-            // Limit validation string length to avoid Excel crash when district list is too long (>255 chars)
+            // Giới hạn ký tự chuỗi validation để tránh lỗi Excel crash khi danh sách quận huyện quá dài (>255 ký tự)
             $formulaString = '"' . implode(',', array_slice($districts, 0, 20)) . '"';
             $districtValidation->setFormula1($formulaString);
 

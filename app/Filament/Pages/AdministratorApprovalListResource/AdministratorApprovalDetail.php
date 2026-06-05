@@ -10,8 +10,7 @@ use Filament\Notifications\Notification;
 use App\Services\Admin\HandelAdminService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Spatie\Permission\Models\Role; // Thêm use này
+use GPBMetadata\Google\Api\Log;
 
 class AdministratorApprovalDetail extends Page
 {
@@ -29,17 +28,14 @@ class AdministratorApprovalDetail extends Page
                           'Public Offical ID Number is invalid',
                           'The Institute name is invalid',
                           'Or write something'
-    ];
+                        ];
     protected HandelAdminService $approvalService;
     protected bool $isEditing = false;
     public $formData = [];
-    public $isNaitaAdmin = false; // Thêm property này
-
     public function __construct()
     {
         $this->approvalService = new HandelAdminService();
     }
-
     public function mount(): void
     {
         $detailId = request()->get('id');
@@ -50,9 +46,6 @@ class AdministratorApprovalDetail extends Page
 
         $adminUser = AdminUser::with('tvetType')->findOrFail($detailId);
         $this->detailid = $adminUser;
-
-        // Kiểm tra xem user đã có role naita_admin chưa
-        $this->isNaitaAdmin = $adminUser->hasRole('naita_admin');
 
         $this->formData = [
             'nic' => $adminUser->nic,
@@ -65,6 +58,7 @@ class AdministratorApprovalDetail extends Page
         ];
     }
 
+
     protected function getHeaderActions(): array
     {
         return [
@@ -73,9 +67,9 @@ class AdministratorApprovalDetail extends Page
                 ->icon($this->isEditing ? 'heroicon-o-check' : 'heroicon-o-pencil')
                 ->action($this->isEditing ? 'save' : 'toggleEditMode')
                 ->color($this->isEditing ? 'success' : 'primary')
-                ->extraAttributes([
-                    'class' => 'rounded-xl'
-                ]),
+            ->extraAttributes([
+                'class' => 'rounded-xl'
+            ]),
         ];
     }
 
@@ -93,6 +87,7 @@ class AdministratorApprovalDetail extends Page
             'formData.phone' => 'required',
         ]);
 
+        $this->detailid->save();
         $adminUser = AdminUser::with('tvetType')->findOrFail($this->detailid->id);
         $adminUser->first_name = $this->formData['first_name'];
         $adminUser->last_name = $this->formData['last_name'];
@@ -101,8 +96,6 @@ class AdministratorApprovalDetail extends Page
         $adminUser->tvet_type = $this->formData['tvet_type'];
         $adminUser->save();
 
-        // Xử lý gán role naita_admin
-        $this->handleNaitaAdminRole($adminUser);
 
         $this->isEditing = false;
 
@@ -111,30 +104,44 @@ class AdministratorApprovalDetail extends Page
             ->success()
             ->send();
     }
-
-    /**
-     * Xử lý gán hoặc xóa role naita_admin
-     */
-    protected function handleNaitaAdminRole($adminUser)
-    {
-        $role = Role::findByName('naita_admin', 'admin');
-        $adminRole = Role::findByName('admin', 'admin');
-
-        if ($this->isNaitaAdmin) {
-            // Nếu toggle được bật, gán role nếu chưa có
-            if (!$adminUser->hasRole('naita_admin')) {
-                $adminUser->removeRole($adminRole);
-                $adminUser->assignRole($role);
-            }
-        } else {
-            // Nếu toggle tắt, xóa role nếu có
-            if ($adminUser->hasRole('naita_admin')) {
-                $adminUser->removeRole($role);
-                $adminUser->assignRole($adminRole);
-            }
-        }
-    }
-
+//    protected function getFirstFormSchema(): array
+//    {
+//            return [
+//                TextInput::make('nic')
+//                    ->label('NIC')
+//                    ->placeholder($this->detailid->nic ?? '')
+//                    ->disabled()
+//                    ->columnSpan('full'),
+//
+//                TextInput::make('name')
+//                    ->label('Name')
+//                    ->placeholder(fn () => $this->detailid->fullName)
+//                    ->disabled()
+//                    ->columnSpan('full'),
+//
+//                TextInput::make('email')
+//                    ->label('E-mail')
+//                    ->disabled()
+//                    ->placeholder(fn () => $this->detailid->fullName)
+//                    ->columnSpan('full'),
+//
+//                TextInput::make('phone')
+//                    ->disabled()
+//                    ->placeholder(fn () => $this->detailid->phone)
+//                    ->columnSpan('full'),
+//
+//                TextInput::make('tvet_type')
+//                    ->label(__('admin/dashboard.cgo.tvet_type'))
+//                    ->placeholder(fn () => $this->detailid->tvetType->head_office_name??'')
+//                    ->disabled()
+//                    ->columnSpan('full'),
+//                DateTimePicker::make('created_at')
+//                    ->label('Sign-up date')
+//                    ->native(false)
+//                    ->placeholder(fn () => $this->detailid->created_at)
+//                    ->columnSpan('full'),
+//            ];
+//    }
     protected function getFirstFormSchema(): array
     {
         return [
@@ -174,49 +181,41 @@ class AdministratorApprovalDetail extends Page
                 ->disabled(fn() => !$this->isEditing)
                 ->columnSpan('full'),
 
-            // Thêm toggle cho NAITA Admin
-            Toggle::make('isNaitaAdmin')
-                ->label('NAITA Admin')
-                ->helperText('Assign NAITA Admin role to this user')
-                ->disabled(fn() => !$this->isEditing)
-                ->onColor('success')
-                ->offColor('danger')
-                ->columnSpan('full'),
-
             TextInput::make('created_at')
                 ->label(__('admin/dashboard.cgo.created_at'))
-                ->disabled()
+                ->disabled() // Always disabled
                 ->placeholder(fn () => date("Y-m-d", strtotime($this->detailid?->created_at)))
-                ->dehydrated(false)
-                ->hidden(fn () => $this->isEditing)
+                ->dehydrated(false) // Prevent sending it when saving
+                ->hidden(fn () => $this->isEditing )
                 ->columnSpan('full'),
         ];
     }
-
     protected function getTvetTypeOptions(): array
     {
         return \App\Models\TvetType::pluck('head_office_name', 'head_office_code')->toArray();
     }
-
     protected function getSecondFormSchema(): array
     {
         return [
             TextInput::make('institute_name')
-                ->label('Institute')
-                ->placeholder(fn () => $this->detailid->institute->name ??'')
-                ->disabled()
-                ->columnSpan('full'),
+            ->label('Institute')
+            ->placeholder(fn () => $this->detailid->institute->name ??'')
+            ->disabled()
+            ->columnSpan('full'),
             TextInput::make('district_name')
                 ->label('District')
                 ->placeholder(fn () => $this->detailid->district->name?? '')
                 ->disabled()
                 ->columnSpan('full'),
-            TextInput::make('tvet_type')
+                TextInput::make('tvet_type')
                 ->label(__('admin/dashboard.cgo.tvet_type'))
                 ->disabled()
                 ->columnSpan('full'),
+
+
         ];
     }
+
 
     public function showApprovalModal()
     {
@@ -232,15 +231,15 @@ class AdministratorApprovalDetail extends Page
     {
         if (!$this->detailid) {
             Notification::make()
-                ->title('User ID not found')
-                ->success()
-                ->send();
+            ->title('User ID not found')
+            ->success()
+            ->send();
             return;
-        } else if(!$this->additionalComments){
+        }else if(!$this->additionalComments){
             Notification::make()
-                ->title('Reason for rejection is required')
-                ->danger()
-                ->send();
+            ->title('Reason for rejection is required')
+            ->danger()
+            ->send();
             return;
         }
 
@@ -248,19 +247,18 @@ class AdministratorApprovalDetail extends Page
 
         if ($success) {
             Notification::make()
-                ->title('Action Success!')
-                ->success()
-                ->send();
+            ->title('Action Success!')
+            ->success()
+            ->send();
             return redirect()->route('filament.admin.pages.administrator-approval-list');
         } else {
             Notification::make()
-                ->title('Something wrong !')
-                ->danger()
-                ->send();
+            ->title('Something wrong !')
+            ->danger()
+            ->send();
         }
         $this->closeModal();
     }
-
     public function toggleReason($reason)
     {
         if (in_array($reason, $this->selectedReasons)) {
@@ -269,7 +267,6 @@ class AdministratorApprovalDetail extends Page
             $this->selectedReasons[] = $reason;
         }
     }
-
     public function handleApproval()
     {
         if (!$this->detailid) {
@@ -286,4 +283,5 @@ class AdministratorApprovalDetail extends Page
             session()->flash('error', 'User not found.');
         }
     }
+
 }

@@ -71,9 +71,9 @@ class CareerGuideResource extends Resource
                 ->rowIndex()
                 ->alignCenter(),
 
-                TextColumn::make('title')->label(__('admin/dashboard.career_guidance.title'))->sortable()->searchable() ->limit(50)->wrap(),
-                TextColumn::make('category.name')->label(__('admin/dashboard.career_guidance.category_id'))->sortable()->wrap(),
-                TextColumn::make('created_at')->date('Y-m-d')->label(__('admin/dashboard.career_guidance.created_at'))->sortable()->wrap(),
+                TextColumn::make('title')->label(__('admin/dashboard.career_guidance.title'))->sortable()->searchable() ->limit(50),
+                TextColumn::make('category.name')->label(__('admin/dashboard.career_guidance.category_id'))->sortable(),
+                TextColumn::make('created_at')->date('Y-m-d')->label(__('admin/dashboard.career_guidance.created_at'))->sortable(),
             ])
             ->defaultSort('created_at', 'desc')
             ->actions([

@@ -65,8 +65,7 @@ class MenuResource extends BaseMenuResource
                     ->searchable()
                     ->sortable()
                     ->limit(50)
-                    ->label(__('filament-menu-builder::menu-builder.resource.name.label'))
-                    ->wrap(),
+                    ->label(__('filament-menu-builder::menu-builder.resource.name.label')),
                 Tables\Columns\TextColumn::make('locations.location')
                     ->label(__('filament-menu-builder::menu-builder.resource.locations.label'))
                     ->default(__('filament-menu-builder::menu-builder.resource.locations.empty'))

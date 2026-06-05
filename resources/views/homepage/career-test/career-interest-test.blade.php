@@ -1,8 +1,4 @@
-@php
-    $isTrainee = activeGuard() == 'trainee';
-    $isSchoolKid = activeGuard() == 'schoolkid';
-    $requireNIC = $isTrainee; // Chỉ trainee bắt buộc NIC
-@endphp
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -625,55 +621,28 @@
                 }
             });
         }*/
-        // function checkNIC(e) {
-        //     $("#pageOneError1").removeClass('d-block');
-        //     $("#pageOneError2").removeClass('d-block');
-        //     $("#pageOneSuccess1").addClass('d-none');
-        //
-        //     const nic = $("input[id='personNIC']").val().trim();
-        //
-        //     // Regular expression for Sri Lankan NIC validation
-        //     const nicPattern = /^([0-9]{9}[vVxX]|[0-9]{12})$/;
-        //
-        //     // Validate NIC
-        //     if (!nic) {
-        //         $("#pageOneError1").addClass('d-block');
-        //         e.preventDefault();
-        //         return false; // Indicate failure
-        //     } else if (!nicPattern.test(nic)) {
-        //         $("#pageOneError2").removeClass('d-none').addClass('d-block');
-        //         e.preventDefault();
-        //         return false; // Indicate failure
-        //     }
-        //
-        //     // Return true for success
-        //     return true;
-        // }
         function checkNIC(e) {
             $("#pageOneError1").removeClass('d-block');
             $("#pageOneError2").removeClass('d-block');
             $("#pageOneSuccess1").addClass('d-none');
 
             const nic = $("input[id='personNIC']").val().trim();
-            const isTrainee = {{ $isTrainee ? 'true' : 'false' }}; // Truyền từ PHP
 
-            // Chỉ validate NIC nếu là trainee
-            if (isTrainee) {
-                // Regular expression for Sri Lankan NIC validation
-                const nicPattern = /^([0-9]{9}[vVxX]|[0-9]{12})$/;
+            // Regular expression for Sri Lankan NIC validation
+            const nicPattern = /^([0-9]{9}[vVxX]|[0-9]{12})$/;
 
-                if (!nic) {
-                    $("#pageOneError1").addClass('d-block');
-                    e.preventDefault();
-                    return false;
-                } else if (!nicPattern.test(nic)) {
-                    $("#pageOneError2").removeClass('d-none').addClass('d-block');
-                    e.preventDefault();
-                    return false;
-                }
+            // Validate NIC
+            if (!nic) {
+                $("#pageOneError1").addClass('d-block');
+                e.preventDefault();
+                return false; // Indicate failure
+            } else if (!nicPattern.test(nic)) {
+                $("#pageOneError2").removeClass('d-none').addClass('d-block');
+                e.preventDefault();
+                return false; // Indicate failure
             }
 
-            // Nếu không phải trainee, không validate NIC
+            // Return true for success
             return true;
         }
         // Function to get the 'lang' parameter from the URL
@@ -765,42 +734,20 @@
         }
 
         function changePage(page) {
-            // if (page === 2) {
-            //     if ($('#personName').val() === '' || $('#personNIC').val() === '' || $('#personInstitute').val() === '') {
-            //         $('#pageOneNameDiv').addClass('was-validated')
-            //         return
-            //     } else {
-            //         if (!checkNIC(event)) {
-            //             // Prevent further execution if checkNIC fails
-            //             return;
-            //         }
-            //         localStorage.setItem('ckt-personName', $('#personName').val())
-            //         localStorage.setItem('ckt-personNIC', $('#personNIC').val())
-            //         localStorage.setItem('ckt-personInstitute', $('#personInstitute').val())
-            //         $('#pageOneNameDiv').removeClass('was-validated')
-            //     }
-            // }
             if (page === 2) {
-                const isTrainee = {{ $isTrainee ? 'true' : 'false' }};
-                const name = $('#personName').val();
-                const nic = $('#personNIC').val();
-                const institute = $('#personInstitute').val();
-
-                // Validate required fields
-                if (name === '' || institute === '') {
-                    $('#pageOneNameDiv').addClass('was-validated');
-                    return;
+                if ($('#personName').val() === '' || $('#personNIC').val() === '' || $('#personInstitute').val() === '') {
+                    $('#pageOneNameDiv').addClass('was-validated')
+                    return
+                } else {
+                    if (!checkNIC(event)) {
+                        // Prevent further execution if checkNIC fails
+                        return;
+                    }
+                    localStorage.setItem('ckt-personName', $('#personName').val())
+                    localStorage.setItem('ckt-personNIC', $('#personNIC').val())
+                    localStorage.setItem('ckt-personInstitute', $('#personInstitute').val())
+                    $('#pageOneNameDiv').removeClass('was-validated')
                 }
-
-                // Chỉ validate NIC nếu là trainee
-                if (isTrainee && !checkNIC(event)) {
-                    return;
-                }
-
-                localStorage.setItem('ckt-personName', name);
-                localStorage.setItem('ckt-personNIC', nic);
-                localStorage.setItem('ckt-personInstitute', institute);
-                $('#pageOneNameDiv').removeClass('was-validated');
             }
 
             if (page === 3) {
@@ -1024,42 +971,24 @@
                 <p id="pageOnePara4">Read each question. Think which one you would like the most and select your answer. If you are not sure, then just guess what is best for you. You have to choose one, and you cannot leave any blank.</p>
                 <p id="pageOnePara5">To start the test, please fill the name below and click on the start button.</p>
                 <div id="pageOneNameDiv" class="row shadow-none p-3 mt-1 mb-3 bg-light rounded" style="justify-content: center">
-                    <div class="@if($requireNIC) col-md-6 @else col-md-12 @endif btn">
+                    <div class="col-md-6 btn">
                         <input type="text" class="form-control" id="personName" placeholder="Your name" {{$userFullName != '' ? 'disabled' : ''}} value="{{$userFullName}}" required>
                         <div id="pageOneError" class="invalid-feedback text-start">
                             Please add your name!
                         </div>
                     </div>
-{{--                    <div class="col-md-6 btn">--}}
-{{--                        <input type="text" class="form-control" id="personNIC" placeholder="Your NIC" {{$userNIC != '' ? 'disabled' : ''}} value="{{$userNIC}}" pattern="^([0-9]{9}[vVxX]|[0-9]{12})$" required>--}}
+                    <div class="col-md-6 btn">
+                        <input type="text" class="form-control" id="personNIC" placeholder="Your NIC" {{$userNIC != '' ? 'disabled' : ''}} value="{{$userNIC}}" pattern="^([0-9]{9}[vVxX]|[0-9]{12})$" required>
 {{--                        <div id="pageOneError1" class="invalid-feedback text-start">--}}
 {{--                            Please add your NIC!--}}
 {{--                        </div>--}}
-{{--                        <div id="pageOneError2" class="invalid-feedback text-start">--}}
-{{--                            Invalid NIC format.--}}
-{{--                        </div>--}}
-{{--                        <div id="pageOneSuccess1" class="d-none text-success text-start">--}}
-{{--                            Your NIC is confirmed!--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
-                    @if($requireNIC)
-                        <div class="col-md-6 btn" id="nicField">
-                            <input type="text" class="form-control" id="personNIC"
-                                   placeholder="Your NIC"
-                                   {{ $userNIC != '' ? 'disabled' : '' }}
-                                   value="{{ $userNIC }}"
-                                   pattern="^([0-9]{9}[vVxX]|[0-9]{12})$"
-                                   required>
-                            <div id="pageOneError1" class="invalid-feedback text-start">
-                                Please add your NIC!
-                            </div>
-                            <div id="pageOneError2" class="invalid-feedback text-start">
-                                Invalid NIC format.
-                            </div>
+                        <div id="pageOneError2" class="invalid-feedback text-start">
+                            Invalid NIC format.
                         </div>
-                    @else
-                        <input type="hidden" id="personNIC" value="">
-                    @endif
+                        <div id="pageOneSuccess1" class="d-none text-success text-start">
+                            Your NIC is confirmed!
+                        </div>
+                    </div>
                     <div class="col-md-12">
                         <select class="select-2 form-control" id="personInstitute" name="personInstitute" required>
                             <option value="">Select your institute</option>

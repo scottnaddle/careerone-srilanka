@@ -9,7 +9,6 @@ use App\Models\CareerGuidanceCategory;
 use App\Models\CgoUser;
 use App\Models\CompanyRecruiter;
 use App\Models\Content;
-use App\Models\SchoolKid;
 use App\Models\TraineeUser;
 use App\Services\Admin\HandelAdminService;
 use App\Services\Cgo\NotificationManager as NotificationManagerCgo;
@@ -75,9 +74,6 @@ class ViewDocument extends ViewRecord
                 break;
             case 'trainee':
                 $user = TraineeUser::where(['id' => $id])->first();
-                break;
-            case 'schoolkid':
-                $user = SchoolKid::where(['id' => $id])->first();
                 break;
         }
         return $user;

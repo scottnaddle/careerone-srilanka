@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Auth\MagicLinkController;
-use App\Http\Controllers\Auth\SocialLoginController;
 use App\Http\Controllers\DistrictController;
 use App\Http\Controllers\EmploymentController;
 use App\Http\Controllers\InstituteController;
@@ -11,15 +9,13 @@ use App\Http\Controllers\QnaAttachmentController;
 use App\Http\Controllers\QNAController;
 use App\Http\Controllers\RegisterVerificationCodeController;
 use App\Http\Controllers\UploadController;
+use App\Services\ESMSService;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventAttachmentController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\LocaleController;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\Mailer\Messenger\SendEmailMessage;
-use App\Services\ESMSService;
-use Filament\Actions\Exports\Http\Controllers\DownloadExport;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -31,9 +27,6 @@ use Filament\Actions\Exports\Http\Controllers\DownloadExport;
 |
 */
 
-Route::get('/filament/exports/{export}/download', DownloadExport::class)
-    ->name('filament.exports.download')
-    ->withoutMiddleware(['auth']);
 Route::get('/', [HomepageController::class, 'index'])->name('homepage');
 Route::get('/about-us', [HomepageController::class, 'aboutUs'])->name('homepage.about-us');
 Route::get('/sitemap.xml', [
@@ -58,10 +51,8 @@ Route::group(['prefix' => 'attempt-to-test', 'as' => 'testnow.'], function () {
 
 Route::post('images/upload', [UploadController::class, 'store'])->name('upload.images');
 
-Route::middleware('auth:admin')->group(function () {
-    Route::get('/admins', function () {
-        return view('admin/dashboard');
-    });
+Route::get('/admins', function () {
+    return view('admin/dashboard');
 });
 Route::get('/choose-login', function () {
     if (Auth::guard('admin')->check()) {
@@ -188,12 +179,8 @@ Route::group(['prefix' => 'sector', 'as' => 'sector.'], function () {
     Route::get('/manufactoring', [HomepageController::class, 'getManufactoringSector'])->name('manufactoring');
     Route::get('/construction', [HomepageController::class, 'getConstructionSector'])->name('construction');
 });
-Route::middleware('auth:admin')->group(function () {
-    Route::get('/deploy/run', [\App\Http\Controllers\DeployController::class, 'run']);
-});
-Route::middleware('auth:trainee')->group(function () {
-    Route::get('/dispatch-portfolios-job', [\App\Http\Controllers\Trainee\PortfolioController::class, 'generatePortfolios']);
-});
+Route::get('/deploy/run', [\App\Http\Controllers\DeployController::class, 'run']);
+Route::get('/dispatch-portfolios-job', [\App\Http\Controllers\Trainee\PortfolioController::class, 'generatePortfolios']);
 Route::get('/test-sms-simple', function () {
     $smsService = new ESMSService();
 
@@ -204,13 +191,13 @@ Route::get('/test-sms-simple', function () {
         // Thông tin gửi SMS
         $alias = "TVEC";
         $messageType = "TEXT";
-        $phoneNumber = "+94762766230";
+        $phoneNumber = "+94707940390";
 
         // Kết quả
         $results = [];
 
         // Gửi 50 tin nhắn liên tục
-        for ($i = 1; $i <= 200; $i++) {
+        for ($i = 1; $i <= 100; $i++) {
             $message = "SMS No. #{$i} - " . date('H:i:s');
 
             try {
@@ -272,12 +259,3 @@ Route::get('/test-sms-simple', function () {
         echo "❌ Lỗi hệ thống: " . $e->getMessage();
     }
 });
-
-// Magic Link Login
-Route::get('/magic-link', [MagicLinkController::class, 'showForm'])->name('magic-link.form');
-Route::post('/magic-link', [MagicLinkController::class, 'send'])->name('magic-link.send');
-Route::get('/magic-link/verify', [MagicLinkController::class, 'verify'])->name('magic-link.verify');
-
-// Social Login (Google)
-Route::get('/auth/google/redirect', [SocialLoginController::class, 'redirect'])->name('social.redirect');
-Route::get('/auth/google/callback', [SocialLoginController::class, 'callback'])->name('social.callback');

@@ -9,32 +9,20 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Activitylog\ActivityLogger;
 use Symfony\Component\Mailer\Messenger\SendEmailMessage;
 use App\Services\ESMSService;
 use Filament\Models\Contracts\HasName;
-use App\Models\ActivityLog;
+
 class CgoUser extends Authenticatable implements HasName
 {
-    use \App\Models\Traits\HasMagicLink;
     use HasApiTokens, HasFactory, Notifiable, HasGenerateCode;
-    protected $fillable = ['nic', 'first_name', 'last_name', 'email', 'password', 'telephone', 'profile_image', 'district_id', 'institute_id', 'verify_at', 'verify_by', 'email_verified_at', 'attached_file','reason', 'active', 'last_login_at', 'last_login_reminder_sent_at'];
+    protected $fillable = ['nic', 'first_name', 'last_name', 'email', 'password', 'telephone', 'profile_image', 'district_id', 'institute_id', 'verify_at', 'verify_by', 'email_verified_at', 'attached_file','reason', 'active'];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'last_login_at' => 'datetime',
-        'last_login_reminder_sent_at' => 'datetime',
     ];
-
-    public function setPasswordAttribute($value)
-    {
-        if (!empty($value)) {
-            $this->attributes['password'] = bcrypt($value);
-        }
-    }
 
     public function institute()
     {
@@ -118,19 +106,6 @@ class CgoUser extends Authenticatable implements HasName
             'counseling_id'
         );
     }
-
-    public function completedCounselings()
-    {
-        return $this->hasManyThrough(
-            CgoCounseling::class,
-            CgoCounselingAssignHistory::class,
-            'assignee_to',
-            'id',
-            'id',
-            'counseling_id'
-        )->where('cgo_counselings.status', 3);
-    }
-
     public function countCancelCounseling(){
         return $this->hasMany(UserAction::class,'cgo_user_id','id')
                     ->where('action','Rejected counseling');
@@ -158,105 +133,5 @@ class CgoUser extends Authenticatable implements HasName
         return $this->hasMany(ReactiveAccountRequest::class, 'user_id')
             ->where('reactive_account_requests.user_type', 'cgo');
     }
-
-    /**
-     * Relationship get login activities
-     */
-    public function loginActivities()
-    {
-        return $this->morphMany(ActivityLog::class, 'causer')
-            ->where('log_name', 'Access')
-            ->whereRaw('properties->>\'guard\' = ?', ['cgo']);
-    }
-
-    /**
-     * total login time
-     */
-    public function getTotalLoginCountAttribute()
-    {
-        return $this->loginActivities()->count();
-    }
-
-    /**
-     * this week
-     */
-    public function getLoginCountThisWeekAttribute()
-    {
-        return $this->loginActivities()
-            ->whereBetween('created_at', [
-                now()->startOfWeek(),
-                now()->endOfWeek()
-            ])
-            ->count();
-    }
-
-    /**
-     * this month
-     */
-    public function getLoginCountThisMonthAttribute()
-    {
-        return $this->loginActivities()
-            ->whereBetween('created_at', [
-                now()->startOfMonth(),
-                now()->endOfMonth()
-            ])
-            ->count();
-    }
-
-    /**
-     * last month
-     */
-    public function getLoginCountLastMonthAttribute()
-    {
-        return $this->loginActivities()
-            ->whereBetween('created_at', [
-                now()->subMonth()->startOfMonth(),
-                now()->subMonth()->endOfMonth()
-            ])
-            ->count();
-    }
-
-    /**
-     * this quarter
-     */
-    public function getLoginCountThisQuarterAttribute()
-    {
-        return $this->loginActivities()
-            ->whereBetween('created_at', [
-                now()->startOfQuarter(),
-                now()->endOfQuarter()
-            ])
-            ->count();
-    }
-
-    /**
-     * this year
-     */
-    public function getLoginCountThisYearAttribute()
-    {
-        return $this->loginActivities()
-            ->whereBetween('created_at', [
-                now()->startOfYear(),
-                now()->endOfYear()
-            ])
-            ->count();
-    }
-
-    public function scopeInactive($query, $days = 30)
-    {
-        return $query->where(function($q) use ($days) {
-            $q->where('last_login_at', '<', Carbon::now()->subDays($days))
-                ->orWhereNull('last_login_at');
-        });
-    }
-
-    // Scope để lấy CGO chưa được nhắc nhở gần đây
-    public function scopeNotRemindedRecently($query, $days = 7)
-    {
-        return $query->where(function($q) use ($days) {
-            $q->whereNull('last_login_reminder_sent_at')
-                ->orWhere('last_login_reminder_sent_at', '<', Carbon::now()->subDays($days));
-        });
-    }
-
+    
 }

@@ -4,15 +4,6 @@ namespace App\Filament\Pages\Dashboard;
 
 use App\Filament\Resources\JobResource\Widgets\JobVacancyChartWidget;
 use App\Filament\Resources\JobResource\Widgets\JobVacancyTableWidget;
-use App\Filament\Widgets\AppliesAndMatchesChart;
-use App\Filament\Widgets\JobAppliesAndMatchesChart;
-use App\Filament\Widgets\MonthlyJobAppliesChart;
-use App\Filament\Widgets\MonthlyJobMatchesChart;
-use App\Filament\Widgets\MonthlyJobsAndOjtsChart;
-use App\Filament\Widgets\MonthlyOjtAppliesChart;
-use App\Filament\Widgets\MonthlyOjtMatchesChart;
-use App\Filament\Widgets\NaitaOverview;
-use App\Filament\Widgets\OjtAppliesAndMatchesChart;
 use App\Filament\Widgets\OverviewWidgets;
 use App\Filament\Widgets\MemberSignupChartWidget;
 use App\Filament\Widgets\MemberSignupTableWidget;
@@ -55,13 +46,6 @@ class Overview extends Page
                 CounselingOverviewChartWidget::class,
                 QuestionsAndAnswersTableWidget::class,
                 QuestionAndAnswersChartWidget::class,
-            ];
-        } elseif (auth('admin')->user()->hasRole('naita')) {
-            return [
-                NaitaOverview::class,
-                MonthlyJobsAndOjtsChart::class,
-                JobAppliesAndMatchesChart::class,
-                OjtAppliesAndMatchesChart::class,
             ];
         }
         return [

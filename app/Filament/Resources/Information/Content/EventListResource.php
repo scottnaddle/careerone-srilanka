@@ -5,9 +5,6 @@ namespace App\Filament\Resources\Information\Content;
 use App\Filament\Resources\Information\Content\EventListResource\Pages;
 use App\Filament\Resources\Information\Content\EventListResource\RelationManagers;
 use App\Models\Event;
-use App\Models\CgoUser;
-use App\Models\Institute;
-use App\Models\TvetType;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -28,7 +25,6 @@ use App\Filament\Forms\Components\CKEditor;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables\Actions\Action;
-
 class EventListResource extends Resource
 {
     protected static ?string $model = Event::class;
@@ -38,253 +34,114 @@ class EventListResource extends Resource
 
     public static function form(Form $form): Form
     {
+
         return $form
-            ->schema([
-                \Filament\Forms\Components\Grid::make()
-                    ->schema([
-                        Select::make('event_type')
-                            ->label(__('admin/dashboard.event.event_type'))
-                            ->options(function () {
-                                $eventTypes = getCodeList('event_type', 'en');
-                                $option = [];
-                                foreach ($eventTypes as $type) {
-                                    $option[$type->code_id] = $type->code_name;
-                                }
-                                return $option;
-                            })
-                            ->required()
-                            ->columnSpan('w-1/2'),
+        ->schema([
+            \Filament\Forms\Components\Grid::make()
+                ->schema([
+                    Select::make('event_type')
+                        ->label(__('admin/dashboard.event.event_type'))
+                        ->options(function () {
+                            $eventTypes = getCodeList('event_type', 'en');
+                            $option = [];
+                            foreach ($eventTypes as $type) {
+                                $option[$type->code_id] = $type->code_name;
+                            }
+                            return $option;
+                        })
+                        ->required()
+                        ->columnSpan('w-1/2'),
 
-                        TextInput::make('title')
-                            ->label(__('admin/dashboard.event.title'))
-                            ->columnSpan('w-2/3')
-                            ->required()
-                            ->afterStateUpdated(function (callable $set, $state) {
-                                $slug = Str::slug($state);
-                                $set('slug', $slug);
-                            }),
-                    ])
-                    ->columnSpan('full'),
+                    TextInput::make('title')
+                        ->label(__('admin/dashboard.event.title'))
+                        ->columnSpan('w-2/3')
+                        ->required()
+                        ->afterStateUpdated(function (callable $set, $state) {
+                            $slug = Str::slug($state);
+                            $set('slug', $slug);
+                        }),
+                ])
+                ->columnSpan('full'),
 
-                \Filament\Forms\Components\Grid::make()
-                    ->schema([
-                        DateTimePicker::make('start_time')
-                            ->label(__('admin/dashboard.event.start_time'))
-                            ->required()
-                            ->columnSpan('w-1/2'),
+            \Filament\Forms\Components\Grid::make()
+                ->schema([
+                    DateTimePicker::make('start_time')
+                        ->label(__('admin/dashboard.event.start_time'))
+                        ->required()
+                        ->columnSpan('w-1/2'),
 
-                        DateTimePicker::make('end_time')
-                            ->label(__('admin/dashboard.event.end_time'))
-                            ->required()
-                            ->after('start_time')
-                            ->columnSpan('w-1/2'),
-                    ])
-                    ->columnSpan('full'),
+                    DateTimePicker::make('end_time')
+                        ->label(__('admin/dashboard.event.end_time'))
+                        ->required()
+                        ->after('start_time')
+                        ->columnSpan('w-1/2'),
+                ])
+                ->columnSpan('full'),
 
-                \Filament\Forms\Components\Grid::make()
-                    ->schema([
-                        FileUpload::make('thumbnail')
-                            ->disk('public')
-                            ->directory('cgo/events/thumbnails/temp')
-                            ->imageEditor()
-                            ->required()
-                            ->preserveFilenames()
-                            ->columnSpan('w-1/2')
-                            ->optimize('webp'),
-
-                        TextInput::make('place')
-                            ->label(__('admin/dashboard.event.place'))
-                            ->columnSpan('w-2/3'),
-                    ]),
-
-                Hidden::make('system')
-                    ->default('admin')
-                    ->columnSpan('full'),
-
-                Hidden::make('slug')
-                    ->label(__('admin/dashboard.event.slug'))
-                    ->dehydrated(fn($state) => !is_null($state)),
-
-                Hidden::make('status')
-                    ->default(\App\Enums\StatusEnumsManagement::APPROVED->value),
-
-                Hidden::make('created_by')
-                    ->default(Auth::id())
-                    ->label(__('admin/dashboard.event.created_by')),
-
-                Forms\Components\Hidden::make('sort')
-                    ->label(__('admin/dashboard.event.sort'))
-                    ->default(function () {
-                        $currentSortValue = Event::max('sort');
-                        return ($currentSortValue ?? 0) + 1;
-                    }),
-
-                CKEditor::make('details')
-                    ->label(__('admin/dashboard.event.details'))
-                    ->columnSpan('full'),
-
-                FileUpload::make('attachments')
-                    ->directory('storage/cgo/events/attachments/temp')
+            \Filament\Forms\Components\Grid::make()
+                ->schema([
+                    FileUpload::make('thumbnail')
+                    ->disk('public') // Chỉ định disk 'public'
+                    ->directory('cgo/events/thumbnails/temp') // Bỏ 'storage/'
                     ->imageEditor()
+                    ->required()
                     ->preserveFilenames()
-                    ->columnSpan('full')
-                    ->reactive()
-                    ->optimize('webp'),
-            ]);
+                    ->columnSpan('w-1/2')
+                    ->optimize('webp')
+                    ,
+
+
+                    TextInput::make('place')
+                        ->label(__('admin/dashboard.event.place'))
+                        ->columnSpan('w-2/3'),
+                ]),
+
+            // Các ô khác
+            Hidden::make('system')
+                ->default('admin')
+                ->columnSpan('full'),
+
+            Hidden::make('slug')
+                ->label(__('admin/dashboard.event.slug'))
+                ->dehydrated(fn($state) => !is_null($state)),
+
+            Hidden::make('status')
+                ->default(\App\Enums\StatusEnumsManagement::APPROVED->value),
+
+            Hidden::make('created_by')
+                ->default(Auth::id())
+                ->label(__('admin/dashboard.event.created_by')),
+
+            Forms\Components\Hidden::make('sort')
+                ->label(__('admin/dashboard.event.sort'))
+                ->default(function () {
+                    $currentSortValue = Event::max('sort');
+                    return ($currentSortValue ?? 0) + 1;
+                }),
+
+            CKEditor::make('details')
+                ->label(__('admin/dashboard.event.details'))
+
+                ->columnSpan('full'),
+
+            FileUpload::make('attachments')
+                ->directory('storage/cgo/events/attachments/temp')
+                ->imageEditor()
+                ->preserveFilenames()
+                ->columnSpan('full')
+                ->reactive()
+                ->optimize('webp'),
+        ]);
+
     }
 
     public static function table(Table $table): Table
     {
-        $user = auth('admin')->user();
-        $isSuperAdmin = $user->hasRole('super_admin');
-        $userTvetType = $user->tvet_type;
-
-        $filters = [];
-
-        if ($isSuperAdmin) {
-            // Filter cho super_admin: có thể chọn TVET và Institute
-            $filters[] = Tables\Filters\Filter::make('tvet_type_filter')
-                ->form([
-                    Forms\Components\Select::make('tvet_type')
-                        ->label('Head Office')
-                        ->options(TvetType::all()->pluck('head_office_name', 'head_office_code'))
-                        ->preload()
-                        ->searchable()
-                        ->reactive()
-                        ->afterStateUpdated(function ($state, callable $set) {
-                            $set('institute_select', null);
-                        }),
-
-                    Forms\Components\Select::make('institute_select')
-                        ->label('Institute')
-                        ->options(function ($get) {
-                            $tvetCode = $get('tvet_type');
-                            if ($tvetCode) {
-                                return Institute::where('institute_head_office', $tvetCode)
-                                    ->orderBy('name', 'asc')
-                                    ->pluck('name', 'id');
-                            }
-                            return [];
-                        })
-                        ->preload()
-                        ->searchable()
-                        ->visible(function ($get) {
-                            return !empty($get('tvet_type'));
-                        }),
-                ])
-                ->query(function (Builder $query, array $data) {
-                    if (!empty($data['tvet_type'])) {
-                        $instituteIds = Institute::where('institute_head_office', $data['tvet_type'])
-                            ->pluck('id')
-                            ->toArray();
-                        $query->whereHas('cgoUsers', function ($q) use ($instituteIds) {
-                            $q->whereIn('institute_id', $instituteIds);
-                        });
-                    }
-                    if (!empty($data['institute_select'])) {
-                        $query->whereHas('cgoUsers', function ($q) use ($data) {
-                            $q->where('institute_id', $data['institute_select']);
-                        });
-                    }
-                });
-        } else {
-            // Filter cho admin thường: chỉ hiển thị institute thuộc tvet_type của họ
-            if ($userTvetType) {
-                $instituteOptions = Institute::where('institute_head_office', $userTvetType)
-                    ->orderBy('name', 'asc')
-                    ->pluck('name', 'id')
-                    ->toArray();
-
-                $filters[] = Tables\Filters\Filter::make('institute_filter')
-                    ->form([
-                        Forms\Components\Select::make('institute_select')
-                            ->label('Institute')
-                            ->options($instituteOptions)
-                            ->preload()
-                            ->searchable()
-                            ->placeholder('All Institutes'),
-                    ])
-                    ->query(function (Builder $query, array $data) {
-                        if (!empty($data['institute_select'])) {
-                            $query->whereHas('cgoUsers', function ($q) use ($data) {
-                                $q->where('institute_id', $data['institute_select']);
-                            });
-                        }
-                    });
-            }
-        }
-
-        // Thêm các filter cơ bản
-        $filters[] = Tables\Filters\Filter::make('is_main_event')
-            ->label('Main event')
-            ->query(fn($query) => $query->where('is_main_event', true))
-            ->toggle();
-
-        $filters[] = Tables\Filters\SelectFilter::make('event_type')
-            ->label('Event Type')
-            ->options(function () {
-                $eventTypes = getCodeList('event_type', 'en');
-                $option = [];
-                foreach ($eventTypes as $type) {
-                    $option[$type->code_id] = $type->code_name;
-                }
-                return $option;
-            })
-            ->placeholder('All Event Types')
-            ->column('event_type');
-
-        $filters[] = Tables\Filters\SelectFilter::make('system')
-            ->label('Select member')
-            ->options([
-                'cgo' => 'CGO',
-                'company' => 'Company',
-                'admin' => 'Admin'
-            ])
-            ->placeholder('All Member')
-            ->column('system');
-
-        $filters[] = Tables\Filters\SelectFilter::make('status')
-            ->label('Status')
-            ->options(function () {
-                $eventStatus = \App\Enums\StatusEnumsManagement::cases();
-                $option = [];
-                foreach ($eventStatus as $statusEnum) {
-                    $option[$statusEnum->value] = \App\Enums\StatusEnumsManagement::getStatusName($statusEnum->value);
-                }
-                return $option;
-            })
-            ->placeholder('All status')
-            ->column('status');
 
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                $user = auth('admin')->user();
-                $isSuperAdmin = $user->hasRole('super_admin');
-
-                // Nếu không phải super_admin, chỉ hiển thị event được tạo bởi CGO thuộc institute của user
-                if (!$isSuperAdmin) {
-                    $userTvetType = $user->tvet_type;
-
-                    if ($userTvetType) {
-                        // Lấy tất cả institute thuộc tvet_type của user
-                        $instituteIds = Institute::where('institute_head_office', $userTvetType)
-                            ->pluck('id')
-                            ->toArray();
-
-                        // Chỉ hiển thị event có created_by là CGO user thuộc các institute đó
-                        // và system là 'cgo'
-                        $query->where('system', 'cgo')
-                            ->whereHas('cgoUsers', function ($q) use ($instituteIds) {
-                                $q->whereIn('institute_id', $instituteIds);
-                            });
-                    } else {
-                        // Nếu user không có tvet_type, không hiển thị gì
-                        $query->whereRaw('1 = 0');
-                    }
-                }
-
-                // Sắp xếp: main event lên đầu, sau đó mới đến created_at
-                return $query->orderByRaw('COALESCE(is_main_event, false) DESC')
+                return $query
+                    ->orderByRaw('COALESCE(is_main_event, false) DESC')
                     ->orderByDesc('created_at');
             })
             ->columns([
@@ -295,26 +152,22 @@ class EventListResource extends Resource
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->sortable()
-                    ->label(__('admin/dashboard.event.date'))->date("Y-m-d")
-                    ->wrap(),
+                    ->label(__('admin/dashboard.event.date'))->date("Y-m-d"),
 
                 Tables\Columns\TextColumn::make('title')
                     ->sortable()
                     ->searchable()
                     ->label(__('admin/dashboard.event.title_table'))
-                    ->limit(50)
-                    ->wrap(),
+                    ->limit(50),
 
                 Tables\Columns\TextColumn::make('full_name')
-                    ->label(__('admin/dashboard.event.author'))
-                    ->wrap(),
+                    ->label(__('admin/dashboard.event.author')),
 
                 Tables\Columns\TextColumn::make('event_type')
                     ->label(__('admin/dashboard.event.event_type'))
                     ->formatStateUsing(function ($record) {
                         return getCodeNameByCodeId('event_type', $record->event_type);
-                    })
-                    ->wrap(),
+                    }),
 
                 Tables\Columns\TextColumn::make('system')
                     ->sortable()
@@ -326,10 +179,9 @@ class EventListResource extends Resource
                             default => $record,
                         };
                     })
-                    ->label(__('admin/dashboard.event.member'))
-                    ->wrap(),
+                    ->label(__('admin/dashboard.event.member')),
 
-                Tables\Columns\TextColumn::make('approval')
+                    Tables\Columns\TextColumn::make('approval')
                     ->label(__('admin/dashboard.event.status'))
                     ->getStateUsing(fn($record) => $record->status == \App\Enums\StatusEnumsManagement::APPROVED->value ?
                         __('admin/status.approved') : ($record->status == \App\Enums\StatusEnumsManagement::NON_APPROVAL->value ?
@@ -342,19 +194,132 @@ class EventListResource extends Resource
                     })
                     ->html(),
 
-                Tables\Columns\ToggleColumn::make('is_main_event')
-                    ->label(trans('general.Main Event'))
-                    ->alignCenter()->visible(fn () => auth('admin')->user()->hasRole('super_admin'))
-                    ->disabled(fn ($record) => $record->status === \App\Enums\StatusEnumsManagement::PENDING_APPROVAL->value),
+
+//                    Tables\Columns\TextColumn::make('show_on_homepage')
+//                    ->label(__('admin/dashboard.event.show_on_home_page'))
+//                    ->formatStateUsing(function ($record) {
+//                        $total = $record->query()->where('show_on_homepage', true)->count();
+//                        $adminCount = $record->query()
+//                            ->where('show_on_homepage', true)
+//                            ->where('system', 'admin')
+//                            ->count();
+//                        $isShown = $record->show_on_homepage;
+//
+//                        return "<span style='font-size:12px; " .
+//                               ($isShown ? "color: #4984F6; background-color: #F2F9FF;" : "color: #666; background-color: #f5f5f5;") .
+//                               " padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-weight:600;'>" .
+//                               ($isShown ? "Showing" : "Not showing") .
+//                               "</span>";
+//                    })
+//                    ->html()
+//                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+                    Tables\Columns\ToggleColumn::make('is_main_event')
+                        ->label(trans('general.Main Event'))
+                        ->alignCenter()
+                        ->disabled(fn ($record) => $record->status === \App\Enums\StatusEnumsManagement::PENDING_APPROVAL->value),
             ])
             ->searchPlaceholder('Title')
-            ->filters($filters)
+            ->filters([
+//                Tables\Filters\Filter::make('show_on_homepage')
+//                    ->label('Show on Homepage')
+//                    ->query(fn($query) => $query->where('show_on_homepage', true))
+//                    ->toggle(),
+                Tables\Filters\Filter::make('is_main_event')
+                    ->label('Main event')
+                    ->query(fn($query) => $query->where('is_main_event', true))
+                    ->toggle(),
+                Tables\Filters\SelectFilter::make('event_type')
+                    ->label('Event Type')
+                    ->options(function () {
+                        $eventTypes = getCodeList('event_type', 'en');
+                        $option = [];
+                        foreach ($eventTypes as $type) {
+                            $option[$type->code_id] = $type->code_name;
+                        }
+                        return $option;
+                    })
+                    ->placeholder('All Event Types')
+                    ->column('event_type'),
+                Tables\Filters\SelectFilter::make('system')
+                    ->label('Select member')
+                    ->options([
+                        'cgo' => 'CGO',
+                        'company' => 'Company',
+                        'admin' => 'Admin'
+                    ])
+                    ->placeholder('All Member')
+                    ->column('system'),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Status')
+                    ->options(function () {
+                        $eventStatus = \App\Enums\StatusEnumsManagement::cases();
+                        $option = [];
+                        foreach ($eventStatus as $statusEnum) {
+                            $option[$statusEnum->value] = \App\Enums\StatusEnumsManagement::getStatusName($statusEnum->value);
+                        }
+                        return $option;
+                    })
+                    ->placeholder('All status')
+                    ->column('status'),
+            ])
             ->actions([
+//                Tables\Actions\Action::make('toggle_homepage')
+//                    ->label(fn($record) => $record->show_on_homepage ? 'Remove from Homepage' : 'Enable showing on Homepage')
+//                    ->action(function ($record) {
+//                        // Kiểm tra nếu đang thêm vào homepage
+//                        if (!$record->show_on_homepage) {
+//                            // Đếm tổng số record đang show trên homepage
+//                            $totalCount = $record->query()->where('show_on_homepage', true)->count();
+//
+//                            // Kiểm tra điều kiện status = 2
+//                            if ($record->status != 2) {
+//                                Notification::make()
+//                                    ->warning()
+//                                    ->title('Cannot add to homepage')
+//                                    ->body('Only approved events can be shown on homepage.')
+//                                    ->send();
+//                                return;
+//                            }
+//
+//                            // Kiểm tra số lượng tối đa
+//                            if ($totalCount >= 4) {
+//                                Notification::make()
+//                                    ->warning()
+//                                    ->title('Cannot add to homepage')
+//                                    ->body('Maximum of 4 items can be shown on homepage. Please remove some items first.')
+//                                    ->send();
+//                                return;
+//                            }
+//                        }
+//
+//                        $record->show_on_homepage = !$record->show_on_homepage;
+//                        $record->save();
+//
+//                        Notification::make()
+//                            ->success()
+//                            ->title($record->show_on_homepage ? 'Added to homepage' : 'Removed from homepage')
+//                            ->send();
+//                    })
+////                    ->icon(fn($record) => $record->show_on_homepage ? 'heroicon-o-x-mark' : 'heroicon-o-check')
+//                    ->icon(fn($record) => $record->show_on_homepage ? 'heroicon-o-x-mark' : '')
+//                    ->color(fn($record) => $record->show_on_homepage ? 'danger' : 'success')
+////                    ->visible(fn($record) => $record->status == 2)
+//                    ->visible(fn($record) => $record->status == 2 && auth('admin')->user()->hasRole('super_admin')),
+
                 Tables\Actions\EditAction::make()
                     ->visible(fn($record) => $record->created_by === auth()->id() && $record->system === 'admin' && auth('admin')->user()->hasRole('super_admin')),
+
+//                    ->visible(fn($record) => $record->created_by === auth()->id() && $record->system === 'admin'),
                 Tables\Actions\ViewAction::make()->color('primary'),
-            ])
-            ->paginated([10, 25, 50, 100])
+            ])->paginated([10, 25, 50, 100])
+//            ->reorderable('sort', auth('admin')->user()->hasRole('super_admin'))
+//            ->reorderRecordsTriggerAction(
+//                fn (Action $action, bool $isReordering) => $action
+//                    ->button()
+//                    ->label($isReordering ? __('Finish reordering position showing on homepage') : __('Reordering position showing on homepage'))
+//                    ->icon($isReordering ? 'heroicon-o-check' : 'heroicon-o-bars-3')
+//                    ->color($isReordering ? 'success' : 'primary')
+//            )
             ->actionsColumnLabel(__('cgo.action'))
             ->actionsAlignment(Alignment::Between->value)
             ->authorizeReorder()
@@ -362,6 +327,8 @@ class EventListResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
+
+
 
     public static function getRelations(): array
     {

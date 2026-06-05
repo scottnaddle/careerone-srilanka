@@ -45,12 +45,12 @@ class MemberSignupTableWidget extends BaseWidget
 
     protected function getTableQuery(): Builder|Relation|null
     {
-        return $this->memberSignupService->getMemberSignupTableData(auth('admin')->user()->hasRole('admin'));
+        return $this->memberSignupService->getMemberSignupTableData();
     }
 
     public function getTableRecordKey(\Illuminate\Database\Eloquent\Model $record): string
     {
-        return $record->date ?? $record->getKey() ?? uniqid();
+        return $record->date;
     }
 
     public function table(Table $table): Table
@@ -65,8 +65,8 @@ class MemberSignupTableWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('date')->label(__('admin/dashboard.member_signup.date'))->sortable()->alignCenter(),
                 Tables\Columns\TextColumn::make('cgo_total')->label(__('admin/dashboard.member_signup.cgo'))->alignCenter(),
                 Tables\Columns\TextColumn::make('trainee_total')->label(__('admin/dashboard.member_signup.trainee'))->alignCenter(),
-                Tables\Columns\TextColumn::make('company_total')->label(__('admin/dashboard.member_signup.company'))->visible(auth('admin')->user()->hasRole('super_admin'))->alignCenter(),
-                Tables\Columns\TextColumn::make('admin_total')->label(__('admin/dashboard.member_signup.admin'))->visible(auth('admin')->user()->hasRole('super_admin'))->alignCenter(),
+                Tables\Columns\TextColumn::make('company_total')->label(__('admin/dashboard.member_signup.company'))->alignCenter(),
+                Tables\Columns\TextColumn::make('admin_total')->label(__('admin/dashboard.member_signup.admin'))->alignCenter(),
                 Tables\Columns\TextColumn::make('total_users')->label(__('admin/dashboard.member_signup.total'))->alignCenter(),
             ])
             ->heading(

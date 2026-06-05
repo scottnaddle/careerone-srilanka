@@ -9,7 +9,6 @@ use App\Models\CgoUser;
 use App\Models\CompanyRecruiter;
 use App\Models\Content;
 use App\Models\JobInformation;
-use App\Models\SchoolKid;
 use App\Models\Sector;
 use App\Models\TraineeUser;
 use App\Services\ContentViewLoggerService;
@@ -182,9 +181,6 @@ class CareerGuidanceController extends Controller
                 break;
             case 'trainee':
                 $user = TraineeUser::where(['id' => $id])->first();
-                break;
-            case 'schoolkid':
-                $user = SchoolKid::where(['id' => $id])->first();
                 break;
         }
         return $user;

@@ -56,63 +56,41 @@ class MemberSignupChartWidget extends ChartWidget
                 ->orderBy('date', 'DESC')
                 ->get();
         }
-        if (auth('admin')->user()->hasRole('super_admin')) {
-            return [
-                'datasets' => [
-                    [
-                        'type' => 'bar',
-                        'label' => __('admin/dashboard.member_signup.cgo'),
-                        'data' => $data->map(fn ($value) => $value->cgo_total),
-                        'backgroundColor' => '#E6447F',
-                        'borderColor' => '#E6447F',
-                    ],
-                    // ... các dataset khác giữ nguyên
-                    [
-                        'type' => 'bar',
-                        'label' => __('admin/dashboard.member_signup.company'),
-                        'data' => $data->map(fn ($value) => $value->company_total),
-                        'backgroundColor' => '#FFD540',
-                        'borderColor' => '#FFD540',
-                    ],
-                    [
-                        'type' => 'bar',
-                        'label' => __('admin/dashboard.member_signup.trainee'),
-                        'data' => $data->map(fn ($value) => $value->trainee_total),
-                        'backgroundColor' => '#4984F6',
-                        'borderColor' => '#4984F6',
-                    ],
-                    [
-                        'type' => 'bar',
-                        'label' => __('admin/dashboard.member_signup.admin'),
-                        'data' => $data->map(fn ($value) => $value->admin_total),
-                        'backgroundColor' => '#63a94d',
-                        'borderColor' => '#63a94d',
-                    ],
-                ],
-                'labels' => $data->map(fn ($value) => Carbon::parse($value->date)->format('d/m (D)')),
-            ];
-        }else {
-            return [
-                'datasets' => [
-                    [
-                        'type' => 'bar',
-                        'label' => __('admin/dashboard.member_signup.cgo'),
-                        'data' => $data->map(fn ($value) => $value->cgo_total),
-                        'backgroundColor' => '#E6447F',
-                        'borderColor' => '#E6447F',
-                    ],
-                    [
-                        'type' => 'bar',
-                        'label' => __('admin/dashboard.member_signup.trainee'),
-                        'data' => $data->map(fn ($value) => $value->trainee_total),
-                        'backgroundColor' => '#4984F6',
-                        'borderColor' => '#4984F6',
-                    ],
-                ],
-                'labels' => $data->map(fn ($value) => Carbon::parse($value->date)->format('d/m (D)')),
-            ];
-        }
 
+        return [
+            'datasets' => [
+                [
+                    'type' => 'bar',
+                    'label' => __('admin/dashboard.member_signup.cgo'),
+                    'data' => $data->map(fn ($value) => $value->cgo_total),
+                    'backgroundColor' => '#E6447F',
+                    'borderColor' => '#E6447F',
+                ],
+                // ... các dataset khác giữ nguyên
+                [
+                    'type' => 'bar',
+                    'label' => __('admin/dashboard.member_signup.company'),
+                    'data' => $data->map(fn ($value) => $value->company_total),
+                    'backgroundColor' => '#FFD540',
+                    'borderColor' => '#FFD540',
+                ],
+                [
+                    'type' => 'bar',
+                    'label' => __('admin/dashboard.member_signup.trainee'),
+                    'data' => $data->map(fn ($value) => $value->trainee_total),
+                    'backgroundColor' => '#4984F6',
+                    'borderColor' => '#4984F6',
+                ],
+                [
+                    'type' => 'bar',
+                    'label' => __('admin/dashboard.member_signup.admin'),
+                    'data' => $data->map(fn ($value) => $value->admin_total),
+                    'backgroundColor' => '#63a94d',
+                    'borderColor' => '#63a94d',
+                ],
+            ],
+            'labels' => $data->map(fn ($value) => Carbon::parse($value->date)->format('d/m (D)')),
+        ];
     }
 
     protected function getType(): string

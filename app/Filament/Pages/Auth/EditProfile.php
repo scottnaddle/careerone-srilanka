@@ -1,4 +1,79 @@
 <?php
+//
+//namespace App\Filament\Pages\Auth;
+//
+//use Filament\Forms\Components\Select;
+//use Filament\Forms\Components\TextInput;
+//use Filament\Forms\Form;
+//use Filament\Pages\Auth\EditProfile as BaseEditProfile;
+//use Illuminate\Support\Facades\Auth;
+//
+//class EditProfile extends BaseEditProfile
+//{
+//    public function mount(): void
+//    {
+//        $this->record = Auth::guard('admin')->user();
+//        $this->form->fill($this->record->toArray());
+//    }
+//
+//    public function form(Form $form): Form
+//    {
+//        return $form
+//            ->schema([
+//                TextInput::make('nic')
+//                    ->label('NIC')
+//                    ->maxLength(12)->required(),
+//                TextInput::make('email')
+//                    ->label('Email')
+//                    ->email()
+//                    ->required()
+//                    ->maxLength(150)->disabled()->required(),
+//                // Only update password if provided
+//                $this->getPasswordFormComponent()->dehydrated(fn ($state) => filled($state)),
+//                $this->getPasswordConfirmationFormComponent(),
+//                TextInput::make('first_name')
+//                    ->label('First Name')
+//                    ->required()
+//                    ->maxLength(60)->required(),
+//
+//                TextInput::make('last_name')
+//                    ->label('Last Name')
+//                    ->required()
+//                    ->maxLength(60)->required(),
+//                TextInput::make('phone')
+//                    ->label('Phone')
+//                    ->required()
+//                    ->maxLength(20)->required(),
+//                Select::make('tvet_type')
+//                    ->label(__('admin/dashboard.cgo.tvet_type'))
+//                    ->options($this->getTvetTypeOptions())
+//                    ->columnSpan('full')->required(),
+//            ]);
+//    }
+//    protected function getTvetTypeOptions(): array
+//    {
+//        return \App\Models\TvetType::pluck('head_office_name', 'head_office_code')->toArray();
+//    }
+//
+//    protected function getPasswordFormComponent(): TextInput
+//    {
+//        return TextInput::make('password')
+//            ->label('Password')
+//            ->password()
+//            ->dehydrateStateUsing(fn ($state) => $state ? bcrypt($state) : null)
+//            ->maxLength(255);
+//    }
+//
+//    protected function getPasswordConfirmationFormComponent(): TextInput
+//    {
+//        return TextInput::make('password_confirmation')
+//            ->label('Confirm Password')
+//            ->password()
+//            ->same('password')
+//            ->maxLength(255);
+//    }
+//}
+
 
 namespace App\Filament\Pages\Auth;
 

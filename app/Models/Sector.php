@@ -23,7 +23,4 @@ class Sector extends Model
     public function parent() {
         return $this->belongsTo(Sector::class, 'sector_id');
     }
-    public function jobCompanies() {
-        return $this->hasMany(Job::class, 'sector_id', 'id');
-    }
 }

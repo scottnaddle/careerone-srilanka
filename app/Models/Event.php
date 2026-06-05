@@ -60,10 +60,5 @@ class Event extends Model
                     ->orderBy('name', 'asc');
     }
 
-    public function cgoUsers()
-    {
-        return $this->belongsTo(CgoUser::class, 'created_by', 'id')->where('system', 'cgo');
-    }
-
 
 }

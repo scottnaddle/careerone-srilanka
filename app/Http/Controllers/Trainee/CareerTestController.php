@@ -22,21 +22,15 @@ use Illuminate\Validation\Rules\File;
 class CareerTestController extends Controller
 {
     public function __construct() {
-        $this->middleware('auth:trainee,schoolkid');
+        $this->middleware('trainee.auth');
     }
     public function index(Request $request) {
         $keyword = $request->has('keyword') ? $request->keyword : '';
         $type = $request->has('type') ? $request->type : 'all';
         $test_type = $request->has('test_type') ? $request->test_type : 'all';
         $count = 0;
-
         $results = CareerTestTraineeResult::query();
-        if (Auth::guard('schoolkid')->check()) {
-            $results->where('trainee_id', Auth::guard('schoolkid')->user()->id)->where('user_type', 'schoolkid');
-        }else {
-            $results->where('trainee_id', Auth::guard('trainee')->user()->id);
-        }
-
+        $results->where('trainee_id', Auth::guard('trainee')->user()->id);
         if ($type != 'all') {
             $results->where('test_type', $type);
         }
@@ -52,7 +46,7 @@ class CareerTestController extends Controller
         $results = $results->orderBy('created_at', 'desc')->paginate(10);
         foreach ($results as $result) {
             if ($result->trainee_id != '') {
-                $result->trainee_name = $result->trainee->fullName ?? $result->schoolkid->fullName;
+                $result->trainee_name = $result->trainee->fullName;
 //                $result->institute = $result->trainee->institute->name;
                 $result->institute = 'NAITA';
             }else {
@@ -88,8 +82,8 @@ class CareerTestController extends Controller
                 return redirect()->route('trainee.career-guidance.career-test.list')->withErrors(trans('system.information.content_management.not_found'));
             }
         }
-        $result->name = Auth::guard('trainee')->user()->fullName ?? Auth::guard('schoolkid')->user()->fullName;
-        $result->trainee_id = Auth::guard('trainee')->user()->id ?? Auth::guard('schoolkid')->user()->id;
+        $result->name = Auth::guard('trainee')->user()->fullName;
+        $result->trainee_id = Auth::guard('trainee')->user()->id;
         $result->career_test_id = $request->type;
         $result->test_type = $request->type;
         if ($request->has('attachment')) {
@@ -102,9 +96,6 @@ class CareerTestController extends Controller
             $file->move($storage_path, $fullName);
             $path = 'storage/'.activeGuard().'/career-guidance/career-test/'.Auth::guard(activeGuard())->user()->id.'/'.$fullName;
             $result->attachment = $path;
-        }
-        if (Auth::guard('schoolkid')->check()) {
-            $result->user_type = 'schoolkid';
         }
         if ($result->save()) {
             if ($old_attachment != '') {

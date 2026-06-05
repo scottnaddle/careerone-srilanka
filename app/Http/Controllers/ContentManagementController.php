@@ -11,7 +11,6 @@ use App\Models\CompanyRecruiter;
 use App\Models\Content;
 use App\Models\ContentComment;
 use App\Models\PeerContentReview;
-use App\Models\SchoolKid;
 use App\Models\TraineeUser;
 use App\Services\Cgo\AutoAssignPeerReviewContentService;
 use App\Services\Cgo\NotificationManager;
@@ -477,9 +476,6 @@ class ContentManagementController extends Controller
                 break;
             case 'trainee':
                 $user = TraineeUser::where(['id' => $id])->first();
-                break;
-            case 'schoolkid':
-                $user = SchoolKid::where(['id' => $id])->first();
                 break;
         }
         return $user;

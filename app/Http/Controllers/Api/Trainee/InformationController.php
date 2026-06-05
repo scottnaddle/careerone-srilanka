@@ -13,7 +13,6 @@ use App\Models\CompanyRecruiter;
 use App\Models\QNA;
 use App\Models\QNAAnswer;
 use App\Models\QnaAttachment;
-use App\Models\SchoolKid;
 use App\Models\TraineeUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -285,9 +284,6 @@ class InformationController extends BaseController
                 break;
             case 'trainee':
                 $user = TraineeUser::where(['id' => $id])->first();
-                break;
-            case 'schoolkid':
-                $user = SchoolKid::where(['id' => $id])->first();
                 break;
         }
         return $user;

@@ -8,7 +8,6 @@ use App\Models\CgoUser;
 use App\Models\CompanyRecruiter;
 use App\Models\Content;
 use App\Models\Resource;
-use App\Models\SchoolKid;
 use App\Models\TraineeUser;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
@@ -58,9 +57,6 @@ class ViewResource extends ViewRecord
                 break;
             case 'trainee':
                 $user = TraineeUser::where(['id' => $id])->first();
-                break;
-            case 'schoolkid':
-                $user = SchoolKid::where(['id' => $id])->first();
                 break;
         }
         return $user;

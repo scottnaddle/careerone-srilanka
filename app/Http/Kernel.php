@@ -4,7 +4,6 @@ namespace App\Http;
 
 use App\Http\Middleware\CheckCgoUserLoggedIn;
 use App\Http\Middleware\CheckCompanyUserLoggedIn;
-use App\Http\Middleware\CheckSchoolKidUserLoggedIn;
 use App\Http\Middleware\CheckTraineeUserLoggedIn;
 use App\Http\Middleware\CheckUserLoggedIn;
 use App\Http\Middleware\LocalizationMiddleware;
@@ -78,6 +77,5 @@ class Kernel extends HttpKernel
         'user.auth' => CheckUserLoggedIn::class,
         'account_must_verified_by_admin' => \App\Http\Middleware\AccountMustVerifyByAdmin::class,
         'trainee.auth' => CheckTraineeUserLoggedIn::class,
-        'schoolkid.auth' => CheckSchoolKidUserLoggedIn::class,
     ];
 }

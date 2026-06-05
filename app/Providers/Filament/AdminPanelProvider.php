@@ -6,7 +6,6 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
 use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\EmergencyUserReset;
-use App\Filament\Pages\PdmDashboard;
 use App\Filament\Resources\JobResource;
 use App\Http\Middleware\AccountMustVerifyByAdmin;
 use App\Http\Middleware\LocalizationMiddleware;
@@ -18,7 +17,6 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
-use Filament\Support\Enums\MaxWidth;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
@@ -52,10 +50,6 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName('CareerOne Admin')
-            ->brandLogo(asset('images/careerone-logo.webp'))
-            ->brandLogoHeight('3rem')
-            ->favicon(asset('favicon.ico'))
             ->colors([
                 'primary' => Color::hex('#4984F6'),
             ])
@@ -70,10 +64,10 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+                Widgets\FilamentInfoWidget::class,
             ])
             ->pages([
                 EmergencyUserReset::class,
-                PdmDashboard::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -94,7 +88,9 @@ class AdminPanelProvider extends PanelProvider
             ->login(Login::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
 //            ->font('Poppins')
+            ->brandLogo(asset('images/careerone-logo.png'))
             ->homeUrl(url('/admin/overview'))
+            ->brandLogoHeight('2rem')
             ->passwordReset(RequestPasswordReset::class)
             ->authPasswordBroker('admin_users')
             ->middleware(['account_must_verified_by_admin'])
@@ -177,17 +173,17 @@ class AdminPanelProvider extends PanelProvider
             })->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_BEFORE,
                 fn (): string => Blade::render('@livewire(\'Accessibility\')'),
-            )->sidebarCollapsibleOnDesktop()
-            ->maxContentWidth(MaxWidth::Full)
-            ->unsavedChangesAlerts()
+            ) ->sidebarCollapsibleOnDesktop()
             ->userMenuItems([
-                'profile' => MenuItem::make()->label('Edit Profile'),
+                'profile' => MenuItem::make()->label('My page'),
                 MenuItem::make()
                 ->label(__('admin/dashboard.download_user_manual'))
                     ->icon('heroicon-o-arrow-down')
                     ->url('/admin/download-user-manual')
                     ->openUrlInNewTab(),
-            ]);
+            ])
+            ->darkMode(false)
+            ->globalSearch(false);
 
 
     }

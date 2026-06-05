@@ -56,21 +56,18 @@ class ContentListResource extends Resource
                     ->alignCenter(),
             Tables\Columns\TextColumn::make('created_at')
                 ->sortable('created_at')
-                ->label(__('admin/dashboard.content.date'))
-                ->wrap(),
+                ->label(__('admin/dashboard.content.date')),
             Tables\Columns\TextColumn::make('title')
                 ->limit(50)
                 ->sortable()
                 ->searchable()
-                ->label(__('admin/dashboard.content.title_table'))
-                ->wrap(),
+                ->label(__('admin/dashboard.content.title_table')),
             Tables\Columns\TextColumn::make('author')
                 ->getStateUsing(function ($record) {
                     return $record->getAuthor($record->system,$record->created_by)->fullName ?? '';
                 })
                 ->sortable()
-                ->label(__('admin/dashboard.content.author'))
-                ->wrap(),
+                ->label(__('admin/dashboard.content.author')),
             Tables\Columns\TextColumn::make('content_type')
                 ->sortable()
                 ->getStateUsing(function ($record) {
@@ -80,8 +77,7 @@ class ContentListResource extends Resource
                         default => $record->content_type,
                     };
                 })
-                ->label(__('admin/dashboard.content.type'))
-                ->wrap(),
+                ->label(__('admin/dashboard.content.type')),
             Tables\Columns\TextColumn::make('system')
                 ->sortable()
                 ->getStateUsing(function ($record) {
@@ -92,8 +88,7 @@ class ContentListResource extends Resource
                         default => $record->system,
                     };
                 })
-                ->label(__('admin/dashboard.content.member'))
-                ->wrap(),
+                ->label(__('admin/dashboard.content.member')),
             Tables\Columns\TextColumn::make('approval')
                 ->label(__('admin/dashboard.content.status'))
                 ->getStateUsing(function ($record) {
@@ -144,7 +139,6 @@ class ContentListResource extends Resource
             ->actions([
                 // Tables\Actions\EditAction::make(),
             ])
-            ->striped()
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
             ->bulkActions([

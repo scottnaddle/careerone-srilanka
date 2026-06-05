@@ -39,14 +39,108 @@ class MyPageController extends Controller
     {
         $cgoId = Auth::guard('cgo')->user()->id;
         $activeGuard = activeGuard();
+
+        $cgoUser = Auth::guard('cgo')->user();
+        $instituteId = $cgoUser->institute_id;
+        
+        $traineeReportsQuery = TraineeUser::whereHas('institutes', function ($query) use ($instituteId) {
+            $query->where('institutes.id', $instituteId);
+        })->with(['portfolio', 'careerTest', 'cgoCounseling', 'nvqs'])
+          ->withCount(['careerTest', 'cgoCounseling']);
+        
+        if ($request->filled('portfolio')) {
+            if ($request->portfolio === 'yes') {
+                $traineeReportsQuery->whereHas('portfolio');
+            } elseif ($request->portfolio === 'no') {
+                $traineeReportsQuery->whereDoesntHave('portfolio');
+            }
+        }
+
+        if ($request->filled('search')) {
+            $search = mb_strtolower($request->input('search'));
+            $traineeReportsQuery->where(function($q) use ($search) {
+                $q->whereRaw('LOWER(first_name) LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('LOWER(last_name) LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('LOWER(full_name) LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('LOWER(nic) LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('LOWER(email) LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw("LOWER(CONCAT(first_name, ' ', last_name)) LIKE ?", ['%' . $search . '%']);
+            });
+        }
+
+        if ($request->filled('sort')) {
+            $sortField = $request->input('sort');
+            $sortDirection = $request->input('direction', 'desc');
+            if ($sortField === 'career_test') {
+                $traineeReportsQuery->orderBy('career_test_count', $sortDirection);
+            } elseif ($sortField === 'counseling') {
+                $traineeReportsQuery->orderBy('cgo_counseling_count', $sortDirection);
+            }
+        } else {
+            $traineeReportsQuery->orderBy('id', 'desc');
+        }
+
+        $traineeReports = $traineeReportsQuery->paginate(10);
+
+        if ($request->ajax()) {
+            return view('cgo.my-page.partials.trainee-report-table', compact('traineeReports'))->render();
+        }
+
         $data = [
             'user' => Auth::guard($activeGuard)->user(),
             'counselings' => $this->getCounselingData($request, $cgoId),
             'statistics' => $this->getStatistics($request, $cgoId),
             'schedule' => $this->getScheduleData($cgoId),
-            'recentItems' => $this->getRecentItems($activeGuard, $cgoId)
+            'recentItems' => $this->getRecentItems($activeGuard, $cgoId),
+            'traineeReports' => $traineeReports
         ];
         return view('cgo.my-page.my-page', $data);
+    }
+
+    public function exportTraineeReport(Request $request)
+    {
+        $cgoUser = Auth::guard('cgo')->user();
+        $instituteId = $cgoUser->institute_id;
+        
+        $traineeReportsQuery = TraineeUser::whereHas('institutes', function ($query) use ($instituteId) {
+            $query->where('institutes.id', $instituteId);
+        })->with(['portfolio', 'careerTest', 'cgoCounseling', 'nvqs'])
+          ->withCount(['careerTest', 'cgoCounseling']);
+        
+        if ($request->filled('portfolio')) {
+            if ($request->portfolio === 'yes') {
+                $traineeReportsQuery->whereHas('portfolio');
+            } elseif ($request->portfolio === 'no') {
+                $traineeReportsQuery->whereDoesntHave('portfolio');
+            }
+        }
+
+        if ($request->filled('search')) {
+            $search = mb_strtolower($request->input('search'));
+            $traineeReportsQuery->where(function($q) use ($search) {
+                $q->whereRaw('LOWER(first_name) LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('LOWER(last_name) LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('LOWER(full_name) LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw('LOWER(nic) LIKE ?', ['%' . $search . '%'])
+                  ->orWhereRaw("LOWER(CONCAT(first_name, ' ', last_name)) LIKE ?", ['%' . $search . '%']);
+            });
+        }
+
+        if ($request->filled('sort')) {
+            $sortField = $request->input('sort');
+            $sortDirection = $request->input('direction', 'desc');
+            if ($sortField === 'career_test') {
+                $traineeReportsQuery->orderBy('career_test_count', $sortDirection);
+            } elseif ($sortField === 'counseling') {
+                $traineeReportsQuery->orderBy('cgo_counseling_count', $sortDirection);
+            }
+        } else {
+            $traineeReportsQuery->orderBy('id', 'desc');
+        }
+
+        $trainees = $traineeReportsQuery->get();
+
+        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\TraineeReportExportCgo($trainees), 'Trainee_Report.xlsx');
     }
 
     private function getCounselingData(Request $request, $cgoId)

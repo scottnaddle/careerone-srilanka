@@ -13,9 +13,6 @@ use Filament\Pages\Auth\Login as BaseLogin;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Component;
-use Filament\Support\Facades\FilamentView;
-use Filament\View\PanelsRenderHook;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Validation\ValidationException;
 use App\Http\Responses\CustomLoginResponse;
 use Illuminate\Support\Facades\Auth;
@@ -35,10 +32,6 @@ class Login extends BaseLogin
             // Redirect to the custom path if authenticated
             redirect()->to('/admin/overview'); // No return here
         }
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::HEAD_END,
-            fn (): string => Blade::render("@vite(['resources/css/app.css', 'resources/js/app.js'])"), // Thay thế bằng đường dẫn file Vite của bạn
-        );
     }
 
     public function form(Form $form): Form

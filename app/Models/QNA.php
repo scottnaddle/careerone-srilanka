@@ -49,9 +49,6 @@ class QNA extends Model
             case 'trainee':
                 $model = TraineeUser::class;
                 break;
-            case 'schoolkid':
-                $model = SchoolKid::class;
-                break;
         }
         return $this->belongsTo($model, 'created_by');
     }

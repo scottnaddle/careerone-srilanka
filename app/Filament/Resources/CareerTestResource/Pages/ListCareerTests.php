@@ -14,7 +14,7 @@ class ListCareerTests extends ListRecords
 {
     protected static string $resource = CareerTestResource::class;
     protected static string $view = 'filament.pages.career-guidance.carrer-test.career-test-list';
-    protected static ?string $title = 'Career Tests';
+    protected static ?string $title = '';
 
     public function getCareerTestTraineeResult() {
         $careerTestType = CareerTest::all();
@@ -26,7 +26,7 @@ class ListCareerTests extends ListRecords
         }
 
         if (!empty($keyword)) {
-            $query->where('name', 'LIKE', '%' . $keyword . '%');
+            $query->where('name', 'ILIKE', '%' . $keyword . '%');
         }
 
         $count = $query->count();

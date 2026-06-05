@@ -15,7 +15,6 @@ use App\Models\Content;
 use App\Models\ContentComment;
 use App\Models\Institute;
 use App\Models\Resource;
-use App\Models\SchoolKid;
 use App\Models\Sector;
 use App\Models\TraineeInstitute;
 use App\Models\TraineeUser;
@@ -589,9 +588,6 @@ class CareerGuidanceController extends BaseController
             case 'trainee':
                 $user = TraineeUser::where(['id' => $id])->first();
                 break;
-            case 'schoolkid':
-                $user = SchoolKid::where(['id' => $id])->first();
-                break;
         }
         return $user;
     }
@@ -603,18 +599,14 @@ class CareerGuidanceController extends BaseController
     {
         $data = $request->all();
         $data['content_id'] = $data['qna_id'];
-        $user = auth('sanctum')->check();
-        if ($user && $user->getTable() == 'school_kids') {
-            $activeGuard = 'schoolkid';
-        }elseif($user && $user->getTable() == 'trainee_users') {
-            $activeGuard = 'trainee';
-        }else {
-            $activeGuard = 'guest';
-        }
+        $activeGuard = auth('sanctum')->check() ? 'trainee' : 'guest';
+
         if (auth('sanctum')->check()) {
             $data['system'] = $activeGuard;
             $data['answer_by'] = auth('sanctum')->user()->id;
             $userNameReply = !empty(auth('sanctum')->user()->fullName) ? auth('sanctum')->user()->fullName  : auth('sanctum')->user()->first_name.' '.auth('sanctum')->user()->last_name;
+
+
 
             $data['parent_id'] = $data['parent_id'] ?? null;
             $data['type'] = 'content';

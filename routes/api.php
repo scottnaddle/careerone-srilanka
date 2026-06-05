@@ -33,8 +33,7 @@ Route::group(['prefix' => 'trainee'], function () {
     Route::get('/register', [AuthController::class, 'getRegister']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/delete-user', [CommonController::class, 'deleteTraineeUser']);
-//    Route::post('/login', [App\Http\Controllers\Api\Trainee\AuthController::class, 'login'])->name('login');
-//    Route::post('/login', [App\Http\Controllers\Api\Trainee\AuthController::class, 'login']);
+    Route::post('/login', [App\Http\Controllers\Api\Trainee\AuthController::class, 'login'])->name('login');
     Route::post('/forget-password', [AuthController::class, 'forgetPassword']);
     Route::post('/verify-email', [AuthController::class, 'verifyEmail'])->name('verification.verify');
     Route::post('/resend-verification', [AuthController::class, 'resendVerification']);

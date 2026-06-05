@@ -120,15 +120,15 @@
                     </div>
                     <div class="flex flex-col gap-3 w-full">
                         <a href="{{ route('informations.events.detail', ['slug' => $mainEvent->slug]) }}"
-                           class="text-[#464559] dark:text-white text-3xl font-semibold hover:text-blue-600">{{ \Str::limit($mainEvent->title, 80) }}</a>
+                           class="text-[#464559] dark:text-white text-3xl font-semibold">{{ \Str::limit($mainEvent->title, 80) }}</a>
                         <div class="flex justify-between ">
-                            <span class="text-sm flex items-center gap-1 text-[#464559] break-words dark:text-white text-primary"><svg
+                            <span class="text-sm flex items-center gap-1 text-[#464559] break-words dark:text-white"><svg
                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5" stroke="currentColor" class="size-4">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                           d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
                                 </svg> {{ date('Y-m-d', strtotime($mainEvent->created_at)) }}</span>
-                            <span class="text-sm gap-1 flex items-center text-primary break-words dark:text-white"><svg
+                            <span class="text-sm gap-1 flex items-center text-[#464559] break-words dark:text-white"><svg
                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                     stroke-width="1.5" stroke="currentColor" class="size-4">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -165,15 +165,15 @@
                         <div class="flex flex-col gap-3 w-full justify-between">
                             <div class="flex flex-col gap-3">
                                 <a href="{{ route('informations.events.detail', ['slug' => $newestEvent->slug]) }}"
-                                   class="text-[#464559] dark:text-white text-xl font-semibold hover:text-blue-600">{{ \Str::limit($newestEvent->title, 50) }}</a>
+                                   class="text-[#464559] dark:text-white text-xl font-semibold">{{ \Str::limit($newestEvent->title, 50) }}</a>
                                 <div class="flex justify-between">
-                                    <span class="text-xs flex items-center gap-1 text-[#464559] break-words dark:text-white text-nowrap text-primary"><svg
+                                    <span class="text-xs flex items-center gap-1 text-[#464559] break-words dark:text-white text-nowrap"><svg
                                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="size-3">
                                             <path stroke-linecap="round" stroke-linejoin="round"
                                                   d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
                                         </svg> {{ date('Y-m-d', strtotime($newestEvent->created_at)) }}</span>
-                                    <span class="text-xs flex items-center text-primary break-words dark:text-white"><svg
+                                    <span class="text-xs flex items-center text-[#464559] break-words dark:text-white"><svg
                                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="size-3">
                                             <path stroke-linecap="round" stroke-linejoin="round"

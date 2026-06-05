@@ -40,7 +40,7 @@ class ViewCompanyJob extends ViewRecord
         $jobs = $companyQuery->jobs();
         if (request()->has('title') && !empty(request()->query('title'))) {
             $searchTerm = strtolower(request()->query('title'));
-            $jobs->where('title', 'LIKE', '%' . $searchTerm . '%');
+            $jobs->where('title', 'ILIKE', '%' . $searchTerm . '%');
         }
 
         if (request()->has('search-time') && !empty(request()->query('search-time'))) {

@@ -98,7 +98,7 @@
 {{--                                            $item->answer_by == Auth::guard(activeGuard())->user()->id &&--}}
 {{--                                            $item->system == activeGuard())--}}
                                     @php
-                                        $user = \Auth::guard(activeGuard())->user();
+                                        $user = Auth::guard(activeGuard())->user();
                                     @endphp
 
                                     @if (

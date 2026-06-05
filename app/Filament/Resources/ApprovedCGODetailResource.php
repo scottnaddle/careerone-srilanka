@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Exports\ApprovedCgoUserExporter;
 use App\Filament\Resources\ApprovedCGODetailResource\Pages;
 use App\Filament\Resources\ApprovedCGODetailResource\RelationManagers;
 use App\Models\CgoUser;
@@ -13,7 +12,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ExportAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -50,102 +48,7 @@ class ApprovedCGODetailResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $user = auth('admin')->user();
-        $isSuperAdmin = $user->hasRole('super_admin');
-        $userTvetType = $user->tvet_type;
-
-        $filters = [];
-
-        if ($isSuperAdmin) {
-            // Filter cho super_admin: có thể chọn TVET và Institute
-            $filters[] = Tables\Filters\Filter::make('tvet_type')
-                ->form([
-                    Forms\Components\Select::make('tvet_type')
-                        ->label('Head Office')
-                        ->options(TvetType::all()->pluck('head_office_name', 'head_office_code'))
-                        ->preload()
-                        ->searchable()
-                        ->reactive()
-                        ->afterStateUpdated(function ($state, callable $set) {
-                            $set('institute_select', null);
-                        }),
-
-                    Forms\Components\Select::make('institute_select')
-                        ->label('Institute')
-                        ->options(function ($get) {
-                            $tvetCode = $get('tvet_type');
-                            if ($tvetCode) {
-                                return Institute::where('institute_head_office', $tvetCode)
-                                    ->orderBy('name', 'asc')
-                                    ->pluck('name', 'id');
-                            }
-                            return [];
-                        })
-                        ->preload()
-                        ->searchable()
-                        ->visible(function ($get) {
-                            return !empty($get('tvet_type'));
-                        }),
-                ])
-                ->query(function (Builder $query, array $data) {
-                    if (!empty($data['tvet_type'])) {
-                        $instituteIds = Institute::where('institute_head_office', $data['tvet_type'])
-                            ->orderBy('name', 'asc')
-                            ->pluck('id')
-                            ->toArray();
-                        $query->whereIn('institute_id', $instituteIds);
-                    }
-                    if (!empty($data['institute_select'])) {
-                        $query->where('institute_id', $data['institute_select']);
-                    }
-                });
-        } else {
-            // Filter cho admin thường: chỉ hiển thị institute thuộc tvet_type của họ
-            if ($userTvetType) {
-                $instituteOptions = Institute::where('institute_head_office', $userTvetType)
-                    ->orderBy('name', 'asc')
-                    ->pluck('name', 'id')
-                    ->toArray();
-
-                $filters[] = Tables\Filters\Filter::make('institute_filter')
-                    ->form([
-                        Forms\Components\Select::make('institute_select')
-                            ->label('Institute')
-                            ->options($instituteOptions)
-                            ->preload()
-                            ->searchable()
-                            ->placeholder('All Institutes'),
-                    ])
-                    ->query(function (Builder $query, array $data) {
-                        if (!empty($data['institute_select'])) {
-                            $query->where('institute_id', $data['institute_select']);
-                        }
-                    });
-            }
-        }
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
-                $user = auth('admin')->user();
-
-                // Nếu không phải super_admin, chỉ hiển thị CGO thuộc institute của user
-                if (!$user->hasRole('super_admin')) {
-                    // Lấy tvet_type từ user admin
-                    $userTvetType = $user->tvet_type;
-
-                    if ($userTvetType) {
-                        // Lấy tất cả institute thuộc tvet_type của user
-                        $instituteIds = Institute::where('institute_head_office', $userTvetType)
-                            ->pluck('id')
-                            ->toArray();
-
-                        // Chỉ hiển thị CGO có institute_id nằm trong danh sách
-                        $query->whereIn('institute_id', $instituteIds);
-                    } else {
-                        // Nếu user không có tvet_type, không hiển thị gì
-                        $query->whereRaw('1 = 0');
-                    }
-                }
-            })
             ->searchPlaceholder('Name')
             ->columns([
                 Tables\Columns\TextColumn::make('index')
@@ -155,12 +58,12 @@ class ApprovedCGODetailResource extends Resource
 
                 Tables\Columns\TextColumn::make('institute.name')
                     ->label(__('admin/dashboard.cgo.institute'))
-                    ->sortable()->limit('50')->wrap(),
-                Tables\Columns\TextColumn::make('district.name')->label(trans('trainee.job_support.company.table.label.district')) ->sortable()->wrap(),
+                    ->sortable()->limit('50'),
+                Tables\Columns\TextColumn::make('district.name')->label(trans('trainee.job_support.company.table.label.district')) ->sortable(),
                 Tables\Columns\TextColumn::make('fullName')
                     ->label(__('admin/dashboard.cgo.name'))
                     ->getStateUsing(fn($record) => $record->fullName ?? 'N/A')
-                    ->searchable(['first_name', 'last_name'])->wrap(),
+                    ->searchable(['first_name', 'last_name']),
 //                Tables\Columns\TextColumn::make('counseling')
 //                    ->getStateUsing(fn($record) => $record->counselings->count())
 //                    ->label(__('admin/dashboard.cgo.guidance'))
@@ -221,37 +124,49 @@ class ApprovedCGODetailResource extends Resource
             ])->paginated([10, 25, 50, 100])
             ->actions([
             ])
-            ->filters($filters)
-            ->defaultSort('updated_at', 'desc')
-            ->reorderable('updated_at')
-            ->headerActions([
-                ExportAction::make()
-                    ->exporter(ApprovedCgoUserExporter::class)
-                    ->label('Export')
-                    ->color('success')
-                    ->modifyQueryUsing(function (Builder $query) {
-                        $user = auth('admin')->user();
+            ->filters([
+                Tables\Filters\Filter::make('tvet_type')
+                    ->form([
+                        Forms\Components\Select::make('tvet_type')
+                            ->label('TVET')
+                            ->options(TvetType::all()->pluck('head_office_name', 'head_office_code'))
+                            ->preload()
+                            ->searchable()
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                $set('institute_select', null);
+                            }),
 
-                        // Nếu không phải super_admin, chỉ export CGO thuộc institute của user
-                        if (!$user->hasRole('super_admin')) {
-                            $userTvetType = $user->tvet_type;
-
-                            if ($userTvetType) {
-                                $instituteIds = Institute::where('institute_head_office', $userTvetType)
-                                    ->pluck('id')
-                                    ->toArray();
-                                $query->whereIn('institute_id', $instituteIds);
-                            } else {
-                                $query->whereRaw('1 = 0');
-                            }
+                        Forms\Components\Select::make('institute_select')
+                            ->label('Institute')
+                            ->options(function ($get) {
+                                $tvetCode = $get('tvet_type');
+                                if ($tvetCode) {
+                                    return Institute::where('institute_head_office', $tvetCode)->orderBy('name', 'asc')
+                                        ->pluck('name', 'id');
+                                }
+                                return [];
+                            })
+                            ->preload()
+                            ->searchable()
+                            ->visible(function ($get) {
+                                return !empty($get('tvet_type'));
+                            }),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        if (!empty($data['tvet_type'])) {
+                            $instituteIds = Institute::where('institute_head_office', $data['tvet_type'])->orderBy('name', 'asc')
+                                ->pluck('id')
+                                ->toArray();
+                            $query->whereIn('institute_id', $instituteIds);
                         }
-
-                        // Chỉ export CGO đã được approved và active
-                        $query->whereNotNull('verify_at')
-                            ->whereNotNull('verify_by')
-                            ->where('active', true);
+                        if (!empty($data['institute_select'])) {
+                            $query->where('institute_id', $data['institute_select']);
+                        }
                     }),
             ])
+            ->defaultSort('updated_at', 'desc')
+            ->reorderable('updated_at')
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     // Tables\Actions\DeleteBulkAction::make(),

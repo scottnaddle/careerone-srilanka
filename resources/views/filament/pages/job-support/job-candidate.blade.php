@@ -29,12 +29,12 @@
                     </div>
                 </div>
                 <div class="w-fit"><button type="submit"
-                        class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-full">{{ __('company.search') }}</button></div>
+                        class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-full">Search</button></div>
 
             </div>
         </form>
         @if (count($this->jobData->appliesTypeApply) <= 0)
-            <p>{{ trans('cgo.job_support.company_list.no_record') }}</p>
+            <p>No record found</p>
         @else
             @foreach ($this->jobData->appliesTypeApply as $apply)
                 <div

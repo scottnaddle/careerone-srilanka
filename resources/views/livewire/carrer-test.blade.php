@@ -48,7 +48,7 @@
         background: white;
         border-radius: 12px;
         overflow: hidden;
-        /*box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);*/
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     }
 
     .career-table thead tr:first-child th {
@@ -131,33 +131,22 @@
         cursor: not-allowed;
     }
 
-    /* Thêm style cho search input */
-    .search-wrapper {
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: flex-end;
-    }
-
-    .search-input {
-        width: 300px;
-        padding: 10px 15px;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        font-size: 14px;
-        transition: all 0.3s ease;
-    }
-
-    .search-input:focus {
-        outline: none;
-        border-color: #4984F6;
-        box-shadow: 0 0 0 3px rgba(73, 132, 246, 0.1);
-    }
 </style>
 
-<div>
-    <div class="relative overflow-x-auto sm:rounded-lg rounded-table">
-        <table id="careerTable" class="career-table text-sm border">
-            <thead>
+{{--<div class="career-wrapper w-full">--}}
+<div class="relative overflow-x-auto sm:rounded-lg rounded-table">
+{{--    <div class="career-search-container">--}}
+{{--        <input type="search" class="career-search-box" id="careerSearchInput"--}}
+{{--            wire:model.defer="searchInstitute"--}}
+{{--            placeholder="{{ __('admin/career_test.career_test.search') }}...">--}}
+
+{{--        --}}{{-- <button wire:click="searchInstitute" class="career-search-button">--}}
+{{--            Tìm kiếm--}}
+{{--        </button> --}}
+{{--    </div>--}}
+
+    <table id="careerTable" class="career-table text-sm">
+        <thead>
             <tr>
                 <th rowspan="2" class="px-6 py-3 border-b border-white border-x">{{ __('admin/career_test.career_test.no') }}</th>
                 <th rowspan="2" class="px-6 py-3 border-b border-white border-x">{{ __('admin/career_test.career_test.institute') }}</th>
@@ -174,80 +163,130 @@
                 <th class="px-6 py-3 border-b border-white border-x">{{ __('admin/career_test.career_test.non_member') }}</th>
                 <th class="px-6 py-3 border-b border-white border-x"></th>
             </tr>
-            </thead>
+        </thead>
+{{--        <tbody>--}}
+{{--            @foreach ($institue as $index => $item)--}}
+{{--                @if($item->countCareerTestByInstituteMember($startDate, $endDate)['member'] > 0 || $item->countCareerTestByInstituteMember($startDate, $endDate)['non_member'] > 0)--}}
+{{--                <tr>--}}
+{{--                    <td>{{ $institue->firstItem() + $index }}</td>--}}
+{{--                    <td class="career-align-left"><a href="{{ route('filament.admin.resources.career-tests.show-id', ['record' => $item->id]) }}">{{ $item->name }}</a> </td>--}}
+{{--                    @foreach ($carrerTestType as $index1 => $item2)--}}
+{{--                        <td>{{ $item->countCareerTestByInstitute($startDate, $endDate, $item2->code_id)['member'] + $item->countCareerTestByInstitute($startDate, $endDate, $item2->code_id)['non_member'] }}--}}
+{{--                        </td>--}}
+{{--                    @endforeach--}}
+{{--                    <td class="career-align-left">{{ $item->countCareerTestByInstituteMember($startDate, $endDate)['member'] }}--}}
+{{--                    </td>--}}
+{{--                    <td class="career-align-left">--}}
+{{--                        {{ $item->countCareerTestByInstituteMember($startDate, $endDate)['non_member'] }}</td>--}}
+{{--                    <td>--}}
+{{--                        <a class="career-details-link whitespace-nowrap flex items-center gap-1"--}}
+{{--                           href="{{ route('filament.admin.resources.career-tests.show-id', ['record' => $item->id]) }}">--}}
+{{--                            {{ __('admin/career_test.career_test.view_details') }}--}}
+{{--                            <span>&gt;</span>--}}
+{{--                        </a>--}}
+{{--                    </td>--}}
+{{--                </tr>--}}
+{{--                @endif--}}
+{{--            @endforeach--}}
+{{--        </tbody>--}}
+        <tbody>
+        @php
+            $hasRecords = false;
+        @endphp
 
-            <tbody>
-            @php
-                $hasRecords = false;
-            @endphp
-
-            @foreach ($institue as $index => $item)
+        @foreach ($institue as $index => $item)
+            @if ($item->countCareerTestByInstituteMember($startDate, $endDate)['member'] > 0 || $item->countCareerTestByInstituteMember($startDate, $endDate)['non_member'] > 0)
                 @php
-                    // Kiểm tra xem institute có dữ liệu trong khoảng thời gian không
-                    $memberStats = $item->countCareerTestByInstituteMember($start_date, $end_date);
-                    $hasMemberData = ($memberStats['member'] > 0 || $memberStats['non_member'] > 0);
-
-                    if ($hasMemberData) {
-                        $hasRecords = true;
-                    }
+                    $hasRecords = true;
                 @endphp
-
-                @if ($hasMemberData)
-                    <tr>
-                        <td>{{ $institue->firstItem() + $index }}</td>
-                        <td class="career-align-left">
-                            <a href="{{ route('filament.admin.resources.career-tests.show-id', ['record' => $item->id]) }}">
-                                {{ $item->name }}
-                            </a>
-                        </td>
-                        @foreach ($carrerTestType as $index1 => $item2)
-                            @php
-                                $testStats = $item->countCareerTestByInstitute($start_date, $end_date, $item2->code_id);
-                            @endphp
-                            <td>
-                                {{ $testStats['member'] + $testStats['non_member'] }}
-                            </td>
-                        @endforeach
-                        <td class="career-align-left">
-                            {{ $memberStats['member'] }}
-                        </td>
-                        <td class="career-align-left">
-                            {{ $memberStats['non_member'] }}
-                        </td>
-                        <td>
-                            <a class="career-details-link whitespace-nowrap flex items-center gap-1"
-                               href="{{ route('filament.admin.resources.career-tests.show-id', ['record' => $item->id]) }}?{{ request()->getQueryString() }}">
-                                {{ __('admin/career_test.career_test.view_details') }}
-                                <span>&gt;</span>
-                            </a>
-                        </td>
-                    </tr>
-                @endif
-            @endforeach
-
-            @if (!$hasRecords)
                 <tr>
-                    <td colspan="9">
-                        <div class="flex flex-col gap-4 justify-center items-center p-4">
-                            <img src="{{ asset('/images/empty-box.png') }}" class="opacity-50 h-32" alt="Empty">
-                            <p class="dark:text-white">No record!</p>
-                        </div>
+                    <td>{{ $institue->firstItem() + $index }}</td>
+                    <td class="career-align-left">
+                        <a href="{{ route('filament.admin.resources.career-tests.show-id', ['record' => $item->id]) }}">
+                            {{ $item->name }}
+                        </a>
+                    </td>
+                    @foreach ($carrerTestType as $index1 => $item2)
+                        <td>
+                            {{ $item->countCareerTestByInstitute($startDate, $endDate, $item2->code_id)['member'] + $item->countCareerTestByInstitute($startDate, $endDate, $item2->code_id)['non_member'] }}
+                        </td>
+                    @endforeach
+                    <td class="career-align-left">
+                        {{ $item->countCareerTestByInstituteMember($startDate, $endDate)['member'] }}
+                    </td>
+                    <td class="career-align-left">
+                        {{ $item->countCareerTestByInstituteMember($startDate, $endDate)['non_member'] }}
+                    </td>
+                    <td>
+                        <a class="career-details-link whitespace-nowrap flex items-center gap-1"
+                           href="{{ route('filament.admin.resources.career-tests.show-id', ['record' => $item->id]) }}">
+                            {{ __('admin/career_test.career_test.view_details') }}
+                            <span>&gt;</span>
+                        </a>
                     </td>
                 </tr>
             @endif
-            </tbody>
-        </table>
+        @endforeach
 
-        <div class="career-pagination">
-            {{ $institue->appends(request()->query())->links('pagination::custom-pagination-admin') }}
-        </div>
+        @if (!$hasRecords)
+            <tr>
+                <td colspan="9">
+                    <div class="flex flex-col gap-4 justify-center items-center p-4">
+                        <img src="{{ asset('/images/empty-box.png') }}" class="opacity-50 h-32" alt="Empty">
+                        <p class="dark:text-white">No record!</p>
+                    </div>
+                </td>
+            </tr>
+        @endif
+        </tbody>
+
+    </table>
+
+    <div class="career-pagination">
+        {{ $institue->links('pagination::custom-pagination-admin') }}
     </div>
 </div>
 
 <script>
-    // Xóa bỏ JavaScript cũ vì đã dùng Livewire để search
+    // $(document).ready(function() {
+    //     var table = $('#careerTable').DataTable({
+    //         paging: true,
+    //         searching: true,
+    //         ordering: true,
+    //         lengthChange: false,
+    //         pageLength: 10,
+    //         responsive: true,
+    //         dom: 't<"career-pagination"p>',
+    //         language: {
+    //             search: '',
+    //             paginate: {
+    //                 next: '›',
+    //                 previous: '‹'
+    //             }
+    //         }
+    //     });
+
+    //     $('#careerSearchInput').on('keyup', function() {
+    //         table.search($(this).val()).draw();
+    //     });
+    // });
     $(document).ready(function() {
-        // Có thể thêm DataTable initialization nếu cần
-        // Hiện tại đang dùng Livewire pagination nên không cần DataTable
+        $("#careerSearchInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $(".career-table tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+
+            // Update empty state message
+            if ($(".career-table tbody tr:visible").length === 0) {
+                if ($(".no-results-message").length === 0) {
+                    $(".career-table tbody").append(
+                        '<tr class="no-results-message"><td colspan="100%" style="text-align: center; padding: 20px;">Không tìm thấy kết quả</td></tr>'
+                    );
+                }
+            } else {
+                $(".no-results-message").remove();
+            }
+        });
     });
 </script>

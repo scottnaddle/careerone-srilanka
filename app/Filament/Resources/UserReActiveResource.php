@@ -8,7 +8,6 @@ use App\Models\AdminUser;
 use App\Models\CgoUser;
 use App\Models\CompanyRecruiter;
 use App\Models\ReactiveAccountRequest;
-use App\Models\SchoolKid;
 use App\Models\TraineeUser;
 use App\Models\UserReActive;
 use Filament\Forms;
@@ -59,14 +58,12 @@ class UserReActiveResource extends Resource
                                 return CgoUser::find($record->user_id)->email ?? '';
                             case 'trainee':
                                 return TraineeUser::find($record->user_id)->email ?? '';
-                            case 'schoolkid':
-                                return SchoolKid::find($record->user_id)->email ?? '';
                             case 'company':
                                 return CompanyRecruiter::find($record->user_id)->email ?? '';
                             default:
                                 return $record->email ?? '';
                         }
-                    })->wrap(),
+                    }),
 
                 Tables\Columns\TextColumn::make('user_type')
                 ->getStateUsing(function ($record) {
@@ -77,11 +74,11 @@ class UserReActiveResource extends Resource
                     'trainee'=>'Trainee',
                     default => $record->user_type,
                 };
-                })->label('User Type')->wrap(),
+                })->label('User Type'),
                 Tables\Columns\TextColumn::make('requested_at')->sortable()
-                    ->label('Rquested At')->wrap(),
+                    ->label('Rquested At'),
                 Tables\Columns\TextColumn::make('confirmed_at')->sortable()
-                    ->label('Confirmed At')->wrap(),
+                    ->label('Confirmed At'),
 
                 Tables\Columns\TextColumn::make('first_name')
                     ->label('Full Name')
@@ -93,14 +90,12 @@ class UserReActiveResource extends Resource
                                 return CgoUser::find($record->user_id)->fullName ?? '';
                             case 'trainee':
                                 return TraineeUser::find($record->user_id)->fullName ?? '';
-                            case 'schoolkid':
-                                return SchoolKid::find($record->user_id)->fullName ?? '';
                             case 'company':
                                 return CompanyRecruiter::find($record->user_id)->fullName ?? '';
                             default:
                                 return $record->fullName ?? '';
                         }
-                    })->wrap(),
+                    }),
                     Tables\Columns\TextColumn::make('status')
                     ->sortable(['confirmed_at'])
                     ->getStateUsing(function ($record) {
@@ -124,7 +119,7 @@ class UserReActiveResource extends Resource
                     ->url(fn($record) => match ($record->user_type) {
                         'admin' => route('filament.admin.resources.administrators.view', ['record' => $record->user_id]),
                         'trainee' => route('filament.admin.resources.trainees.view', ['record' => $record->user_id]),
-                        'company' => route('filament.admin.resources.company-recruiters.view', ['record' => $record->user_id]),
+                        'company' => route('filament.admin.resources.comapny-user-lists.view', ['record' => $record->user_id]),
                         'cgo' => route('filament.admin.resources.c-g-o-s.view', ['record' => $record->user_id]),
                         default => '',
                     })

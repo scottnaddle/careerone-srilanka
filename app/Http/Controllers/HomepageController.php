@@ -18,7 +18,6 @@ use App\Models\Event;
 use App\Models\Institute;
 use App\Models\Popup;
 use App\Models\ReactiveAccountRequest;
-use App\Models\SchoolKid;
 use App\Models\Sector;
 use App\Models\TraineeInstitute;
 use App\Services\Company\JobVacancyService;
@@ -128,7 +127,7 @@ class HomepageController extends Controller
 
         $contentCategory = CareerGuidanceCategory::first();
 
-        $contentsQuery = $contentCategory->contentApproved()->latest();
+        $contentsQuery = $contentCategory->contentApproved()->inRandomOrder();
 
         $contents = $contentsQuery->take(4)->get();
 
@@ -157,13 +156,7 @@ to support urbanisation, enhance connectivity, and stimulate industrial growth.'
                     ->orWhereDate('end_time', '>=', $today);
             })
             ->get();
-        $stats = [
-            'trainees' => TraineeUser::where('active', true)->count(),
-            'companies' => Company::whereNotNull('verified_by')->where('active', true)->count(),
-            'jobs' => Job::where('status', JobStatusEnum::PROGRESS->value)->count(),
-            'cgos' => CgoUser::whereNotNull('verify_at')->where('active', true)->count(),
-        ];
-        return view('homepage.index', compact('mainEvent', 'newestEvents', 'recent_jobs', 'sectors', 'banners', 'popups', 'contents', 'contentCategory', 'stats'));
+        return view('homepage.index', compact('mainEvent', 'newestEvents', 'recent_jobs', 'sectors', 'banners', 'popups', 'contents', 'contentCategory'));
     }
 
     public function getTests()
@@ -185,28 +178,23 @@ to support urbanisation, enhance connectivity, and stimulate industrial growth.'
                 $view = 'career-key-test';
                 break;
         }
-
-        $traineeUser = Auth::guard('trainee')->user() ?? Auth::guard('schoolkid')->user();
+        $traineeUser = Auth::guard('trainee')->user();
         $userFullName = $traineeUser ? $traineeUser->fullName : '';
         $userNIC = $traineeUser ? $traineeUser->nic : '';
         $institutes = [];
-        if(Auth::guard('trainee')->user()) {
-            $institutes = [];
-            if ($traineeUser) {
-                $this->traineeTrainingSyncService->syncTraineeTrainingInformation($traineeUser); //sync lại 1 lần để lấy những thông tin mới nhất
-            }
-            if ($traineeUser && TraineeInstitute::where('trainee_id', $traineeUser->id)->count() > 0) {
-                $histories = TraineeInstitute::where('trainee_id', $traineeUser->id)->get();
-                foreach ($histories as $history) {
-                    $institutes[] = $history->institute;
-                }
-                $institutes = array_unique($institutes);
-            }else {
-                $institutes = Institute::where('active_status', 'ILIKE', 'Active')->get();
-            }
-        }else {
-            $institutes = Institute::where('active_status', 'ILIKE', 'Active')->get(); // Thay bằng school list
+        if ($traineeUser) {
+            $this->traineeTrainingSyncService->syncTraineeTrainingInformation($traineeUser); //sync lại 1 lần để lấy những thông tin mới nhất
         }
+        if ($traineeUser && TraineeInstitute::where('trainee_id', $traineeUser->id)->count() > 0) {
+            $histories = TraineeInstitute::where('trainee_id', $traineeUser->id)->get();
+            foreach ($histories as $history) {
+                $institutes[] = $history->institute;
+            }
+            $institutes = array_unique($institutes);
+        }else {
+            $institutes = Institute::where('active_status', 'ILIKE', 'Active')->get();
+        }
+
         if ($view == '') {
             return back()->with('message', 'We can not find the test');
         }
@@ -221,12 +209,7 @@ to support urbanisation, enhance connectivity, and stimulate industrial growth.'
         $result->name = $traineeName;
         $result->nic = $request->nic ?? "";
         $result->institute_id = $request->institute ?? "";
-        if ($request->user_type == 'schoolkid' || Auth::guard('schoolkid')->user()) {
-            $trainee = SchoolKid::where('id', $request->uid)->first() ?? Auth::guard('schoolkid')->user();
-            $result->user_type = 'schoolkid';
-        }else {
-            $trainee = TraineeUser::where('nic', $request->nic)->first() ?? Auth::guard('schoolkid')->user();
-        }
+        $trainee = TraineeUser::where('nic', $request->nic)->first();
         $result->trainee_id = $trainee->id ?? null;
         $result->career_test_id = $request->type;
         $result->test_type = $request->type; //Career Key test

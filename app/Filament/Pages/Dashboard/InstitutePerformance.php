@@ -6,9 +6,6 @@ use App\Enums\TypeTraineeApply;
 use App\Filament\Resources\CompanyResource\Widgets\JobPostingTableWidget;
 use App\Filament\Resources\ContentResource\Widgets\ContentTableWidget;
 use App\Filament\Resources\EventResource\Widgets\EventTableWidget;
-use App\Filament\Widgets\GuidanceCompletionWidget;
-use App\Filament\Widgets\NvqLevelPyramid;
-use App\Filament\Widgets\SriLankaDistrictMapWidget;
 use App\Models\TvetType;
 use Filament\Pages\Page;
 use App\Filament\Resources\OJTResource\Widgets\OJTTableWidget;
@@ -36,22 +33,10 @@ class InstitutePerformance extends Page
 
     public function mount()
     {
-        $user = auth('admin')->user();
-
-        $headOffice = request()->query('head_office');
-
-        if ($headOffice === null) {
-            if (! $user->hasRole('super_admin') && ! $user->hasRole('naita_admin')) {
-                $headOffice = $user->tvet_type;
-            } elseif (! $user->hasRole('super_admin') && $user->hasRole('naita_admin')) {
-                $headOffice = 'NAITA';
-            }
-        }
-
         $this->data = [
-            'keywords_search' => request()->query('keywords_search'),
-            'tvet_type' => request()->query('tvet_type'),
-            'head_office' => $headOffice,
+            'keywords_search' => request()->query('keywords_search', null),
+            'tvet_type' => request()->query('tvet_type', null),
+            'head_office' => request()->query('head_office', null),
         ];
     }
 
@@ -63,15 +48,6 @@ class InstitutePerformance extends Page
     protected function getFooterWidgets(): array
     {
         return [
-            GuidanceCompletionWidget::make([
-                'data' => $this->data,
-            ]),
-            SriLankaDistrictMapWidget::make([
-                'data' => $this->data,
-            ]),
-            NvqLevelPyramid::make([
-                'data' => $this->data,
-            ]),
             CareerGuidanceTableWidget::make([
                 'data' => $this->data,
                 'type' => 'institute',
@@ -99,7 +75,6 @@ class InstitutePerformance extends Page
                 'data' => $this->data,
                 'type' => 'institute',
             ]),
-
             // JobPostingTableWidget::make([
             //     'data' => array_merge($this->data, ['apply_type' => TypeTraineeApply::APPLY->value]),
             //     'titleHeader' => __('admin/institute_performance.job_apply'),

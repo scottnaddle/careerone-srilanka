@@ -31,15 +31,14 @@ class ShowCountInformation extends StatsOverviewWidget
     {
      $resultCount= $this->memberSignupService->countUnverifiedUsers();
         // Get data
-        $isAdmin = auth('admin')->user()->hasRole('super_admin') || auth('admin')->user()->hasRole('naita_admin');
-
-        $data = $isAdmin ? [
+        $data = [
             0 => [
                 'title' => __('admin/dashboard.member_signup.trainee'),
                 'value' => $resultCount['unverifiedTraineeCount'],
                 'description' => '',
                 'color' => 'bg-[#4984F6]',
                 'link' => route('filament.admin.resources.trainees.index'),
+
             ],
             1 => [
                 'title' => __('admin/dashboard.member_signup.company'),
@@ -53,7 +52,7 @@ class ShowCountInformation extends StatsOverviewWidget
                 'value' => $resultCount['unverified_company_recruiters'],
                 'description' => '',
                 'color' => 'bg-[#4984F6]',
-                'link' => route('filament.admin.resources.company-recruiters.index'),
+                'link' => route('filament.admin.resources.comapny-user-lists.index'),
             ],
             3 => [
                 'title' => __('admin/dashboard.job_vacancy_title'),
@@ -69,23 +68,7 @@ class ShowCountInformation extends StatsOverviewWidget
                 'color' => 'bg-[#4984F6]',
                 'link' => route('filament.admin.resources.c-g-o-s.index'),
             ]
-        ] : [
-            0 => [
-                'title' => __('admin/dashboard.member_signup.trainee'),
-                'value' => $resultCount['unverifiedTraineeCount'],
-                'description' => '',
-                'color' => 'bg-[#4984F6]',
-                'link' => route('filament.admin.resources.trainees.index'),
-            ],
-            1 => [
-                'title' => __('admin/dashboard.member_signup.cgo'),
-                'value' => $resultCount['unverified_cgo_users'],
-                'description' => '',
-                'color' => 'bg-[#4984F6]',
-                'link' => route('filament.admin.resources.c-g-o-s.index'),
-            ]
         ];
-
 
         return array_map(function ($stat) {
             return Stat::make($stat['title'], $stat['value'])

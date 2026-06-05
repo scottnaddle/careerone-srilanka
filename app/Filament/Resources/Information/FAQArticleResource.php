@@ -62,20 +62,20 @@ class FAQArticleResource extends Resource
                 ->alignCenter(),
                 Tables\Columns\TextColumn::make('faq.category_name')
                     ->label(__('admin/dashboard.faq_article.category'))
-                    ->sortable()->wrap(),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('question')
                     ->label(__('admin/dashboard.faq_article.question'))
                     ->searchable()
                     ->limit(50)
-                    ->sortable()->wrap(),
+                    ->sortable(),
                Tables\Columns\TextColumn::make('url')
                    ->label('Url')
                    ->searchable()
                    ->limit(50)
-                   ->sortable()->wrap(),
+                   ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('admin/dashboard.faq_article.registration_date'))
-                    ->sortable()->wrap(),
+                    ->sortable(),
             ])->searchPlaceholder(__('admin/dashboard.faq_article.question_title'))
             ->filters([
                 Tables\Filters\SelectFilter::make('newsletter_category_id')

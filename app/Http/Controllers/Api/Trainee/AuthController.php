@@ -11,7 +11,6 @@ use App\Models\District;
 use App\Models\Institute;
 use App\Models\NVQLevel;
 use App\Models\Occupation;
-use App\Models\SchoolKid;
 use App\Models\TraineeUser;
 use App\Models\VerificationCode;
 use App\Services\Trainee\TraineeTrainingSyncService;
@@ -71,111 +70,75 @@ class AuthController extends BaseController
     // Đăng ký
     public function register(Request $request): JsonResponse
     {
-        if ($request->user_type == 'schoolkid') {
-            $validator = Validator::make($request->all(), [
-                'password' => 'required',
-                'repassword' => 'required|same:password',
-                'first_name' => 'min:0|max:20',
-                'last_name' => 'min:0|max:20',
-                'email' => 'required|unique:school_kids,email|min:2|max:100',
-                'mobile' => 'required|unique:school_kids,mobile',
-                'verification_type' => 'required',
-                'agree_terms' => 'accepted',
-                'user_type' => 'required'
-            ], [
-                'repassword.same' => 'Password does not match.'
+        $validator = Validator::make($request->all(), [
+            'nic' => ['required', 'string', 'regex:/^(?:\d{9}[VXvx]|\d{12})$/', 'unique:trainee_users,nic'],
+            'password' => 'required',
+            'repassword' => 'required|same:password',
+            'first_name' => 'min:0|max:20',
+            'last_name' => 'min:0|max:20',
+//            'full_name' => 'min:0|max:100',
+            'email' => 'required|unique:trainee_users,email|min:2|max:100',
+//            'telephone' => 'required',
+            'mobile' => 'required|unique:trainee_users,mobile',
+            'verification_type' => 'required',
+            'agree_terms' => 'accepted'
+        ], [
+            'repassword.same' => 'Password does not match.'
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+        $isManual = $request->has('manual') && $request->manual == 1;
+
+        $traineeInformations = $this->traineeInfomationService->getTraineeInformation($request->nic)['message'][0];
+        $password = bcrypt($request->password);
+        $verification_method = $request->verification_type;
+        $data = $request->except(['_token', 'verification_type', 'accept_terms']);
+        if ($isManual) {
+            $data['full_name'] = $data['first_name'] . ' ' . $data['last_name'];
+            $userData = $this->buildManualUserData($data, $password);
+        } else {
+            $traineeInfo = $this->traineeInfomationService->getTraineeInformation($request->nic)['message'];
+            if ($traineeInfo != 'No Information.') {
+                $traineeInfo = $traineeInfo[0];
+                $userData = $this->buildAutoUserData($data, $password, $traineeInfo);
+            }else {
+                return $this->sendError('Not found trainee information in NVQ System.', $request->nic);
+            }
+        }
+        $user = TraineeUser::create($userData);
+
+        // Sync with external systems
+        $data['disabled'] = 0;
+        $this->traineeCasSyncService->signUp($data);
+
+        if (!$isManual) {
+            $this->traineeSyncService->syncTraineeTrainingInformation($user);
+        }
+        if ($request->has('attached_file')) {
+            $attached_file = $request->file('attached_file');
+            $storage_path = storage_path('app/public/' . activeGuard() . '/' . 'attached_file/' . $user->id);
+            $filename = pathinfo($attached_file->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension = $attached_file->getClientOriginalExtension();
+            $fileNameToStore = $filename . '.' . $extension;
+            $attached_file->move($storage_path, $fileNameToStore);
+            $path = 'storage/' . activeGuard() . '/' . 'attached_file/' . $user->id . '/' . $fileNameToStore;
+            $user->update([
+                'attached_file' => $path
             ]);
-
-            if ($validator->fails()) {
-                return $this->sendError('Validation Error.', $validator->errors());
-            }
-
-            $verificationMethod = $request->verification_type;
-            $data = $request->except(['_token', 'verification_type', 'accept_terms']);
-            $password = bcrypt($request->password);
-
-            $userData = $this->buildManualSchoolKidData($data, $password);
-
-            $user = SchoolKid::create($userData);
-
-            // Send verification
-            $token = base64_encode($request->email);
-            $this->sendVerification($user, $token, $verificationMethod);
-            return $this->sendResponse('Register successfully', ['message' => 'User registered successfully. Please check your email for verification link.']);
-        }else {
-            $validator = Validator::make($request->all(), [
-                'nic' => ['required', 'string', 'regex:/^(?:\d{9}[VXvx]|\d{12})$/', 'unique:trainee_users,nic'],
-                'password' => 'required',
-                'repassword' => 'required|same:password',
-                'first_name' => 'min:0|max:20',
-                'last_name' => 'min:0|max:20',
-                //            'full_name' => 'min:0|max:100',
-                'email' => 'required|unique:trainee_users,email|min:2|max:100',
-                //            'telephone' => 'required',
-                'mobile' => 'required|unique:trainee_users,mobile',
-                'verification_type' => 'required',
-                'agree_terms' => 'accepted',
-                'user_type' => 'required'
-            ], [
-                'repassword.same' => 'Password does not match.'
-            ]);
-
-            if ($validator->fails()) {
-                return $this->sendError('Validation Error.', $validator->errors());
-            }
-
-            $isManual = $request->has('manual') && $request->manual == 1;
-
-            $traineeInformations = $this->traineeInfomationService->getTraineeInformation($request->nic)['message'][0];
-            $password = bcrypt($request->password);
-            $verification_method = $request->verification_type;
-            $data = $request->except(['_token', 'verification_type', 'accept_terms']);
-            if ($isManual) {
-                $data['full_name'] = $data['first_name'] . ' ' . $data['last_name'];
-                $userData = $this->buildManualUserData($data, $password);
-            } else {
-                $traineeInfo = $this->traineeInfomationService->getTraineeInformation($request->nic)['message'];
-                if ($traineeInfo != 'No Information.') {
-                    $traineeInfo = $traineeInfo[0];
-                    $userData = $this->buildAutoUserData($data, $password, $traineeInfo);
-                }else {
-                    return $this->sendError('Not found trainee information in NVQ System.', $request->nic);
-                }
-            }
-            $user = TraineeUser::create($userData);
-
-            // Sync with external systems
-            $data['disabled'] = 0;
-            $this->traineeCasSyncService->signUp($data);
-
-            if (!$isManual) {
-                $this->traineeSyncService->syncTraineeTrainingInformation($user);
-            }
-            if ($request->has('attached_file')) {
-                $attached_file = $request->file('attached_file');
-                $storage_path = storage_path('app/public/' . activeGuard() . '/' . 'attached_file/' . $user->id);
-                $filename = pathinfo($attached_file->getClientOriginalName(), PATHINFO_FILENAME);
-                $extension = $attached_file->getClientOriginalExtension();
-                $fileNameToStore = $filename . '.' . $extension;
-                $attached_file->move($storage_path, $fileNameToStore);
-                $path = 'storage/' . activeGuard() . '/' . 'attached_file/' . $user->id . '/' . $fileNameToStore;
-                $user->update([
-                    'attached_file' => $path
-                ]);
-            }
-
-            $token = base64_encode($request->email);
-            switch ($verification_method) {
-                case Constant::email:
-                    $user->sendEmailVerify($token);
-                    break;
-                case Constant::sms:
-                    $user->sendSMSVerify($token);
-                    break;
-            }
-            return $this->sendResponse('Register successfully', ['message' => 'User registered successfully. Please check your email for verification link.']);
         }
 
+        $token = base64_encode($request->email);
+        switch ($verification_method) {
+            case Constant::email:
+                $user->sendEmailVerify($token);
+                break;
+            case Constant::sms:
+                $user->sendSMSVerify($token);
+                break;
+        }
+        return $this->sendResponse('Register successfully', ['message' => 'User registered successfully. Please check your email for verification link.']);
     }
 
     private function buildManualUserData($data, $password)
@@ -236,131 +199,68 @@ class AuthController extends BaseController
     // Đăng nhập
     public function login(Request $request): JsonResponse
     {
-        if ($request->user_type == 'schoolkid') {
-            $validator = Validator::make($request->all(), [
-                'email' => ['required'],
-                'password' => 'required',
-            ]);
-            if ($validator->fails()) {
-                return $this->sendError('Validation Error.', $validator->errors());
-            }
-            $user = SchoolKid::where('email', $request->email)->first();
-
-            if ($user) {
-                if (!$user->hasVerifiedEmail()) {
-                    $data['email'] = $user->email;
-                    $data['verifiedEmail'] = false;
-                    return $this->sendError('Unverified.', ['message' => 'User has not verified.', 'data' => $data]);
-                }
-                if (\Hash::check($request->password, $user->password)) {
-
-                    if ($user->active == false) {
-                        return $this->sendError('Account deactived.', ['error' => 'Your account is not active in our system! Please contact admin or create a new one!'],);
-                    }
-
-                    $tokenResult = $user->createToken('MyApp');
-                    $token = $tokenResult->accessToken;
-                    $token->expires_at = now()->addDays(30);
-                    $token->save();
-                    // Save the device token if provided
-                    if ($request->filled('device_token')) {
-                        $existingToken = DeviceToken::where('user_id', $user->id)
-                            ->where('system', 'schoolkid')
-                            ->first();
-
-                        if ($existingToken) {
-
-                            $existingToken->update(['device_token' => $request->device_token]);
-                        } else {
-                            DeviceToken::create([
-                                'user_id' => $user->id,
-                                'system' => 'schoolkid',
-                                'device_token' => $request->device_token
-                            ]);
-                        }
-                    }
-                    $success['token'] =  $tokenResult->plainTextToken;
-                    $success['fullName'] =  $user->fullName;
-                    $success['nic'] =  $user->nic;
-                    $success['email'] =  $user->email;
-                    $success['user_type'] = 'schoolkid';
-                    $success['expires_at'] =  Carbon::parse($token->expires_at)->toDateTimeString();
-                    return $this->sendResponse($success, 'User login successfully.');
-                } else {
-                    return $this->sendError('Unauthorised.', ['error' => 'The username or password is incorrect!']);
-                }
-            } else {
-                return $this->sendError('Unauthorised.', ['error' => 'User does not exist']);
-            }
-        }else {
-            $validator = Validator::make($request->all(), [
-                'nic' => ['required'],
-                'password' => 'required',
-            ]);
-            if ($validator->fails()) {
-                return $this->sendError('Validation Error.', $validator->errors());
-            }
-            $user = TraineeUser::where('nic', $request->nic)->first();
-
-            if ($user) {
-                if (!$user->hasVerifiedEmail()) {
-                    $data['email'] = $user->email;
-                    $data['verifiedEmail'] = false;
-                    return $this->sendError('Unverified.', ['message' => 'User has not verified.', 'data' => $data]);
-                }
-                if (\Hash::check($request->password, $user->password)) {
-
-                    if ($user->active == false) {
-                        return $this->sendError('Account deactived.', ['error' => 'Your account is not active in our system! Please contact admin or create a new one!'],);
-                    }
-
-                    $tokenResult = $user->createToken('MyApp');
-                    $token = $tokenResult->accessToken;
-                    $token->expires_at = now()->addDays(30);
-                    $token->save();
-                    // Save the device token if provided
-                    if ($request->filled('device_token')) {
-                        $existingToken = DeviceToken::where('user_id', $user->id)
-                            ->where('system', 'trainee')
-                            ->first();
-
-                        if ($existingToken) {
-
-                            $existingToken->update(['device_token' => $request->device_token]);
-                        } else {
-                            DeviceToken::create([
-                                'user_id' => $user->id,
-                                'system' => 'trainee',
-                                'device_token' => $request->device_token
-                            ]);
-                        }
-                    }
-                    $success['token'] =  $tokenResult->plainTextToken;
-                    $success['fullName'] =  $user->fullName;
-                    $success['nic'] =  $user->nic;
-                    $success['email'] =  $user->email;
-                    $success['expires_at'] =  Carbon::parse($token->expires_at)->toDateTimeString();
-                    return $this->sendResponse($success, 'User login successfully.');
-                } else {
-                    return $this->sendError('Unauthorised.', ['error' => 'The username or password is incorrect!']);
-                }
-            } else {
-                return $this->sendError('Unauthorised.', ['error' => 'User does not exist']);
-            }
+        $validator = Validator::make($request->all(), [
+            'nic' => ['required'],
+            'password' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
         }
+        $user = TraineeUser::where('nic', $request->nic)->first();
 
+        if ($user) {
+            if (!$user->hasVerifiedEmail()) {
+                $data['email'] = $user->email;
+                $data['verifiedEmail'] = false;
+                return $this->sendError('Unverified.', ['message' => 'User has not verified.', 'data' => $data]);
+            }
+            if (\Hash::check($request->password, $user->password)) {
+
+                if ($user->active == false) {
+                    return $this->sendError('Account deactived.', ['error' => 'Your account is not active in our system! Please contact admin or create a new one!'],);
+                }
+
+                $tokenResult = $user->createToken('MyApp');
+                $token = $tokenResult->accessToken;
+                $token->expires_at = now()->addDays(30);
+                $token->save();
+                // Save the device token if provided
+                if ($request->filled('device_token')) {
+                    $existingToken = DeviceToken::where('user_id', $user->id)
+                        ->where('system', 'trainee')
+                        ->first();
+
+                    if ($existingToken) {
+
+                        $existingToken->update(['device_token' => $request->device_token]);
+                    } else {
+                        DeviceToken::create([
+                            'user_id' => $user->id,
+                            'system' => 'trainee',
+                            'device_token' => $request->device_token
+                        ]);
+                    }
+                }
+                $success['token'] =  $tokenResult->plainTextToken;
+                $success['fullName'] =  $user->fullName;
+                $success['nic'] =  $user->nic;
+                $success['email'] =  $user->email;
+                $success['expires_at'] =  Carbon::parse($token->expires_at)->toDateTimeString();
+                return $this->sendResponse($success, 'User login successfully.');
+            } else {
+                return $this->sendError('Unauthorised.', ['error' => 'The username or password is incorrect!']);
+            }
+        } else {
+            return $this->sendError('Unauthorised.', ['error' => 'User does not exist']);
+        }
     }
 
     // Quên mật khẩu
     public function forgetPassword(Request $request)
     {
-        $request->validate(['email' => 'required|email'], ['email.email' => 'This email is invalid!', 'user_type' => 'required']);
+        $request->validate(['email' => 'required|email'], ['email.email' => 'This email is invalid!']);
         $email = $request->email;
-        if ($request->user_type == 'schoolkid') {
-            $exist = SchoolKid::where('email', $email)->first();
-        }else {
-            $exist = TraineeUser::where('email', $email)->first();
-        }
+        $exist = TraineeUser::where('email', $email)->first();
 
         if (!$exist) {
             return $this->sendError('Error.', ['error' => 'This email is not existed.']);
@@ -402,13 +302,7 @@ class AuthController extends BaseController
     // Xác thực email
     public function verifyEmail(Request $request): JsonResponse
     {
-        if ($request->user_type && $request->user_type == 'schoolkid') {
-            $user = SchoolKid::where('email', $request->email)->first();
-            $verification_code = VerificationCode::where(['email' => $user->email, 'u_type' => Constant::schoolkid])->firstOrFail();
-        }else {
-            $user = TraineeUser::where('email', $request->email)->first();
-            $verification_code = VerificationCode::where(['email' => $user->email, 'u_type' => Constant::trainee])->firstOrFail();
-        }
+        $user = TraineeUser::where('email', $request->email)->first();
 
         if (!$user) {
             return $this->sendError('Error.', ['message' => 'User not found']);
@@ -416,17 +310,15 @@ class AuthController extends BaseController
         if ($user->hasVerifiedEmail()) {
             return $this->sendError('Error.', ['message' => 'Email already verified.']);
         }
-
+        $verification_code = VerificationCode::where(['email' => $user->email, 'u_type' => Constant::trainee])->firstOrFail();
         if ($verification_code && $user) {
             if (now()->addMinute(5) < $verification_code->expired_at) {
                 return $this->sendError('Error.', ['message' => 'Your code has expired!']);
             } else {
                 if ($request->code == $verification_code->code) {
                     $user->markEmailAsVerified();
-                    if ($request->user_type != 'schoolkid') {
-                        $user->disabled = 0;
-                        $this->traineeCasSyncService->updateUser($user);
-                    }
+                    $user->disabled = 0;
+                    $this->traineeCasSyncService->updateUser($user);
                     return $this->sendResponse('Success.', ['message', 'Your account activated successfully!']);
                 } else {
                     return $this->sendError('Error.', ['message' => 'Your entered code is wrong!']);
@@ -440,15 +332,14 @@ class AuthController extends BaseController
     // Gửi lại xác thực
     public function resendVerification(Request $request): JsonResponse
     {
-        $request->validate(['email' => 'required|email', 'verification_method' => 'required', 'user_type' => 'required']);
-        if ($request->user_type == 'schoolkid') {
-            $user = SchoolKid::where('email', $request->email)->first();
-        }else {
-            $user = TraineeUser::where('email', $request->email)->first();
-        }
+        $request->validate(['email' => 'required|email', 'verification_method' => 'required']);
+
+        $user = TraineeUser::where('email', $request->email)->first();
+
         if (!$user) {
             return $this->sendError('Error.', ['message' => 'User not found']);
         }
+
         if ($user->hasVerifiedEmail()) {
             return $this->sendError('Error.', ['message' => 'Email already verified.']);
         }
@@ -563,37 +454,5 @@ class AuthController extends BaseController
             // Optionally, you can rethrow the exception or handle it gracefully
             // return response()->json(['error' => 'An error occurred while syncing trainee information.']);
         }
-    }
-
-    private function buildManualSchoolKidData($data, $password)
-    {
-        $recommendedBy = $data['recommended_by'] ?? null;
-        $system = null;
-        $userId = null;
-        if ($recommendedBy && str_contains($recommendedBy, '-')) {
-            [$system, $userId] = explode('-', $recommendedBy);
-        }
-        return [
-            'username' => $data['email'],
-            'email' => $data['email'],
-            'password' => $password,
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'contact_address' => $data['contact_address'],
-            'gender' => $data['gender'],
-            'mobile' => $data['mobile'],
-            'district_id' => $data['district_id'],
-            'recommended_by_user_id' => $userId,
-            'recommended_by_user_system' => $system,
-        ];
-    }
-
-    private function sendVerification($user, $token, $method)
-    {
-        match ($method) {
-            Constant::email => $user->sendEmailVerify($token),
-            Constant::sms => $user->sendSMSVerify($token),
-            default => null
-        };
     }
 }

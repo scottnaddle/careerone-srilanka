@@ -78,15 +78,12 @@ class BannerCategoryResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->limit(50)
-                    ->searchable()
-                    ->wrap(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('parent.name')->label('Sub Category of')
                     ->sortable()
-                    ->searchable()
-                    ->wrap(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
-                    ->searchable()
-                    ->wrap(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('is_active')->label('Status')
                     ->badge()
                     ->alignCenter()
@@ -101,13 +98,11 @@ class BannerCategoryResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->wrap(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable()
-                    ->wrap(),
+                    ->toggleable(),
             ])
             ->filters([
                 //

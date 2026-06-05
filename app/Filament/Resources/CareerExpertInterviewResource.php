@@ -58,16 +58,16 @@ class CareerExpertInterviewResource extends Resource
                 ->sortable()
                 ->limit(50)
                 ->searchable()
-                ->label(__('admin/dashboard.career_expert_interview.title_table'))->wrap(),
+                ->label(__('admin/dashboard.career_expert_interview.title_table')),
 
             Tables\Columns\TextColumn::make('video_url')
                 ->sortable()
-                ->label(__('admin/dashboard.career_expert_interview.video_url'))->wrap(),
+                ->label(__('admin/dashboard.career_expert_interview.video_url')),
 
             TextColumn::make('created_at')
                 ->date('Y-m-d')
                 ->sortable()
-                ->label(__('admin/dashboard.career_expert_interview.created_at'))->wrap(),
+                ->label(__('admin/dashboard.career_expert_interview.created_at')),
         ])->searchPlaceholder('Title')
             ->filters([
                 Tables\Filters\SelectFilter::make('status')

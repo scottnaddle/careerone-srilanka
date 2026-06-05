@@ -1,4 +1,4 @@
-@extends('auth.layouts.master')
+@extends('cgo.auth.layouts.master')
 
 @section('title', 'Reset password')
 
@@ -47,7 +47,7 @@
                                 class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <input type="email" name="email" id="email" value="{{ old('email') }}"
-                            class="bg-gray-50 border py-2 px-3 pl-4 h-9 w-full border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white">
+                            class="bg-gray-50 border p-3 pl-4 h-9 w-full border-gray-300 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block  dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white">
                         @if ($errors->has('email'))
                             <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('email') }}</span>
                         @endif

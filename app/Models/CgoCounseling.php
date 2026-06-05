@@ -55,10 +55,6 @@ class CgoCounseling extends Model
         return $this->hasMany(CgoCounselingAssignHistory::class, 'counseling_id', 'id');
     }
 
-    public function cgoUser() {
-        return $this->hasOneThrough(CgoUser::class,CgoCounselingAssignHistory::class, 'counseling_id','id','id','assignee_to')->orderBy('id','desc');
-    }
-
     public function institute() {
         return $this->belongsTo(Institute::class, 'institute_id', 'id');
     }

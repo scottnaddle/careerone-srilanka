@@ -166,7 +166,7 @@ class MenuTableSeeder extends Seeder
                                 'title' => 'menu.company_recruiter',
                                 'url' => '#',
                                 'subItems' => [
-                                    ['title' => 'menu.company_recruiter_list', 'url' => '/admin/company-recruiters'],
+                                    ['title' => 'menu.company_recruiter_list', 'url' => '/admin/comapny-user-lists'],
                                     ['title' => 'menu.company_recruiter_approval_list', 'url' => '/admin/company-recruiter-approvals'],
                                 ],
                             ],

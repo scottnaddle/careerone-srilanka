@@ -7,7 +7,6 @@ use App\Http\Requests\RegisterVerificationCodeRequest;
 use App\Models\CgoUser;
 use App\Models\AdminUser;
 use App\Models\CompanyRecruiter;
-use App\Models\SchoolKid;
 use App\Models\TraineeUser;
 use App\Models\VerificationCode;
 use App\Services\Trainee\TraineeCasSyncService;
@@ -35,10 +34,6 @@ class RegisterVerificationCodeController extends Controller
                 break;
             case Constant::trainee:
                 $user = TraineeUser::where(['email' => base64_decode($token)])->first();
-
-                break;
-            case Constant::schoolkid:
-                $user = SchoolKid::where(['email' => base64_decode($token)])->first();
 
                 break;
             default:
@@ -76,10 +71,6 @@ class RegisterVerificationCodeController extends Controller
                 $user = TraineeUser::where(['email' => base64_decode($request->token)])->first();
 
                 break;
-            case Constant::schoolkid:
-                $user = SchoolKid::where(['email' => base64_decode($request->token)])->first();
-
-                break;
             default:
                 break;
         }
@@ -98,12 +89,7 @@ class RegisterVerificationCodeController extends Controller
                     if ($data['u_type'] == 'trainee') {
                         $user->disabled = 0;
                         $this->traineeCasSyncService->updateUser($user);
-                        // Progressive signup: redirect to complete profile
-                        if ($user->profile_incomplete || empty($user->nic)) {
-                            Auth::guard('trainee')->login($user);
-                            return redirect()->route('trainee.my-page.complete-profile');
-                        }
-                        return redirect()->route('trainee.auth.login')->with('message', 'Your account activated successfully');
+                        return redirect()->route('trainee.cas.get-login')->with('message', 'Your account activated successfully');
                     }
                     return redirect()->route($data['u_type'].'.auth.login')->with('message', 'Your account activated successfully');
                 } else {
@@ -132,9 +118,6 @@ class RegisterVerificationCodeController extends Controller
             case Constant::trainee:
                 $user = TraineeUser::where(['email' => base64_decode($token)])->first();
                 break;
-            case Constant::schoolkid:
-                $user = SchoolKid::where(['email' => base64_decode($token)])->first();
-                break;
             default:
                 break;
 
@@ -148,6 +131,6 @@ class RegisterVerificationCodeController extends Controller
                 break;
         }
 
-        return redirect()->route('verification.verify', ['u_type' => $u_type, 'token' => $token, 'verification_method' => $verification_method])->with('message', 'Verification code has been sent');
+        return redirect()->route('verification.verify', ['u_type' => $u_type, 'token' => $token, 'verification_method' => $verification_method])->with('message', 'sended');
     }
 }

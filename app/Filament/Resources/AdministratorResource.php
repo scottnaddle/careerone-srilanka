@@ -121,12 +121,12 @@ class AdministratorResource extends Resource
                     ->preload()
                     ->searchable()
                     ->query(function (Builder $query, array $data) {
-                        if (!empty($data['value'])) {
-                            if ($data['value'] == 'verified') {
+                        if (!empty($data['approval'])) {
+                            if ($data['approval'] == 'verified') {
                                 $query->whereNotNull('verify_at')
                                       ->whereNotNull('verify_by')
                                       ->whereNotNull('email_verified_at');
-                            } elseif ($data['value'] == 'recently') {
+                            } elseif ($data['approval'] == 'recently') {
                                 $query->orderBy('updated_at', 'desc');
                             }
                         }
@@ -173,7 +173,6 @@ class AdministratorResource extends Resource
                 ->hidden(fn ($record) => $record->active === true)
                 ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
             ])
-            ->striped()
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
             ->paginated([10, 25, 50, 100])

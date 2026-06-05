@@ -17,7 +17,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Forms\Components\DatePicker;
 use Filament\Resources\Tables\Columns;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -28,7 +27,7 @@ class TraineeResource extends Resource
 {
     protected static ?string $model = TraineeUser::class;
 
-    protected static ?string $navigationLabel = 'Trainee';
+    protected static ?string $navigationLabel = 'Trainee ';
     protected static ?string $navigationGroup = 'Trainee';
     protected static ?int $navigationSort = 1;
     public static $totalRecords;
@@ -36,58 +35,49 @@ class TraineeResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Personal Information')
-                    ->schema([
-                        Forms\Components\TextInput::make('nic')
-                            ->label('NIC')
-                            ->maxLength(12)
-                            ->required()
-                            ->unique(ignoreRecord: true),
+                Forms\Components\TextInput::make('nic')
+                    ->label('NIC')
+                    ->maxLength(12)
+                    ->required()
+                    ->unique(ignoreRecord: true),
 
-                        Forms\Components\TextInput::make('full_name')
-                            ->required(),
+                Forms\Components\TextInput::make('full_name')
+                    ->required(),
 
 
-                        Forms\Components\Select::make('gender')
-                            ->options([
-                                '1' => 'Male',
-                                '2' => 'Female',
-                                '3' => 'N/A',
-                            ])
-                            ->nullable(),
 
-                        Forms\Components\TextInput::make('std_surname'),
+                Forms\Components\Textarea::make('permanant_address')
+                    ->columnSpan("1/2"),
 
-                        Forms\Components\TextInput::make('std_initials')
-                            ->maxLength(60),
-                    ])->columns(2),
+                Forms\Components\Textarea::make('contact_address')
+                    ->columnSpan("1/2"),
 
-                Forms\Components\Section::make('Contact Information')
-                    ->schema([
-                        Forms\Components\Textarea::make('permanant_address')
-                            ->columnSpan("1/2"),
+                Forms\Components\TextInput::make('email')
+                    ->email()
+                    ->maxLength(150)
+                    ->required()
+                    ->unique(ignoreRecord: true),
+                Forms\Components\Select::make('gender')
+                    ->options([
+                        '1' => 'Male',
+                        '2' => 'Female',
+                        '3' => 'N/A',
+                    ])
+                    ->nullable()->columnSpan("1/3"),
+                Forms\Components\TextInput::make('telephone')
+                    ->maxLength(20)->columnSpan("1/3"),
 
-                        Forms\Components\Textarea::make('contact_address')
-                            ->columnSpan("1/2"),
+                Forms\Components\TextInput::make('mobile')
+                    ->maxLength(20)->columnSpan("1/3"),
 
-                        Forms\Components\TextInput::make('email')
-                            ->email()
-                            ->maxLength(150)
-                            ->required()
-                            ->unique(ignoreRecord: true),
 
-                        Forms\Components\TextInput::make('telephone')
-                            ->maxLength(20),
+                Forms\Components\TextInput::make('std_surname'),
 
-                        Forms\Components\TextInput::make('mobile')
-                            ->maxLength(20),
-                    ])->columns(2),
+                Forms\Components\TextInput::make('std_initials')
+                    ->maxLength(60),
 
-                Forms\Components\Section::make('Account Settings')
-                    ->schema([
-                        Forms\Components\Toggle::make('active')
-                            ->default(true),
-                    ])->columns(2),
+                Forms\Components\Toggle::make('active')
+                    ->default(true),
             ]);
     }
 
@@ -103,22 +93,16 @@ class TraineeResource extends Resource
                 ->alignCenter(),
 
                 Tables\Columns\TextColumn::make('institutes.name')->limit(50)
-                    ->label(__('admin/dashboard.trainee.institute'))
-                    ->wrap(),
+                    ->label(__('admin/dashboard.trainee.institute')),
                 Tables\Columns\TextColumn::make('full_name')
                     ->searchable()
-                    ->label(__('admin/dashboard.trainee.name'))
-                    ->wrap(),
+                    ->label(__('admin/dashboard.trainee.name')),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
-                    ->copyable()
-                    ->copyMessage('Email copied')
-                    ->label(__('admin/dashboard.trainee.email'))
-                    ->wrap(),
+                    ->label(__('admin/dashboard.trainee.email')),
                 Tables\Columns\TextColumn::make('nic')
                     ->label('NIC')->searchable()
-                    ->sortable()
-                    ->wrap(),
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('recommended_by')
                     ->label(trans('general.Recommended by'))
                     ->getStateUsing(function ($record) {
@@ -135,8 +119,7 @@ class TraineeResource extends Resource
                             $recommendedBy = strtoupper($record->recommended_by_user_system) .' - '. $user?->fullName. ' ('. $headOffice.')';
                         }
                         return $recommendedBy;
-                    })
-                    ->wrap(),
+                    }),
                 Tables\Columns\TextColumn::make('career_test')
                     ->getStateUsing(function ($record) {
                         return $record->careerTest()->count();
@@ -170,52 +153,30 @@ class TraineeResource extends Resource
                     ->color(fn ($state) => $state ? 'success' : 'danger')
             ])
             ->actions([
-                Tables\Actions\DeleteAction::make()
-                    ->iconButton()
-                    ->tooltip('Delete')
-                    ->requiresConfirmation()
-                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
-                Tables\Actions\ViewAction::make()
-                    ->iconButton()
-                    ->tooltip('View'),
-                Tables\Actions\EditAction::make()
-                    ->iconButton()
-                    ->tooltip('Edit')
-                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+                // Tables\Actions\DeleteAction::make()->requiresConfirmation(),
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
                 Action::make('deactivate')
-                    ->label(__('Deactivate'))
-                    ->icon('heroicon-o-x-circle')
-                    ->color('danger')
-                    ->iconButton()
-                    ->tooltip('Deactivate')
-                    ->requiresConfirmation()
-                    ->action(function ($record) {
-                        $record->update(['active' => false]);
-                    })
-                    ->hidden(fn ($record) => $record->active === false)
-                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
-                Action::make('activate')
-                    ->label(__('Activate'))
-                    ->icon('heroicon-o-check-circle')
-                    ->color('success')
-                    ->iconButton()
-                    ->tooltip('Activate')
-                    ->requiresConfirmation()
-                    ->action(function ($record) {
-                        $record->update(['active' => true]);
-                    })
-                    ->hidden(fn ($record) => $record->active === true)
-                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+                ->label(__('Deactivate'))
+                ->icon('heroicon-o-x-circle')
+                ->color('danger')
+                ->requiresConfirmation()
+                ->action(function ($record) {
+                    $record->update(['active' => false]);
+                })
+                ->hidden(fn ($record) => $record->active === false)->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+            Action::make('activate')
+                ->label(__('Activate'))
+                ->icon('heroicon-o-check-circle')
+                ->color('success')
+                ->requiresConfirmation()
+                ->action(function ($record) {
+                    $record->update(['active' => true]);
+                })
+                ->hidden(fn ($record) => $record->active === true)->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
             ])
-            ->striped()
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
-                ]),
-            ])
             ->filters([
                 Tables\Filters\Filter::make('search')
                     ->form([
@@ -305,87 +266,46 @@ class TraineeResource extends Resource
                     ->query(function (Builder $query, array $data) {
                         $instituteIds = [];
 
-                        // Filter by province
+                        // Lọc theo provin
                         if (!empty($data['provin'])) {
+                            $instituteIds = [];
                             $districtIds = District::where('prov_id', $data['provin'])->pluck('id')->toArray();
                             $provinInstituteIds = Institute::whereIn('dist_id', $districtIds)->pluck('id')->toArray();
-                            $instituteIds = $provinInstituteIds;
+                            $instituteIds = array_merge($instituteIds, $provinInstituteIds);
                         }
 
-                        // Filter by district (narrows down from province if set)
+                        // Lọc theo district
                         if (!empty($data['district'])) {
+                            $instituteIds = [];
                             $districtInstituteIds = Institute::where('dist_id', $data['district'])->pluck('id')->toArray();
-                            $instituteIds = !empty($instituteIds)
-                                ? array_intersect($instituteIds, $districtInstituteIds)
-                                : $districtInstituteIds;
+                            $instituteIds = array_merge($instituteIds, $districtInstituteIds);
                         }
 
-                        // Filter by divisional (narrows down from district if set)
+                        // Lọc theo divisional
                         if (!empty($data['divisional'])) {
-                            $divisionalQuery = Institute::where('ds_id', $data['divisional']);
+                            $instituteIds = [];
+                            $divisionalInstituteIds = Institute::where('ds_id', $data['divisional']);
                             if (!empty($data['active_status'])) {
-                                $divisionalQuery->where('active_status', $data['active_status']);
+                                $divisionalInstituteIds->where('active_status', $data['active_status']);
                             }
                             if (!empty($data['owner_ship'])) {
-                                $divisionalQuery->where('ownership', $data['owner_ship']);
+                                $divisionalInstituteIds->where('ownership', $data['owner_ship']);
                             }
-                            $divisionalInstituteIds = $divisionalQuery->pluck('id')->toArray();
-                            $instituteIds = !empty($instituteIds)
-                                ? array_intersect($instituteIds, $divisionalInstituteIds)
-                                : $divisionalInstituteIds;
+                            $instituteIds = array_merge($instituteIds, $divisionalInstituteIds->pluck('id')->toArray());
                         }
 
-                        // Apply ownership and active_status independently (not tied to divisional)
-                        if (empty($data['divisional']) && (!empty($data['owner_ship']) || !empty($data['active_status']))) {
-                            $statusQuery = Institute::query();
-                            if (!empty($data['owner_ship'])) {
-                                $statusQuery->where('ownership', $data['owner_ship']);
-                            }
-                            if (!empty($data['active_status'])) {
-                                $statusQuery->where('active_status', $data['active_status']);
-                            }
-                            $statusInstituteIds = $statusQuery->pluck('id')->toArray();
-                            $instituteIds = !empty($instituteIds)
-                                ? array_intersect($instituteIds, $statusInstituteIds)
-                                : $statusInstituteIds;
-                        }
-
-                        // Filter by specific institute
+                        // Lọc theo institute_select
                         if (!empty($data['institute_select'])) {
-                            $instituteIds = !empty($instituteIds)
-                                ? array_intersect($instituteIds, [$data['institute_select']])
-                                : [$data['institute_select']];
+                            $instituteIds[] = $data['institute_select'];
                         }
 
-                        $instituteIds = array_unique(array_filter($instituteIds));
+                        $instituteIds = array_unique($instituteIds);
                         if (!empty($instituteIds)) {
-                            // Chunk large ID arrays to avoid SQLite's 999 parameter limit
-                            if (count($instituteIds) > 900) {
-                                $query->whereHas('institutes', function ($q) use ($instituteIds) {
-                                    $q->where(function ($sub) use ($instituteIds) {
-                                        foreach (array_chunk($instituteIds, 900) as $i => $chunk) {
-                                            $sub->whereIn('institute_id', $chunk, $i === 0 ? 'and' : 'or');
-                                        }
-                                    });
-                                });
-                            } else {
-                                $query->whereHas('institutes', function ($q) use ($instituteIds) {
-                                    $q->whereIn('institute_id', $instituteIds);
-                                });
-                            }
+                            $query->whereHas('institutes', function ($instituteQuery) use ($instituteIds) {
+                                $instituteQuery->whereIn('institute_id', $instituteIds);
+                            });
                         }
-                    }),
-                Tables\Filters\Filter::make('created_at')
-                    ->form([
-                        DatePicker::make('date')
-                            ->label('Created Date')
-                            ->native(false),
-                    ])
-                    ->query(function ($query, array $data) {
-                        if (!empty($data['date'])) {
-                            $query->whereDate('created_at', $data['date']);
-                        }
-                    }),
+                    })
             ]);
     }
 

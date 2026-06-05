@@ -50,12 +50,6 @@ class CompanyJobResource extends Resource
                     'status' => request()->query('status', null)
                 ])
             )
-            ->modifyQueryUsing(function ($query) {
-                $admin = auth('admin')->user();
-                if ($admin && $admin->hasRole('naita_admin')) {
-                    $query->where('is_belongs_to_naita', true);
-                }
-            })
             ->columns([
                 Tables\Columns\TextColumn::make('index')
                     ->label(__('admin/dashboard.compnay_job.no'))
@@ -65,14 +59,12 @@ class CompanyJobResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->limit(50)
                     ->label(__('admin/dashboard.compnay_job.company_name'))
-                    ->sortable()
-                    ->wrap(),
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('district.name')
                     ->label(__('admin/dashboard.compnay_job.district'))
                     ->searchable()
-                    ->sortable()
-                    ->wrap(),
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('jobs')
                     ->label(__('admin/dashboard.compnay_job.job_posting'))
@@ -91,16 +83,16 @@ class CompanyJobResource extends Resource
                         return $record->statusCompanyList();
                     })
                     ->formatStateUsing(fn($state) => match ($state) {
-                        'Verified' => "<span style='font-size:12px;color: #4984F6; background-color: #F2F9FF; padding: 0.2rem 0.4rem; border-radius: 0.25rem;font-weight:600;'>".trans('admin/performance.Verified')."</span>",
-                        'Request' => "<span style='font-size:12px;color: #5a5252; background-color: #dfdada; padding: 0.2rem 0.4rem; border-radius: 0.25rem;font-weight:600;'>".trans('admin/performance.Request')."</span>",
-                        default => "<span style='font-size:12px;color: #F34550; background-color: #FFF0F0; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-weight:600;'>".trans('admin/performance.Rejected')."</span>",
+                        'Verified' => "<span style='font-size:12px;color: #4984F6; background-color: #F2F9FF; padding: 0.2rem 0.4rem; border-radius: 0.25rem;font-weight:600;'>$state</span>",
+                        'Request' => "<span style='font-size:12px;color: #5a5252; background-color: #dfdada; padding: 0.2rem 0.4rem; border-radius: 0.25rem;font-weight:600;'>Request</span>",
+                        default => "<span style='font-size:12px;color: #F34550; background-color: #FFF0F0; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-weight:600;'>Rejected</span>",
                     })
                     ->html(),
                 Tables\Columns\TextColumn::make('active')
                     ->label('Status')
                     ->sortable()
                     ->badge()
-                    ->formatStateUsing(fn($state) => $state ? trans('auth.active') : trans('admin/status.inactive'))
+                    ->formatStateUsing(fn($state) => $state ? 'Active' : 'Inactive')
                     ->color(fn($state) => $state ? 'success' : 'danger')
             ])
             ->searchPlaceholder(__('admin/dashboard.compnay_job.search_placeholder'))
@@ -108,44 +100,19 @@ class CompanyJobResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('district_id')
                     ->label('District')
-                    ->options(function () {
-                        $admin = auth('admin')->user();
-                        $districtQuery = District::query();
-
-                        if ($admin && $admin->hasRole('naita_admin')) {
-                            // Chỉ lấy các district có chứa company thuộc Naita
-                            $districtQuery->whereHas('companies', function ($q) {
-                                $q->where('is_belongs_to_naita', true);
-                            });
-                        }
-
-                        return $districtQuery->pluck('name', 'id');
-                    })
+                    ->options(District::all()->pluck('name', 'id'))
                     ->searchable(),
 
                 Tables\Filters\SelectFilter::make('sector')
                     ->label(__('admin/dashboard.compnay_job.job_category'))
-                    ->options(function () {
-                        $admin = auth('admin')->user();
-                        $sectorQuery = Sector::query();
-
-                        if ($admin && $admin->hasRole('naita_admin')) {
-                            // Chỉ lấy các sector có job thuộc company Naita
-                            $sectorQuery->whereHas('jobCompanies.company', function ($q) {
-                                $q->where('is_belongs_to_naita', true);
-                            });
-                        }
-
-                        return $sectorQuery->pluck('name', 'id');
-                    })
+                    ->options(Sector::pluck('name', 'id')->toArray())
                     ->query(function (\Illuminate\Database\Eloquent\Builder $query, array $data) {
                         if (isset($data['value']) && !empty($data['value'])) {
                             $query->whereHas('jobs', function ($query) use ($data) {
                                 $query->where('jobs.sector_id', $data['value']);
                             });
                         }
-                    })
-                    ->searchable(),
+                    })->searchable(),
             ])
             ->actions([
                 ViewAction::make()

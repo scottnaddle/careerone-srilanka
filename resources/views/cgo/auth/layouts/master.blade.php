@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <title>@yield('title') - {{ env('APP_NAME', 'TVEC SYSTEM') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
 
     </style>
@@ -47,9 +46,11 @@
     </script>
 </head>
 
-<body class="bg-custom mx-auto max-w-[1440px] flex flex-col justify-center h-auto lg:h-[100vh]">
-    <div class="my-6 flex flex-col items-center justify-center mx-4">
+<body class="bg-custom flex justify-center items-center bg-cover bg-center bg-fixed">
+    <div class="max-w-[1440px] mx-auto h-[100vh]">
+        <div class="mx-auto content-center flex items-start h-full">
             @yield('content')
+        </div>
     </div>
     @stack('js')
 </body>

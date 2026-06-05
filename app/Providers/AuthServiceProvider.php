@@ -2,13 +2,11 @@
 
 namespace App\Providers;
 
-use App\Policies\ExportPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use App\Policies\ActivityPolicy;
 use Spatie\Activitylog\Models\Activity;
 use  App\Policies\PortfolioPolicy;
 use App\Models\Portfolio;
-use Filament\Actions\Exports\Models\Export;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -19,8 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Activity::class => ActivityPolicy::class,
-        Portfolio::class => PortfolioPolicy::class,
-        Export::class => ExportPolicy::class,
+        Portfolio::class => PortfolioPolicy::class
     ];
 
     /**
@@ -28,6 +25,6 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->registerPolicies();
+
     }
 }

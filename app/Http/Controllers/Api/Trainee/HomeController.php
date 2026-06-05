@@ -123,7 +123,7 @@ class HomeController extends BaseController
 
         $contentCategory = CareerGuidanceCategory::first();
 
-        $contentsQuery = $contentCategory->contentApproved()->latest();
+        $contentsQuery = $contentCategory->contentApproved()->inRandomOrder();
 
         $contents = $contentsQuery->take(4)->get();
 

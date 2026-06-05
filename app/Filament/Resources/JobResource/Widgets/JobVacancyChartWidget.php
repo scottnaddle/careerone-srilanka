@@ -77,7 +77,7 @@ class JobVacancyChartWidget extends ChartWidget
                     'order' => 1,
                 ],
             ],
-            'labels' => $data->map(fn ($value) => Carbon::parse($value->created_at)->format('d/m (D)')),
+            'labels' => $data->map(fn ($value) => Carbon::parse($value->date)->format('d/m (D)')),
         ];
     }
 
