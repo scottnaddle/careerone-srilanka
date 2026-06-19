@@ -16,7 +16,7 @@ class SetLocale
     public function handle(Request $request, Closure $next): Response
     {
         if ($lang = $request->query('lang')) {
-            // Nếu hợp lệ thì set locale
+            // If valid, set the locale
             if (in_array($lang, ['en', 'sn', 'tm'])) {
                 App::setLocale($lang);
                 session(['locale' => $lang]);

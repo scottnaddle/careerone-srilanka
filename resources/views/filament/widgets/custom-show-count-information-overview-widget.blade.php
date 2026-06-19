@@ -1,7 +1,7 @@
 {{-- resources/views/filament/widgets/custom-stats-overview-widget.blade.php --}}
 @php
 //    $columns = $this->getColumns();
-    $columns = 5;
+    $columns = count($this->getCachedStats());
 @endphp
 
 <x-filament-widgets::widget class="fi-wi-stats-overview">

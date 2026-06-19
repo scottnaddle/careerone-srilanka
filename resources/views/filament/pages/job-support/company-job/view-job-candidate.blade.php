@@ -32,8 +32,8 @@
                 <div class="w-full flex gap-4">
                     <div class="flex items-center gap-4 w-full">
                         <select id="search-time" name="search-time" class="font-semibold border text-base rounded-xl block p-2.5 border-gray-300 text-[#4984F6] bg-white">
-                            <option @selected(request('search-time') == 'desc') value="desc">Recently</option>
-                            <option @selected(request('search-time') == 'asc') value="asc">Oldest</option>
+                            <option @selected(request('search-time') == 'desc') value="desc">{{trans('system.filter.recently')}}</option>
+                            <option @selected(request('search-time') == 'asc') value="asc">{{trans('system.filter.oldest')}}</option>
                         </select>
                         <input type="text" name="search"
                             class="flex-grow px-4 py-2 border border-gray-300 rounded-lg text-[#91919A] font-medium"
@@ -41,13 +41,13 @@
                     </div>
                 </div>
                 <div class="w-fit">
-                    <button type="submit" class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-full">Search</button>
+                    <button type="submit" class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-full">{{ __('company.search') }}</button>
                 </div>
             </div>
         </form>
 
         @if (count($job->appliesTypeApply) <= 0)
-            <p>No record found</p>
+            <p>{{ trans('cgo.job_support.company_list.no_record') }}</p>
         @else
             @foreach ($job->appliesTypeApply as $apply)
                 <div

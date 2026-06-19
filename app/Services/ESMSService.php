@@ -121,7 +121,7 @@ class ESMSService
 //
 //        return $sendMessagesMultiLangResponse->return;
 //    }
-// Send Unicode SMS to recipients với retry logic
+// Send Unicode SMS to recipients with retry logic
     public function sendMessagesMultiLang($session, $alias, $message, $recipients, $messageType, $maxRetries = 3, $retryDelay = 1000)
     {
         $smsMessageMultiLang = new \stdClass();
@@ -149,27 +149,27 @@ class ESMSService
                 $sendMessagesMultiLangResponse = $this->client->sendMessagesMultiLang($sendMessagesMultiLang);
                 $lastResponse = $sendMessagesMultiLangResponse->return;
 
-                // Nếu mã trả về là 200 (thành công) thì trả về kết quả ngay
+                // If the return code is 200 (success), return the result immediately
                 if ($lastResponse == 200) {
                     return $lastResponse;
                 }
 
-                // Nếu là lỗi session (151) hoặc session đang được sử dụng (152),
-                // có thể cần renew session trước khi thử lại
+                // If it is a session error (151) or the session is in use (152),
+                // the session may need to be renewed before retrying
                 if (in_array($lastResponse, [151, 152])) {
-                    // Renew session và thử lại
+                    // Renew the session and retry
                     $session = $this->renewSession($session);
                     $sendMessagesMultiLang->session = $session;
                 }
 
-                // Log lỗi (bạn có thể thay thế bằng logging thực tế)
+                // Log the error (you can replace this with real logging)
                 error_log("SMS send attempt " . ($attempt + 1) . " failed with code: " . $lastResponse);
 
                 $attempt++;
 
-                // Nếu chưa đạt max retries thì chờ một chút trước khi thử lại
+                // If max retries has not been reached, wait a bit before retrying
                 if ($attempt < $maxRetries) {
-                    usleep($retryDelay * 1000); // Chuyển đổi ms sang microseconds
+                    usleep($retryDelay * 1000); // Convert ms to microseconds
                 }
 
             } catch (\Exception $e) {
@@ -183,8 +183,8 @@ class ESMSService
             }
         }
 
-        // Nếu đã thử lại tối đa mà vẫn không được, trả về mã lỗi cuối cùng
-        // hoặc ném exception nếu bạn muốn
+        // If all retries are exhausted without success, return the last error code
+        // or throw an exception if you prefer
         return $lastResponse;
     }
 

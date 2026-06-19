@@ -212,6 +212,10 @@ class CounselingController extends Controller
             if ($assignHistory) {
                 if ($assignHistory->assignee_from == '') {
                     $from = [];
+                } else {
+                    $from = is_array($assignHistory->assignee_from)
+                        ? $assignHistory->assignee_from
+                        : (json_decode($assignHistory->assignee_from, true) ?: []);
                 }
                 array_push($from, $assignHistory->assignee_to);
                 $assignHistory->assignee_from = $from;

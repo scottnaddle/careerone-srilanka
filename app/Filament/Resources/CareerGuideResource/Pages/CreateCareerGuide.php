@@ -14,7 +14,7 @@ class CreateCareerGuide extends CreateRecord
     protected static bool $canCreateAnother = false;
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['slug'] = \Str::slug($data['title']);
+        $data['slug'] = \Str::slug($data['title'], '-', 'ta');
         // $data['thumbnail'] = 'storage/' . $data['thumbnail'];
         return $data;
     }

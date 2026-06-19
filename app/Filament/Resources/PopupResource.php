@@ -60,7 +60,7 @@ class PopupResource extends Resource
                         ->label(trans('admin/dashboard.event.end_time'))
                         ->columnSpan(1)
                         ->minDate(fn (callable $get) => $get('start_time') ?? now())
-                ])
+                ]),
             ]);
     }
 
@@ -70,10 +70,10 @@ class PopupResource extends Resource
             ->columns([
                 TextColumn::make('popup_name')->label(trans('admin/dashboard.popup_name'))->searchable(),
 //                TextColumn::make('title')->label(trans('cgo.title'))->searchable(),
-                BadgeColumn::make('status')->label(trans('admin/dashboard.event.status'))->colors([
-                    'success' => 'active',
-                    'secondary' => 'inactive',
-                ]),
+                Tables\Columns\ToggleColumn::make('status')
+                    ->label(trans('admin/dashboard.event.status'))
+                    ->getStateUsing(fn ($record) => $record->status === 'active')
+                    ->updateStateUsing(fn ($record, $state) => $record->update(['status' => $state ? 'active' : 'inactive'])),
 //                ImageColumn::make('image')->label(trans('admin/dashboard.banner.image_section')),
                 TextColumn::make('start_time')->label(trans('admin/dashboard.event.start_time'))->date("Y-m-d"),
                 TextColumn::make('end_time')->label(trans('admin/dashboard.event.end_time'))->date("Y-m-d"),

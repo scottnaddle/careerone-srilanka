@@ -151,7 +151,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($jobs as $item)
+                            @forelse ($jobs as $item)
                                 {{-- @if (!$item->checkEmployed($item->id, $trainee->id)) --}}
                                 <tr
                                     class="bg-white dark:bg-[#1E1E1E] border-b border-[#F8F8F8] dark:border-gray-700 text-center">
@@ -216,13 +216,22 @@
                                     </td>
                                 </tr>
                                 {{-- @endif --}}
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="7">
+                                        <div class="flex flex-col gap-4 justify-center items-center p-4">
+                                            <img src="{{asset('/images/empty-box.png')}}" class="opacity-50 h-32" alt="Empty">
+                                            <p class="dark:text-white">{{ trans('cgo.no_record') }}</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
 
                         </tbody>
                     </table>
 
                 </div>
-                {{--            //cái này gọi tailwind pagination trong vendor ra --}}
+                {{--            // this renders the tailwind pagination from vendor --}}
                 {{ $jobs->onEachSide(1)->links() }}
             </div>
         </div>

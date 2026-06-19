@@ -47,14 +47,14 @@
                 <!-- Issue Date -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-white">{{$t('Issue Date')}} <span class="text-red-600">*</span></label>
-                    <input v-model="newEvidence.issue_date" type="month" :class="{'border-red-500': errors.issue_date}" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-2">
+                    <flowbite-datepicker type="month" v-model="newEvidence.issue_date" :placeholder="$t('Issue Date')" :class="{'border-red-500': errors.issue_date}"></flowbite-datepicker>
                     <p v-if="errors.issue_date" class="mt-1 text-sm text-red-600">{{ errors.issue_date }}</p>
                 </div>
 
                 <!-- Validity Period -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-white">{{$t('Validity Period (if applicable)')}}</label>
-                    <input v-model="newEvidence.validity_period" type="month" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-2">
+                    <flowbite-datepicker type="month" v-model="newEvidence.validity_period" :placeholder="$t('Validity Period')"></flowbite-datepicker>
                 </div>
 
                 <!-- Description -->
@@ -197,13 +197,13 @@
 
                     <div class="mt-2">
                         <label class="block text-sm font-medium text-gray-700 dark:text-white">{{$t('Issue Date')}} <span class="text-red-600">*</span></label>
-                        <input v-model="editForms[index].issue_date" type="month" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-2" :class="{'border-red-500': editErrors[index].issue_date}">
+                        <flowbite-datepicker type="month" v-model="editForms[index].issue_date" :placeholder="$t('Issue Date')" :class="{'border-red-500': editErrors[index]?.issue_date}"></flowbite-datepicker>
                         <p v-if="editErrors[index]?.issue_date" class="mt-1 text-sm text-red-600">{{ editErrors[index].issue_date }}</p>
                     </div>
 
                     <div class="mt-2">
                         <label class="block text-sm font-medium text-gray-700 dark:text-white">{{$t('Validity Period (if applicable)')}}</label>
-                        <input v-model="editForms[index].validity_period" type="month" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-2">
+                        <flowbite-datepicker type="month" v-model="editForms[index].validity_period" :placeholder="$t('Validity Period')"></flowbite-datepicker>
                     </div>
 
                     <div class="mt-2">
@@ -276,8 +276,8 @@ export default {
                 document_type: '',
                 name: '',
                 issuing_organisation: '',
-                issue_date: '', // Sẽ lưu dưới dạng 'YYYY-MM'
-                validity_period: '', // Sẽ lưu dưới dạng 'YYYY-MM'
+                issue_date: '', // Will be stored as 'YYYY-MM'
+                validity_period: '', // Will be stored as 'YYYY-MM'
                 description: '',
                 attachment_path: ''
             },
@@ -388,16 +388,16 @@ export default {
         resetEditingStates() {
             this.editing = this.evidences.map(() => false);
             this.editForms = this.evidences.map(ev => {
-                // Xử lý chuyển đổi định dạng date từ YYYY-MM-DD sang YYYY-MM nếu cần
+                // Convert date format from YYYY-MM-DD to YYYY-MM if needed
                 let issue_date = ev?.issue_date || '';
                 let validity_period = ev?.validity_period || '';
 
-                // Chuyển đổi từ YYYY-MM-DD sang YYYY-MM nếu cần
+                // Convert from YYYY-MM-DD to YYYY-MM if needed
                 if (issue_date && issue_date.match(/^\d{4}-\d{2}-\d{2}$/)) {
-                    issue_date = issue_date.substring(0, 7); // Lấy YYYY-MM
+                    issue_date = issue_date.substring(0, 7); // Take YYYY-MM
                 }
                 if (validity_period && validity_period.match(/^\d{4}-\d{2}-\d{2}$/)) {
-                    validity_period = validity_period.substring(0, 7); // Lấy YYYY-MM
+                    validity_period = validity_period.substring(0, 7); // Take YYYY-MM
                 }
 
                 return {
@@ -541,16 +541,16 @@ export default {
             const monthRegex = /^\d{4}-\d{2}$/;
             const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
-            // Validate Issue Date - chấp nhận cả 2 định dạng
+            // Validate Issue Date - accept both formats
             if (!evidence.issue_date) {
                 errors.issue_date = this.$t('Issue date is required');
             } else if (!monthRegex.test(evidence.issue_date) && !dateRegex.test(evidence.issue_date)) {
                 errors.issue_date = this.$t('Issue date must be in YYYY-MM format');
             } else {
-                // Chuẩn hóa về YYYY-MM-DD để validation
+                // Normalize to YYYY-MM-DD for validation
                 let issueDateStr = evidence.issue_date;
                 if (monthRegex.test(issueDateStr)) {
-                    issueDateStr = evidence.issue_date + '-01'; // Thêm ngày 01
+                    issueDateStr = evidence.issue_date + '-01'; // Append day 01
                 }
 
                 const issueDate = new Date(issueDateStr);
@@ -575,15 +575,15 @@ export default {
 
             let year, month;
 
-            // Xử lý cả 2 định dạng: YYYY-MM và YYYY-MM-DD
+            // Handle both formats: YYYY-MM and YYYY-MM-DD
             if (dateString.match(/^\d{4}-\d{2}$/)) {
-                // Định dạng mới: YYYY-MM
+                // New format: YYYY-MM
                 [year, month] = dateString.split('-');
             } else if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
-                // Định dạng cũ: YYYY-MM-DD
+                // Old format: YYYY-MM-DD
                 [year, month] = dateString.split('-');
             } else {
-                return 'N/A'; // Định dạng không hợp lệ
+                return 'N/A'; // Invalid format
             }
 
             const date = new Date(year, month - 1);
@@ -1293,14 +1293,14 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 <!--            if (!evidence.issue_date) {-->
 <!--                errors.issue_date = this.$t('Issue date is required');-->
 <!--            } else {-->
-<!--                // Kiểm tra định dạng YYYY-MM-DD-->
+<!--                // Check YYYY-MM-DD format-->
 <!--                if (!/^\d{4}-\d{2}-\d{2}$/.test(evidence.issue_date)) {-->
 <!--                    errors.issue_date =  this.$t('Date format must be YYYY-MM-DD');-->
 <!--                } else {-->
 <!--                    const issueDate = new Date(evidence.issue_date);-->
 <!--                    const year = issueDate.getFullYear();-->
 
-<!--                    // Năm phải đủ 4 số và >=1900-->
+<!--                    // Year must have 4 digits and be >=1900-->
 <!--                    if (year < 1900) {-->
 <!--                        errors.issue_date =  this.$t('Year must be 1900 or later');-->
 <!--                    } else if (issueDate > today) {-->
@@ -1322,7 +1322,7 @@ input[type="month"]::-webkit-calendar-picker-indicator {
 <!--            const date = new Date(dateString);-->
 
 <!--            const year = date.getFullYear();-->
-<!--            const month = String(date.getMonth() + 1).padStart(2, '0'); // thêm 0 phía trước nếu < 10-->
+<!--            const month = String(date.getMonth() + 1).padStart(2, '0'); // prepend 0 if < 10-->
 <!--            const day = String(date.getDate()).padStart(2, '0');-->
 
 <!--            return `${year}-${month}-${day}`; // Y-m-d-->

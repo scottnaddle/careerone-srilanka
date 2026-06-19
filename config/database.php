@@ -148,7 +148,7 @@ return [
 //
 //    ],
     'redis' => [
-        'client' => env('REDIS_CLIENT', 'phpredis'), // hoặc 'predis'
+        'client' => env('REDIS_CLIENT', 'phpredis'), // or 'predis'
 
         'default' => [
             'host' => env('REDIS_MASTER_HOST', '127.0.0.1'),
@@ -164,7 +164,7 @@ return [
             'database' => 1,
         ],
 
-        // Replica chỉ dùng cho các tác vụ "read-only"
+        // Replica is used only for "read-only" operations
         'replica' => [
             'host' => env('REDIS_REPLICA_HOST', '127.0.0.1'),
             'password' => env('REDIS_PASSWORD', null),

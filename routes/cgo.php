@@ -118,7 +118,7 @@ Route::group(['prefix' => 'cgo', 'as' => 'cgo.'], function () {
 
     });
 
-    Route::group(['prefix' => 'job-support', 'as' => 'job-support.'], function () {
+    Route::group(['prefix' => 'job-support', 'as' => 'job-support.', 'middleware' => ['cgo.auth']], function () {
         Route::group(['prefix' => 'trainee-list', 'as' => 'trainee-list.'], function () {
             Route::get('/', [JobSupportController::class, 'listTrainee'])->name('list');
             Route::get('/export', [JobSupportController::class, 'exportTrainee'])

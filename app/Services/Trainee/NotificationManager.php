@@ -47,14 +47,14 @@ class NotificationManager
 
         $emailContent = $this->emailContentService->getApprovalEmailContent($data);
         // $this->emailService->sendEmail($user, $emailContent);
-        // Tạo instance của mailable với thông tin từ emailContent
+        // Create an instance of the mailable with the information from emailContent
         // $mailable = new \App\Mail\BaseMailable(
         //     $emailContent['subject'],
         //     $emailContent['view'],
         //     $emailContent['data']
         // );
 
-        // // Gửi email
+        // // Send email
         // $this->emailService->sendEmail($user, $mailable);
     }
     public function sendMembershipBlockEmail($user)

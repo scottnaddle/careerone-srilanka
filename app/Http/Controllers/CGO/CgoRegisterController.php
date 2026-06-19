@@ -53,7 +53,7 @@ class CgoRegisterController extends Controller
                 $user->sendSMSVerify($token);
                 break;
         }
-        return redirect()->route('verification.verify', ['u_type' => 'cgo', 'token' => $token, 'verification_method' => $verification_method])->with('message', 'Sent');
+        return redirect()->route('verification.verify', ['u_type' => 'cgo', 'token' => $token, 'verification_method' => $verification_method])->with('message', 'Verification code has been sent');
         // return redirect()->route('cgo.auth.login');
     }
 }

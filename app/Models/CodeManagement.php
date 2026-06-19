@@ -11,6 +11,24 @@ class CodeManagement extends Model
     use HasFactory;
     protected $fillable = ['code_id', 'code_name_en', 'code_name_tm', 'code_name_sn', 'module'];
     protected $table = 'code_managements';
+
+    /**
+     * Flush the cached code lookups (see getCodeList / getCodeNameByCodeId) whenever
+     * a code record changes, so admin edits are reflected immediately.
+     */
+    protected static function booted(): void
+    {
+        $flush = function (self $code) {
+            $module = strtolower((string) $code->module);
+            foreach (['code_name_en', 'code_name_tm', 'code_name_sn'] as $col) {
+                \Illuminate\Support\Facades\Cache::forget("codelist.{$module}.{$col}");
+                \Illuminate\Support\Facades\Cache::forget("codename.{$module}.{$code->code_id}.{$col}");
+            }
+        };
+
+        static::saved($flush);
+        static::deleted($flush);
+    }
     public function carrerTests()
     {
         return $this->hasMany(CareerTest::class, 'test_type', 'code_id');

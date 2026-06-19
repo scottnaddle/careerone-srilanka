@@ -334,9 +334,9 @@ return [
         'company_list' => [
             'root' => 'கம்பனி பட்டியல்',
             'search' => 'தேடுக',
-            'filterResult' => ' filterResult ',
-            'searchPlaceholder' => ' searchPlaceholder ',
-            'no_record' => 'No record!',
+            'filterResults' => 'முடிவுகள்',
+            'no_record' => 'பதிவுகள் எதுவும் இல்லை!',
+            'not_limitation' => 'கட்டுப்பாடு இல்லை',
             'filter' => [
                 'district' => 'மாவட்டம்',
                 'recently' => 'சமீபத்திய',
@@ -488,7 +488,7 @@ return [
             'candidate_list' => [
                 'title' => 'தேர்வுநாடி பட்டியல்',
                 'search' => 'தேடுக',
-                'filterResult' => ' filterResult ',
+                'filterResult' => 'முடிவுகள்',
                 'no_record' => 'பதிவு இல்லை',
                 'filter' => [
                     'all_type' => 'எல்லா வகைகள்',
@@ -505,7 +505,7 @@ return [
         'ojt_list' => [
             'root' => 'OJT பட்டியல்',
             'search' => 'தேடுக',
-            'filterResults' => ' filterResults ',
+            'filterResults' => 'முடிவுகள் ',
             'no_record' => 'பதிவு இல்லை!',
             'not_limitation' => 'வரம்பில்லை',
             'filter' => [

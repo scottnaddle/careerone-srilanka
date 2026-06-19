@@ -24,7 +24,7 @@ class QnASeeder extends Seeder
             DB::table('q_n_a_s')->insert([
                 'status' => $status[array_rand($status, 1)],
                 'title' => $title,
-                'slug' => Str::slug($title),
+                'slug' => Str::slug($title, '-', 'ta'),
                 'description' => $faker->paragraph(10),
                 'system' => $system[array_rand($system, 1)],
                 'created_by' => $faker->randomElement(CgoUser::pluck('id')->toArray()),

@@ -11,6 +11,7 @@ use App\Models\CompanyRecruiter;
 use App\Models\Content;
 use App\Models\ContentComment;
 use App\Models\PeerContentReview;
+use App\Models\SchoolKid;
 use App\Models\TraineeUser;
 use App\Services\Cgo\AutoAssignPeerReviewContentService;
 use App\Services\Cgo\NotificationManager;
@@ -98,7 +99,7 @@ class ContentManagementController extends Controller
         }
         $previousUrl = URL::previous();
         $video->title = $request->title;
-        $video->slug = \Str::slug($request->title);
+        $video->slug = \Str::slug($request->title, '-', 'ta');
         $video->content_type = 'video';
         $video->video_url = $request->video_url;
         $video->intro = $request->intro;
@@ -147,7 +148,7 @@ class ContentManagementController extends Controller
             if (isset($attachment_details->path)) {
                 $path = storage_path('app/' . ltrim($attachment_details->path, '/'));
                 if (file_exists($path)) {
-                    @unlink($path); // @ để tránh warning nếu file không tồn tại
+                    @unlink($path); // @ to suppress the warning if the file does not exist
                 }
             }
             $document->peerReview()->delete();
@@ -311,7 +312,7 @@ class ContentManagementController extends Controller
 
         $document->fill([
             'title' => $request->title,
-            'slug' => \Str::slug($request->title),
+            'slug' => \Str::slug($request->title, '-', 'ta'),
             'intro' => $request->intro,
             'status' => StatusEnumsManagement::PENDING_APPROVAL->value,
             'author' => $request->author,
@@ -354,7 +355,7 @@ class ContentManagementController extends Controller
                     putenv('TMPDIR=/var/tmp/gs_tmp');
                 }
                 $gsPath = env('PDF_OPTIMIZER_GS');
-                // Nén PDF với Ghostscript
+                // Compress the PDF with Ghostscript
                 PdfOptimizer::init($gsPath)->logger(\Log::getLogger())
                 ->optimize($tempFullPath, $finalFilePath);
 
@@ -405,7 +406,7 @@ class ContentManagementController extends Controller
             if (isset($attachmentDetails->path) && File::exists($attachmentDetails->path)) {
                 $path = $attachmentDetails->path;
 
-                // Nếu là PDF thì hiển thị trên trình duyệt
+                // If it is a PDF, display it in the browser
                 if ($document->content_type === 'pdf') {
                     return response()->file($path, [
                         'Content-Type' => 'application/pdf',
@@ -413,7 +414,7 @@ class ContentManagementController extends Controller
                     ]);
                 }
 
-                // Nếu không phải PDF thì tải xuống
+                // If it is not a PDF, download it
                 return response()->download($path);
             }
         }
@@ -476,6 +477,9 @@ class ContentManagementController extends Controller
                 break;
             case 'trainee':
                 $user = TraineeUser::where(['id' => $id])->first();
+                break;
+            case 'schoolkid':
+                $user = SchoolKid::where(['id' => $id])->first();
                 break;
         }
         return $user;
@@ -626,14 +630,14 @@ class ContentManagementController extends Controller
             } elseif ($peerReviewitem->cgo_user_id_3 == $currentUserId) {
                 $position = 3;
             } else {
-                // User không được gán trong 3 user_id
+                // User is not assigned to any of the 3 user_ids
                 abort(403, 'You are not authorized to access this content.');
             }
 
             $resultField = "cgo_user_{$position}_result";
             $detailsField = "cgo_user_{$position}_result_details";
 
-            // Truy cập dữ liệu:
+            // Access the data:
             $peerReviewitem->$resultField = $sum;
             $peerReviewitem->$detailsField = json_encode($result);
             $peerReviewitem->save();

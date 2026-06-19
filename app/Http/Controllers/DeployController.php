@@ -8,7 +8,7 @@ class DeployController extends Controller
 {
     public function run()
     {
-        // Kiểm tra quyền truy cập (quan trọng!)
+        // Check access permission (important!)
         if (!app()->environment('local')) {
             abort(403, 'Unauthorized');
         }
@@ -27,7 +27,7 @@ class DeployController extends Controller
         $output = [];
 
         foreach ($commands as $cmd) {
-            // Di chuyển vào thư mục dự án trước khi chạy lệnh
+            // Change into the project directory before running the command
             $fullCommand = "cd {$projectBasePath} && {$cmd}";
             $result = shell_exec($fullCommand . ' 2>&1');
             $output[] = [

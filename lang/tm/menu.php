@@ -6,6 +6,7 @@ return [
     'institute_performance' => 'கல்வி நிறுவன செயல்திறன்',
     'company_performance' => 'கம்பனி செயல்திறன்',
     'log_performance' => 'பதிவு (log) செயல்திறன்',
+    'pdm-dashboard' => 'PDM டேஷ்போர்ட்',
 
     'career_guidance' => 'தொழில் வழிகாட்டல்',
     'career_test' => 'தொழில் சோதனை',

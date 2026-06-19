@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\TraineeUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Institute;
-use App\Models\CareerTest;
-use App\Models\TraineeUser;
 
 class CareerTestTraineeResult extends Model
 {
     use HasFactory;
+    protected $fillable=['name','nic','trainee_id','career_test_id','test_type','result','attachment','note','user_type'];
     public function careerTest()
     {
         return $this->belongsTo(CareerTest::class, 'career_test_id','id');
@@ -19,6 +18,11 @@ class CareerTestTraineeResult extends Model
     public function trainee()
     {
         return $this->belongsTo(TraineeUser::class, 'trainee_id', 'id');
+    }
+
+    public function schoolkid()
+    {
+        return $this->belongsTo(SchoolKid::class, 'trainee_id', 'id');
     }
 
     public function traineeInstitute()

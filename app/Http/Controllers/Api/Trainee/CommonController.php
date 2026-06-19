@@ -11,6 +11,7 @@ use App\Models\Institute;
 use App\Models\NVQLevel;
 use App\Models\Occupation;
 use App\Models\Province;
+use App\Models\SchoolKid;
 use App\Models\Sector;
 use App\Http\Controllers\Api\Trainee\BaseController as BaseController;
 use App\Models\Banner;
@@ -57,7 +58,12 @@ class CommonController extends BaseController
         if (!$user) {
             return $this->sendError('User not authenticated', [], 401);
         }
-        $findUser = TraineeUser::find($user->id);
+        if ($user->getTable() == 'school_kids') {
+            $findUser = SchoolKid::find($user->id);
+        }else {
+            $findUser = TraineeUser::find($user->id);
+        }
+
         if (!$findUser) {
             return $this->sendError('User not found', [], 404);
         }
@@ -72,18 +78,31 @@ class CommonController extends BaseController
         if (!$user) {
             return $this->sendError('User not authenticated', [], 401);
         }
-        $trainingInformations = \App\Models\TraineeTrainingHistory::where('trainee_id', $user->id)->first();
-        if ($trainingInformations) {
-            $informations = json_decode($trainingInformations->content);
-            $user->trainingInformations = $informations;
+        if ($user->getTable() === 'school_kids') {
+            $user->trainingInformations = [];
+            $user->total_job_applies = 0;
+            $user->total_counseling = 0;
+            $user->total_job_matches = 0;
+            $user->user_type = 'schoolkid';
+            unset($user->job_applies);
+            $data['data'] = $user;
+            $data['active_delete_button'] = env('ACTIVE_DELETE_BUTTON', false);
+            return $this->sendResponse($data, 'Success');
+        } else{
+            $trainingInformations = \App\Models\TraineeTrainingHistory::where('trainee_id', $user->id)->first();
+            if ($trainingInformations) {
+                $informations = json_decode($trainingInformations->content);
+                $user->trainingInformations = $informations;
+            }
+            $user->total_job_applies = count($user->jobApplies);
+            $user->total_counseling = count($user->cgoCounseling);
+            $user->total_job_matches = count($user->jobMatches);
+            unset($user->job_applies);
+            $data['data'] = $user;
+            $data['active_delete_button'] = env('ACTIVE_DELETE_BUTTON', false);
+            return $this->sendResponse($data, 'Success');
         }
-        $user->total_job_applies = count($user->jobApplies);
-        $user->total_counseling = count($user->cgoCounseling);
-        $user->total_job_matches = count($user->jobMatches);
-        unset($user->job_applies);
-        $data['data'] = $user;
-        $data['active_delete_button'] = env('ACTIVE_DELETE_BUTTON', false);
-        return $this->sendResponse($data, 'Success');
+
     }
 
 

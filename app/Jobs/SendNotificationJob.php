@@ -24,7 +24,7 @@ class SendNotificationJob implements ShouldQueue
     protected $messaging;
 
     /**
-     * Tạo một instance của job.
+     * Create a new instance of the job.
      */
     public function __construct($userData, $notificationClass, $contentData, $messaging)
     {

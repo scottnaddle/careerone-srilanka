@@ -12,7 +12,22 @@ class KeepTraineeController extends Controller
 {
     public function markKeeped(Request $request)
     {
-        $data = $request->all();
+        $validated = $request->validate([
+            'trainee_id' => 'required|integer|exists:trainee_users,id',
+            'system'     => 'nullable|string',
+            'redirect'   => 'nullable',
+        ]);
+
+        // The keeper is always the authenticated CGO — never trust a client-supplied keeper_id.
+        $data = [
+            'trainee_id' => $validated['trainee_id'],
+            'keeper_id'  => auth('cgo')->id(),
+            'system'     => $validated['system'] ?? 'cgo',
+        ];
+        if ($request->has('redirect')) {
+            $data['redirect'] = $request->input('redirect');
+        }
+
         $isKept = KeepTrainee::where([
             'keeper_id' => $data['keeper_id'],
             'trainee_id' => $data['trainee_id']

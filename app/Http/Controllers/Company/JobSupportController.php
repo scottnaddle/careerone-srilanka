@@ -274,6 +274,7 @@ class JobSupportController extends Controller
                 ->update(['read' => now()]);
             return response()->json(['status' => 'success', 'message' => 'Update status read CV success']);
         } catch (\Exception $e) {
+            Log::error('Error when update status read CV: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => 'Error when update status read CV']);
         }
     }
@@ -303,6 +304,7 @@ class JobSupportController extends Controller
                     'unselect_at' => null]);
             return response()->json(['status' => 'success', 'message' => 'Selected trainee apply success']);
         } catch (\Exception $e) {
+            Log::error('Error when selected trainee apply: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => 'Error when selected trainee apply']);
         }
     }
@@ -369,6 +371,7 @@ class JobSupportController extends Controller
             }
             return response()->json(['status' => 'success', 'message' => 'Unselected trainee apply success']);
         } catch (\Exception $e) {
+            Log::error('Error when employeed trainee apply: ' . $e->getMessage());
             return response()->json(['status' => 'error', 'message' => 'Error when employeed trainee apply']);
         }
     }
@@ -435,7 +438,7 @@ class JobSupportController extends Controller
         //        }
 
 
-        // Sắp xếp theo first_name
+        // Sort by first_name
         return $query->orderBy('first_name', 'asc');
     }
 
@@ -521,7 +524,7 @@ class JobSupportController extends Controller
     public function ojtDetail($slug)
     {
         $ojt = OJT::where('slug', $slug)->first();
-        $companyList = Company::whereNotNull('verified_by')->whereNotNull('verified_by')->where('active',true)->get();
+        $companyList = Company::whereNotNull('verified_at')->whereNotNull('verified_by')->where('active',true)->get();
         return view('company.job-support.ojt-list.ojt-details')->with(['ojt' => $ojt, 'companyList' => $companyList]);
     }
 

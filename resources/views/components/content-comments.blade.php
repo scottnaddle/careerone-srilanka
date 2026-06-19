@@ -98,7 +98,7 @@
 {{--                                            $item->answer_by == Auth::guard(activeGuard())->user()->id &&--}}
 {{--                                            $item->system == activeGuard())--}}
                                     @php
-                                        $user = Auth::guard(activeGuard())->user();
+                                        $user = \Auth::guard(activeGuard())->user();
                                     @endphp
 
                                     @if (
@@ -447,10 +447,10 @@
     {{--    });--}}
     {{--}--}}
     function submitForm(form) {
-        // Lấy nút submit trong form
+        // Get the submit button in the form
         let submitButton = $(form).find('button[type="submit"]');
 
-        // Vô hiệu hóa nút submit để ngăn nhiều lần nhấn
+        // Disable the submit button to prevent multiple clicks
         submitButton.prop('disabled', true);
 
         if (typeof toggleLoadingOverlay === 'function') {
@@ -479,20 +479,20 @@
                     }
                 } else {
                     console.error('Error:', response.message);
-                    // Kích hoạt lại nút submit nếu có lỗi
+                    // Re-enable the submit button if there is an error
                     submitButton.prop('disabled', false);
                 }
             },
             error: function(xhr, status, error) {
                 console.error('AJAX Error:', error);
-                // Kích hoạt lại nút submit nếu có lỗi
+                // Re-enable the submit button if there is an error
                 submitButton.prop('disabled', false);
             },
             complete: function(response) {
                 if (typeof toggleLoadingOverlay === 'function') {
                     toggleLoadingOverlay();
                 }
-                // Có thể bỏ comment dòng dưới nếu muốn kích hoạt lại khi hoàn tất
+                // You can uncomment the line below to re-enable it when complete
                 // submitButton.prop('disabled', false);
             }
         });
@@ -530,7 +530,7 @@
             @endif
         `;
 
-        // Thêm form mới vào DOM
+        // Add the new form to the DOM
         $(".reply-new").append(newForm);
     }
 

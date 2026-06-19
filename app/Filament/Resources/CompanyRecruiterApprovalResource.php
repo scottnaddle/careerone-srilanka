@@ -22,9 +22,26 @@ use Illuminate\Support\Facades\Hash;
 class CompanyRecruiterApprovalResource extends Resource
 {
     protected static ?string $model = CompanyRecruiter::class;
-    protected static ?string $modelLabel = 'Company Recruiters Approval List';
+    protected static ?string $modelLabel = null;
+    public static function getModelLabel(): string
+    {
+        return trans('admin/performance.Company Recruiters Approval List');
+    }
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     public static $totalCompany;
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        // If naita_admin, only get company users of companies where is_belongs_naita = true
+        if (auth('admin')->user()?->hasRole('naita_admin')) {
+            $query->whereHas('company', function (Builder $q) {
+                $q->where('is_belongs_to_naita', true);
+            });
+        }
+
+        return $query;
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -40,7 +57,7 @@ class CompanyRecruiterApprovalResource extends Resource
                     ->columnSpan('full')
                     ->placeholder('Select a company'),
                 Forms\Components\TextInput::make('first_name')
-                    ->label('First Name')
+                    ->label(trans('cgo.first_name'))
                     ->columnSpan('full')
                     ->required(),
 //                Forms\Components\TextInput::make('username')
@@ -49,7 +66,7 @@ class CompanyRecruiterApprovalResource extends Resource
 //                    ->required(),
 
                 Forms\Components\TextInput::make('last_name')
-                    ->label('Last Name')
+                    ->label(trans('cgo.last_name'))
                     ->columnSpan('full')
                     ->required(),
 
@@ -68,7 +85,7 @@ class CompanyRecruiterApprovalResource extends Resource
                     ->visible(fn ($record) => $record === null)
                     ->dehydrateStateUsing(fn($state) => Hash::make($state)),
                 Forms\Components\TextInput::make('telephone')
-                    ->label('Telephone')
+                    ->label(trans('system.form.telephone'))
                     ->tel()
                     ->columnSpan('full')
                     ->required(),
@@ -86,6 +103,11 @@ class CompanyRecruiterApprovalResource extends Resource
             'company_id' => request()->query('company_id', null),
             'check_approval'=>true
         ]);
+        if (auth('admin')->user()?->hasRole('naita_admin')) {
+            $query->whereHas('company', function (Builder $q) {
+                $q->where('is_belongs_to_naita', true);
+            });
+        }
         self::$totalCompany = $query->count();
 
         return $table
@@ -146,7 +168,28 @@ class CompanyRecruiterApprovalResource extends Resource
 //                    ->html(),
 
             ])->searchPlaceholder(__('admin/dashboard.company_recruiter_user.name'))
-            ->filters([])
+            ->filters([
+                Tables\Filters\SelectFilter::make('company_id')
+                    ->label(__('admin/dashboard.company_recruiter_user.company'))
+                    ->options(function () {
+                        $query = Company::whereNotNull('verified_by')
+                            ->whereNotNull('verified_at')
+                            ->where('active', true);
+
+                        if (auth('admin')->user()?->hasRole('naita_admin')) {
+                            $query->where('is_belongs_to_naita', true);
+                        }
+
+                        return $query->pluck('name', 'id');
+                    })
+                    ->preload()
+                    ->searchable()
+                    ->query(function (Builder $query, array $data) {
+                        if (isset($data['value']) && !empty($data['value'])) {
+                            $query->where('company_id', $data['value']);
+                        }
+                    }),
+            ])
             ->actions([
                 Tables\Actions\ViewAction::make()->label(__('admin/dashboard.view_more'))->color('primary'),
             ])

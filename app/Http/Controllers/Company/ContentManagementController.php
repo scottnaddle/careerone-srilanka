@@ -97,7 +97,7 @@ class ContentManagementController extends Controller
             }
         }
         $video->title = $request->title;
-        $video->slug = \Str::slug($request->title);
+        $video->slug = \Str::slug($request->title, '-', 'ta');
         $video->type = 'video';
         $video->video_url = $request->video_url;
         $video->intro = $request->intro;
@@ -106,7 +106,7 @@ class ContentManagementController extends Controller
         $video->system = activeGuard();
         $video->created_by = Auth::guard(activeGuard())->user()->id;
         if ($video->save()) {
-            return redirect()->route(activeGuard().'.informations.content-management.videos')->with('success', 'SAVED!');
+            return redirect()->route(activeGuard().'.informations.content-management.videos')->with('success', __('system.form.saved'));
         }
     }
     public function deleteVideo($slug) {
@@ -184,7 +184,7 @@ class ContentManagementController extends Controller
             }
         }
         $document->title = $request->title;
-        $document->slug = \Str::slug($request->title);
+        $document->slug = \Str::slug($request->title, '-', 'ta');
         $document->intro = $request->intro;
         $document->status = 0;
         $document->author = $request->author;
@@ -223,7 +223,7 @@ class ContentManagementController extends Controller
         $document->system = activeGuard();
         $document->created_by = Auth::guard(activeGuard())->user()->id;
         if ($document->save()) {
-            return redirect()->route(activeGuard().'.informations.content-management.documents')->with('success', 'SAVED!');
+            return redirect()->route(activeGuard().'.informations.content-management.documents')->with('success', __('system.form.saved'));
         }
     }
 

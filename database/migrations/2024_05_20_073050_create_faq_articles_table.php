@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('faq_id')->unsigned();
             $table->string('question');
             $table->text('answer');
-            $table->text('url')->nullable();
+//            $table->text('url')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('faq_id')->references('id')->on('faqs')->onDelete('cascade');

@@ -146,7 +146,7 @@ class EmergencyUserReset extends Page implements HasForms
     // }
 
     /**
-     * Định nghĩa Action Reset Password với Modal xác nhận
+     * Define the Reset Password action with a confirmation modal
      */
     public function resetPasswordAction(): Action
     {
@@ -175,7 +175,7 @@ class EmergencyUserReset extends Page implements HasForms
         // Generate secure password meeting requirements
         $plainPassword = $this->generateSecurePassword(12); // You can adjust length (8-16)
 
-        // Cập nhật thông tin User
+        // Update the user information
         $this->foundUser->password = bcrypt($plainPassword);
         $this->foundUser->active = true;
         if ($this->userType != 'trainee') {
@@ -191,7 +191,7 @@ class EmergencyUserReset extends Page implements HasForms
 
         if ($this->userType === 'trainee') {
             try {
-                // Lưu plain password tạm thời để gửi CAS
+                // Temporarily store the plain password to send to CAS
                 $this->foundUser->password = $plainPassword;
                 $casSyncService = new TraineeCasSyncService();
                 $casSyncService->changePassword($this->foundUser);

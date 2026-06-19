@@ -146,11 +146,11 @@
                         $(".loading").removeClass('hidden');
                         // Send a POST request to save the content to the database
                         /*$.ajax({
-                            url: '/trainee/career-guidance/portfolio/save-portfolio',  // Địa chỉ API
+                            url: '/trainee/career-guidance/portfolio/save-portfolio',  // API URL
                             type: 'POST',
-                            dataType: 'json',  // Dữ liệu trả về là JSON
+                            dataType: 'json',  // Returned data is JSON
                             headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')  // Thêm CSRF Token
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')  // Add CSRF Token
                             },
                             data: JSON.stringify({
                                 'pid': {{$id}},
@@ -160,14 +160,14 @@
                             }),
                             success: function(response) {
                                 console.log(response);
-                                if (response.status == 'success') {  // Kiểm tra nếu thành công
+                                if (response.status == 'success') {  // Check if successful
                                     showToast('Template saved successfully!', 'success', 'green');
-                                    window.location.href = '/trainee/career-guidance/portfolio/my-portfolio';  // Điều hướng trang
+                                    window.location.href = '/trainee/career-guidance/portfolio/my-portfolio';  // Redirect page
                                 } else {
-                                    showToast('Failed to save template.', 'error', '#e74c3c');  // Thông báo lỗi
+                                    showToast('Failed to save template.', 'error', '#e74c3c');  // Show error message
                                 }
                             },
-                            error: function(xhr, status, error) {  // Xử lý lỗi
+                            error: function(xhr, status, error) {  // Handle error
                                 console.error('Error:', error);
                                 showToast('An error occurred.', 'error', '#e74c3c');
                             }

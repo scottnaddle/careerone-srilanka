@@ -225,7 +225,7 @@
                         <tbody>
 
                             <tr class="bg-white dark:bg-[#1E1E1E]">
-                                <!-- Header cho cột PM -->
+                                <!-- Header for PM column -->
                                 <td
                                     class="px-2 sm:px-4 py-2 border border-[#F8F8F8] font-medium text-xs sm:text-sm text-[#706F81] dark:text-white">
 

@@ -33,7 +33,7 @@ class NotificationController extends BaseController
                 $message['params'] ?? []
             );
 
-            // Sao chép data, sửa trong biến trung gian, rồi gán lại
+            // Copy the data, modify it in an intermediate variable, then assign it back
             $data = $notification->data;
             $data['message']['message'] = $translated;
             $notification->data = $data;

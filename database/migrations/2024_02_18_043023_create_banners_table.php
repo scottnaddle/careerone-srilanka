@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('banners', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->ulid('banner_category_id')->nullable(); // Tạo cột khóa ngoại
+            $table->ulid('banner_category_id')->nullable(); // Create foreign key column
             $table->smallInteger('sort')->default(0)->index();
             $table->boolean('is_visible')->default(false)->index();
             $table->string('title', 255)->nullable();

@@ -34,7 +34,7 @@ class NvqLevelPyramid extends Widget
 
     protected function initializeHeadOfficeFilter(): void
     {
-        // Nếu là naita_admin, không cần filter (đã được xử lý trong getAllowedInstituteIds)
+        // If naita_admin, no filter needed (already handled in getAllowedInstituteIds)
         if ($this->isNaitaAdmin()) {
             $this->headOfficeFilter = null;
             return;
@@ -69,7 +69,7 @@ class NvqLevelPyramid extends Widget
             $this->currentUserTvetType = null;
         } elseif ($user && $user->hasRole('naita_admin')) {
             $this->currentUserRole = 'naita_admin';
-            $this->currentUserTvetType = 'NAITA'; // Mặc định là NAITA
+            $this->currentUserTvetType = 'NAITA'; // Defaults to NAITA
         } elseif ($user && $user->hasRole('admin')) {
             $this->currentUserRole = 'admin';
             $this->currentUserTvetType = $user->tvet_type ?? null;
@@ -116,7 +116,7 @@ class NvqLevelPyramid extends Widget
         }
 
         if ($this->isNaitaAdmin()) {
-            // Naita admin lấy tất cả institute có head_office = 'NAITA'
+            // Naita admin gets all institutes with head_office = 'NAITA'
             return Institute::where('institute_head_office', 'NAITA')
                 ->pluck('id')
                 ->toArray();
@@ -171,13 +171,13 @@ class NvqLevelPyramid extends Widget
     public function resetDateRange(): void
     {
         $this->dateRange = 'this_month';
-        // Gửi data mới xuống frontend
+        // Send the new data down to the frontend
         $this->dispatch('updateNvqChart', data: $this->chartData);
     }
 
     public function updatedDateRange(): void
     {
-        // Gửi data mới xuống frontend
+        // Send the new data down to the frontend
         $this->dispatch('updateNvqChart', data: $this->chartData);
     }
 
@@ -266,10 +266,10 @@ class NvqLevelPyramid extends Widget
                 return [];
             }
 
-            // Lấy danh sách trainee với NVQ cao nhất của họ
+            // Get the list of trainees with their highest NVQ
             $traineeHighestNvq = DB::table('trainee_users')
                 ->join('trainee_n_v_q_s', 'trainee_users.id', '=', 'trainee_n_v_q_s.trainee_id')
-                ->join('n_v_q_levels', DB::raw('CAST(trainee_n_v_q_s.nvq_id AS INTEGER)'), '=', 'n_v_q_levels.id')
+                ->join('n_v_q_levels', 'trainee_n_v_q_s.nvq_id', '=', 'n_v_q_levels.id')
                 ->where('trainee_users.active', true);
 
             $bounds = $this->getDateRangeBounds();
@@ -279,7 +279,7 @@ class NvqLevelPyramid extends Widget
 
             $this->applyInstituteFilterToRawQuery($traineeHighestNvq, 'trainee_users');
 
-            // Subquery để lấy mỗi trainee với 1 NVQ duy nhất
+            // Subquery to get each trainee with a single, unique NVQ
             $subQuery = $traineeHighestNvq
                 ->select(
                     'trainee_users.id',
@@ -295,7 +295,7 @@ class NvqLevelPyramid extends Widget
                 ->pluck('total', 'level')
                 ->toArray();
 
-            // Đếm No NVQ
+            // Count No NVQ
             $noNvqQuery = TraineeUser::query()
                 ->where('active', true)
                 ->whereNotExists(function($q) {
@@ -376,7 +376,7 @@ class NvqLevelPyramid extends Widget
 
             $query = DB::table('trainee_users')
                 ->join('trainee_n_v_q_s', 'trainee_users.id', '=', 'trainee_n_v_q_s.trainee_id')
-                ->join('n_v_q_levels', DB::raw('CAST(trainee_n_v_q_s.nvq_id AS INTEGER)'), '=', 'n_v_q_levels.id')
+                ->join('n_v_q_levels', 'trainee_n_v_q_s.nvq_id', '=', 'n_v_q_levels.id')
                 ->where('trainee_users.active', true);
 
             $bounds = $this->getDateRangeBounds();
@@ -406,10 +406,10 @@ class NvqLevelPyramid extends Widget
             $data = $this->nvqData;
             if (empty($data)) return 'N/A';
 
-            // Lọc chỉ lấy các level có count > 0
+            // Filter to keep only levels with count > 0
             $nonZeroData = array_filter($data, fn($item) => $item['count'] > 0);
 
-            // Nếu không có level nào có count > 0
+            // If no level has count > 0
             if (empty($nonZeroData)) {
                 return 'None';
             }

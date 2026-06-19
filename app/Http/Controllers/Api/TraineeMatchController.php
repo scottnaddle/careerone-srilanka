@@ -32,9 +32,18 @@ class TraineeMatchController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
-        // dd($data);
-        $data['match_time'] = now();
+        $validated = $request->validate([
+            'trainee_id' => 'required|integer|exists:trainee_users,id',
+            'job_id'     => 'required|integer|exists:jobs,id',
+        ]);
+
+        // The matching CGO is the authenticated user — never trust a client-supplied created_by.
+        $data = [
+            'trainee_id' => $validated['trainee_id'],
+            'job_id'     => $validated['job_id'],
+            'match_time' => now(),
+            'created_by' => auth('cgo')->id(),
+        ];
         $job_id = $data['job_id'];
         $job = Job::where('id', $job_id)->first();
 

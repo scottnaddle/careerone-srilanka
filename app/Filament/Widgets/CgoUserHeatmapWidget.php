@@ -21,7 +21,7 @@ class CgoUserHeatmapWidget extends ChartWidget
 
     protected static ?int $sort = 1;
 
-    // Filter mặc định
+    // Default filter
     public ?string $filter = 'this_month';
 
     protected function getData(): array
@@ -32,35 +32,35 @@ class CgoUserHeatmapWidget extends ChartWidget
             [
                 'label' => trans('admin/performance.Logins'),
                 'data' => $users->pluck('total_logins')->toArray(),
-                'backgroundColor' => 'rgba(54, 162, 235, 0.8)',   // Xanh dương
+                'backgroundColor' => 'rgba(54, 162, 235, 0.8)',   // Blue
                 'borderColor' => '#ffffff',
                 'borderWidth' => 1,
             ],
             [
                 'label' => trans('admin/performance.Completed Counselings'),
                 'data' => $users->pluck('total_completed_counselings')->toArray(),
-                'backgroundColor' => 'rgba(255, 99, 132, 0.8)',   // Đỏ hồng
+                'backgroundColor' => 'rgba(255, 99, 132, 0.8)',   // Pink-red
                 'borderColor' => '#ffffff',
                 'borderWidth' => 1,
             ],
             [
                 'label' => trans('admin/performance.Contents Created'),
                 'data' => $users->pluck('total_contents')->toArray(),
-                'backgroundColor' => 'rgba(255, 206, 86, 0.8)',   // Vàng
+                'backgroundColor' => 'rgba(255, 206, 86, 0.8)',   // Yellow
                 'borderColor' => '#ffffff',
                 'borderWidth' => 1,
             ],
             [
                 'label' => trans('admin/performance.Events Created'),
                 'data' => $users->pluck('total_events')->toArray(),
-                'backgroundColor' => 'rgba(75, 192, 192, 0.8)',   // Xanh ngọc
+                'backgroundColor' => 'rgba(75, 192, 192, 0.8)',   // Teal
                 'borderColor' => '#ffffff',
                 'borderWidth' => 1,
             ],
             [
                 'label' => trans('admin/performance.Q&A Answers'),
                 'data' => $users->pluck('total_qna_answers')->toArray(),
-                'backgroundColor' => 'rgba(153, 102, 255, 0.8)',  // Tím
+                'backgroundColor' => 'rgba(153, 102, 255, 0.8)',  // Purple
                 'borderColor' => '#ffffff',
                 'borderWidth' => 1,
             ],
@@ -150,7 +150,7 @@ class CgoUserHeatmapWidget extends ChartWidget
     }
 
     /**
-     * Logic filter ngày tháng đồng bộ với CgoCounselingStatsWidget
+     * Date filter logic, kept in sync with CgoCounselingStatsWidget
      */
     protected function applyDateFilter($query, $dateField)
     {
@@ -158,7 +158,7 @@ class CgoUserHeatmapWidget extends ChartWidget
 
         switch ($this->filter) {
             case 'all_time':
-                // Không thêm điều kiện where (lấy tất cả)
+                // Don't add a where condition (get everything)
                 break;
 
             case 'this_month':
@@ -190,7 +190,7 @@ class CgoUserHeatmapWidget extends ChartWidget
                 break;
 
             default:
-                // Xử lý các năm được chọn tự động (VD: year_2025, year_2026)
+                // Handle dynamically selected years (e.g.: year_2025, year_2026)
                 if (preg_match('/^year_(\d{4})$/', $this->filter, $matches)) {
                     $year = (int) $matches[1];
                     $query->whereBetween($dateField, [
@@ -198,7 +198,7 @@ class CgoUserHeatmapWidget extends ChartWidget
                         Carbon::create($year, 12, 31)->endOfDay()
                     ]);
                 } else {
-                    // Fallback mặc định
+                    // Default fallback
                     $query->whereBetween($dateField, [
                         $now->copy()->startOfMonth(),
                         $now->copy()->endOfMonth()
@@ -243,7 +243,7 @@ class CgoUserHeatmapWidget extends ChartWidget
     }
 
     /**
-     * Khởi tạo danh sách filter trên giao diện ChartWidget
+     * Initialize the filter list on the ChartWidget interface
      */
     protected function getFilters(): ?array
     {
@@ -254,7 +254,7 @@ class CgoUserHeatmapWidget extends ChartWidget
             'this_year' => trans('admin/performance.This Year'),
         ];
 
-        // Lấy tự động các năm từ 2025 đến hiện tại giống widget trên
+        // Automatically get the years from 2025 to the present, like the widget above
         $currentYear = (int) Carbon::now()->year;
         $startYear = 2025;
 

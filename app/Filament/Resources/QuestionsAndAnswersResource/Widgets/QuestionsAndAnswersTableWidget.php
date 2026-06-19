@@ -25,7 +25,7 @@ class QuestionsAndAnswersTableWidget extends BaseWidget
         $this->type = 'default';
     }
 
-    // --- THÊM HÀM NÀY ---
+    // --- ADDED THIS METHOD ---
     public function rendering($view, $data)
     {
         $records = $this->getTable()->getRecords();
@@ -45,7 +45,7 @@ class QuestionsAndAnswersTableWidget extends BaseWidget
                     ->beforeLast('Widget')
             )
             ->query($dataQuery)
-            // QUAN TRỌNG: Thêm identifier để URL phân trang không bị xung đột với các bảng khác
+            // IMPORTANT: add an identifier so the pagination URL does not conflict with other tables
             ->queryStringIdentifier('qna_table')
             ->columns([
                 Tables\Columns\TextColumn::make('index')
@@ -74,7 +74,7 @@ class QuestionsAndAnswersTableWidget extends BaseWidget
                     ->getStateUsing(fn($record) => $record->trainee ?? 0),
             ])
             ->defaultPaginationPageOption(5)
-            ->paginated([5]) // Khớp với logic cắt 5 dòng bên Chart
+            ->paginated([5]) // Matches the 5-row slicing logic in the chart
             ->emptyStateHeading(__('admin/dashboard.qna.no_qna'))
             ->headerActions([
                 Tables\Actions\Action::make('qnas')

@@ -1,3 +1,8 @@
+@php
+    $isTrainee = activeGuard() == 'trainee';
+    $isSchoolKid = activeGuard() == 'schoolkid';
+    $requireNIC = $isTrainee;
+@endphp
 <!doctype html>
 <html lang="en" xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
 <head>
@@ -35,6 +40,10 @@
             height: 36px !important;
         }
     </style>
+    <script>
+        const requireNIC = {{ $requireNIC ? 'true' : 'false' }};
+        const isTrainee = {{ $isTrainee ? 'true' : 'false' }};
+    </script>
     <script>
         let lang = 'en'
         if (localStorage.getItem('ckt-lang2')) {
@@ -459,6 +468,30 @@
                 }
             });
         }*/
+        // function checkNIC(e) {
+        //     $("#pageOneError1").removeClass('d-block');
+        //     $("#pageOneError2").removeClass('d-block');
+        //     $("#pageOneSuccess1").addClass('d-none');
+        //
+        //     const nic = $("input[id='personNIC']").val().trim();
+        //
+        //     // Regular expression for Sri Lankan NIC validation
+        //     const nicPattern = /^([0-9]{9}[vVxX]|[0-9]{12})$/;
+        //
+        //     // Validate NIC
+        //     if (!nic) {
+        //         $("#pageOneError1").addClass('d-block');
+        //         e.preventDefault();
+        //         return false; // Indicate failure
+        //     } else if (!nicPattern.test(nic)) {
+        //         $("#pageOneError2").removeClass('d-none').addClass('d-block');
+        //         e.preventDefault();
+        //         return false; // Indicate failure
+        //     }
+        //
+        //     // Return true for success
+        //     return true;
+        // }
         function checkNIC(e) {
             $("#pageOneError1").removeClass('d-block');
             $("#pageOneError2").removeClass('d-block');
@@ -466,21 +499,24 @@
 
             const nic = $("input[id='personNIC']").val().trim();
 
-            // Regular expression for Sri Lankan NIC validation
-            const nicPattern = /^([0-9]{9}[vVxX]|[0-9]{12})$/;
+            // Only validate NIC if the user is a trainee
+            if (requireNIC) {
+                // Regular expression for Sri Lankan NIC validation
+                const nicPattern = /^([0-9]{9}[vVxX]|[0-9]{12})$/;
 
-            // Validate NIC
-            if (!nic) {
-                $("#pageOneError1").addClass('d-block');
-                e.preventDefault();
-                return false; // Indicate failure
-            } else if (!nicPattern.test(nic)) {
-                $("#pageOneError2").removeClass('d-none').addClass('d-block');
-                e.preventDefault();
-                return false; // Indicate failure
+                // Validate NIC
+                if (!nic) {
+                    $("#pageOneError1").addClass('d-block');
+                    e.preventDefault();
+                    return false; // Indicate failure
+                } else if (!nicPattern.test(nic)) {
+                    $("#pageOneError2").removeClass('d-none').addClass('d-block');
+                    e.preventDefault();
+                    return false; // Indicate failure
+                }
             }
 
-            // Return true for success
+            // Return true for success (schoolkid does not need NIC validation)
             return true;
         }
         // Function to get the 'lang' parameter from the URL
@@ -583,21 +619,43 @@
         }
 
         function changePage(page) {
+            // if (page === 2) {
+            //     if ($('#personName').val() === '' || $('#personNIC').val() === '' || $('#personInstitute').val() === '') {
+            //         $('#pageOneNameDiv').addClass('was-validated')
+            //         return
+            //     } else {
+            //         if (!checkNIC(event)) {
+            //             // Prevent further execution if checkNIC fails
+            //             $('#pageOneNameDiv').addClass('was-validated')
+            //             return;
+            //         }
+            //         localStorage.setItem('ckt-personName2', $('#personName').val())
+            //         localStorage.setItem('ckt-personNIC2', $('#personNIC').val())
+            //         localStorage.setItem('ckt-personInstitute2', $('#personInstitute').val())
+            //         $('#pageOneNameDiv').removeClass('was-validated')
+            //     }
+            // }
             if (page === 2) {
-                if ($('#personName').val() === '' || $('#personNIC').val() === '' || $('#personInstitute').val() === '') {
-                    $('#pageOneNameDiv').addClass('was-validated')
-                    return
-                } else {
-                    if (!checkNIC(event)) {
-                        // Prevent further execution if checkNIC fails
-                        $('#pageOneNameDiv').addClass('was-validated')
-                        return;
-                    }
-                    localStorage.setItem('ckt-personName2', $('#personName').val())
-                    localStorage.setItem('ckt-personNIC2', $('#personNIC').val())
-                    localStorage.setItem('ckt-personInstitute2', $('#personInstitute').val())
-                    $('#pageOneNameDiv').removeClass('was-validated')
+                const name = $('#personName').val();
+                const nic = $('#personNIC').val();
+                const institute = $('#personInstitute').val();
+
+                // Validate required fields
+                if (name === '' || institute === '') {
+                    $('#pageOneNameDiv').addClass('was-validated');
+                    return;
                 }
+
+                // Only validate NIC if the user is a trainee
+                if (requireNIC && !checkNIC(event)) {
+                    $('#pageOneNameDiv').addClass('was-validated');
+                    return;
+                }
+
+                localStorage.setItem('ckt-personName2', name);
+                localStorage.setItem('ckt-personNIC2', nic);
+                localStorage.setItem('ckt-personInstitute2', institute);
+                $('#pageOneNameDiv').removeClass('was-validated');
             }
 
             if (page === 3) {
@@ -854,25 +912,107 @@
                 </div>
                 <p id="pageOnePara2">The Career Key unlocks the mystery of this matching process. It will show you how to identify the jobs most likely to satisfy you.</p>
                 <p id="pageOnePara3">To start the test, please fill the name and NIC number below and click on the start button.</p>
+{{--                <div id="pageOneNameDiv" class="row shadow-none p-3 mt-1 mb-3 bg-light rounded" style="justify-content: center">--}}
+{{--                    <div class="col-md-6 btn">--}}
+{{--                        <input type="text" class="form-control" id="personName" placeholder="Your name" {{$userFullName != '' ? 'disabled' : ''}} value="{{$userFullName}}" required>--}}
+{{--                        <div id="pageOneError" class="invalid-feedback text-start">--}}
+{{--                            Please add your name!--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                    <div class="col-md-6 btn">--}}
+{{--                        <input type="text" class="form-control" id="personNIC" placeholder="Your NIC" {{$userNIC != '' ? 'disabled' : ''}} value="{{$userNIC}}"  pattern="^([0-9]{9}[vVxX]|[0-9]{12})$"  required>--}}
+{{--                        <div id="pageOneError1" class="invalid-feedback text-start">--}}
+{{--                            Please add your NIC number!--}}
+{{--                        </div>--}}
+{{--                        <div id="pageOneError2" class="invalid-feedback text-start">--}}
+{{--                            Invalid NIC format.--}}
+{{--                        </div>--}}
+{{--                        <div id="pageOneSuccess1" class="text-success d-none text-start">--}}
+{{--                            Your NIC is confirmed!--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                    <div class="col-md-12">--}}
+{{--                        <select class="select-2 form-control" id="personInstitute" name="personInstitute" required>--}}
+{{--                            <option value="">Select your institute</option>--}}
+{{--                            @forelse($institutes as $institute)--}}
+{{--                                <option value="{{$institute->id}}">{{$institute->name}} ({{$institute->reg_no}})</option>--}}
+{{--                            @empty--}}
+{{--                            @endforelse--}}
+{{--                        </select>--}}
+{{--                        <div id="pageOneError3" class="invalid-feedback text-start">--}}
+{{--                            Please select your Institute!--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                    --}}{{--@if(activeGuard() == '' && !Auth::guard(activeGuard())->check())--}}
+{{--                        <div class="col-auto" id="checNICButtonDiv">--}}
+{{--                            <div class="btn">--}}
+{{--                                <a href="javascript:;" onclick='checkNIC(event)' class="primary" id="checNICButton">Check your NIC</a>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                        <div class="col-auto d-none" id="pageOneButtonDiv">--}}
+{{--                            <div class="btn">--}}
+{{--                                <a href="javascript:;" onclick='changePage(2)' class="primary" id="pageOneButton">Start the Test</a>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    @else--}}
+{{--                        <div class="col-auto" id="pageOneButtonDiv">--}}
+{{--                            <div class="btn">--}}
+{{--                                <a href="javascript:;" onclick='changePage(2)' class="primary" id="pageOneButton">Start the Test</a>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    --}}{{--@endif--}}
+{{--                </div>--}}
                 <div id="pageOneNameDiv" class="row shadow-none p-3 mt-1 mb-3 bg-light rounded" style="justify-content: center">
-                    <div class="col-md-6 btn">
+                    <div class="@if($requireNIC) col-md-6 @else col-md-12 @endif btn">
                         <input type="text" class="form-control" id="personName" placeholder="Your name" {{$userFullName != '' ? 'disabled' : ''}} value="{{$userFullName}}" required>
                         <div id="pageOneError" class="invalid-feedback text-start">
                             Please add your name!
                         </div>
                     </div>
-                    <div class="col-md-6 btn">
-                        <input type="text" class="form-control" id="personNIC" placeholder="Your NIC" {{$userNIC != '' ? 'disabled' : ''}} value="{{$userNIC}}"  pattern="^([0-9]{9}[vVxX]|[0-9]{12})$"  required>
-{{--                        <div id="pageOneError1" class="invalid-feedback text-start">--}}
-{{--                            Please add your NIC number!--}}
+{{--                    <div class="col-md-6 btn">--}}
+{{--                        <input type="text" class="form-control" id="personNIC"--}}
+{{--                               placeholder="Your NIC"--}}
+{{--                               {{$userNIC != '' ? 'disabled' : ''}}--}}
+{{--                               value="{{$userNIC}}"--}}
+{{--                               @if($requireNIC)--}}
+{{--                                   pattern="^([0-9]{9}[vVxX]|[0-9]{12})$" required--}}
+{{--                            @endif>--}}
+
+{{--                        @if($requireNIC)--}}
+{{--                            <div id="pageOneError1" class="invalid-feedback text-start">--}}
+{{--                                Please add your NIC number!--}}
+{{--                            </div>--}}
+{{--                            <div id="pageOneError2" class="invalid-feedback text-start">--}}
+{{--                                Invalid NIC format.--}}
+{{--                            </div>--}}
+{{--                        @endif--}}
+
+{{--                        <div id="pageOneSuccess1" class="text-success d-none text-start">--}}
+{{--                            Your NIC is confirmed!--}}
 {{--                        </div>--}}
-                        <div id="pageOneError2" class="invalid-feedback text-start">
-                            Invalid NIC format.
+{{--                    </div>--}}
+                    @if($requireNIC)
+                        <div class="col-md-6 btn">
+                            <input type="text" class="form-control" id="personNIC"
+                                   placeholder="Your NIC"
+                                   {{$userNIC != '' ? 'disabled' : ''}}
+                                   value="{{$userNIC}}"
+                                   pattern="^([0-9]{9}[vVxX]|[0-9]{12})$" required>
+
+                            <div id="pageOneError1" class="invalid-feedback text-start">
+                                Please add your NIC number!
+                            </div>
+                            <div id="pageOneError2" class="invalid-feedback text-start">
+                                Invalid NIC format.
+                            </div>
+                            <div id="pageOneSuccess1" class="text-success d-none text-start">
+                                Your NIC is confirmed!
+                            </div>
                         </div>
-                        <div id="pageOneSuccess1" class="text-success d-none text-start">
-                            Your NIC is confirmed!
-                        </div>
-                    </div>
+                    @else
+                        <!-- Hidden field to store an empty value -->
+                        <input type="hidden" id="personNIC" value="">
+                    @endif
                     <div class="col-md-12">
                         <select class="select-2 form-control" id="personInstitute" name="personInstitute" required>
                             <option value="">Select your institute</option>
@@ -885,24 +1025,12 @@
                             Please select your Institute!
                         </div>
                     </div>
-                    {{--@if(activeGuard() == '' && !Auth::guard(activeGuard())->check())
-                        <div class="col-auto" id="checNICButtonDiv">
-                            <div class="btn">
-                                <a href="javascript:;" onclick='checkNIC(event)' class="primary" id="checNICButton">Check your NIC</a>
-                            </div>
+
+                    <div class="col-auto" id="pageOneButtonDiv">
+                        <div class="btn">
+                            <a href="javascript:;" onclick='changePage(2)' class="primary" id="pageOneButton">Start the Test</a>
                         </div>
-                        <div class="col-auto d-none" id="pageOneButtonDiv">
-                            <div class="btn">
-                                <a href="javascript:;" onclick='changePage(2)' class="primary" id="pageOneButton">Start the Test</a>
-                            </div>
-                        </div>
-                    @else--}}
-                        <div class="col-auto" id="pageOneButtonDiv">
-                            <div class="btn">
-                                <a href="javascript:;" onclick='changePage(2)' class="primary" id="pageOneButton">Start the Test</a>
-                            </div>
-                        </div>
-                    {{--@endif--}}
+                    </div>
                 </div>
                 <p class="mt-5 fst-italic">
                     <small id="pageOneCopyRight">

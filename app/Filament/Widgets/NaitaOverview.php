@@ -111,7 +111,7 @@ class NaitaOverview extends BaseWidget
                 ->url('/admin/jobs')
                 ->icon('heroicon-o-briefcase'),
 
-            // Thêm Job Active
+            // Add Active Jobs
             Stat::make(trans('admin/performance.Active Jobs'), $totalActiveJobs)
                 ->descriptionColor($activeJobsChange > 0 ? 'success' : ($activeJobsChange < 0 ? 'danger' : 'secondary'))
                 ->url('/admin/jobs')
@@ -123,7 +123,7 @@ class NaitaOverview extends BaseWidget
                 ->url('/admin/o-j-t-s')
                 ->icon('heroicon-o-academic-cap'),
 
-            // Thêm OJT Active
+            // Add Active OJT
             Stat::make(trans('admin/performance.Active OJT'), $totalActiveOjts)
                 ->descriptionColor($activeOjtsChange > 0 ? 'success' : ($activeOjtsChange < 0 ? 'danger' : 'secondary'))
                 ->url('/admin/o-j-t-s')

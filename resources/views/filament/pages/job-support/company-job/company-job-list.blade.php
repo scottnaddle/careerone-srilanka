@@ -16,14 +16,14 @@
     <div class="p-6 space-y-6 bg-white mt-4 rounded-xl">
         <div class="flex items-center text-lg">
             <x-filament::breadcrumbs :breadcrumbs="[
-                '/admin/overview' =>  'Admin',
-                '#' =>  'Job Support',
-                '/admin/jobs' => 'Company List',
+                '/admin/overview' =>  trans('admin/performance.Admin'),
+                '#' =>  trans('menu.job_support'),
+                '/admin/jobs' =>  trans('menu.company_list'),
             ]" />
         </div>
 
         <h1 class="fi-header-heading text-2xl font-bold tracking-tight text-gray-950 dark:text-white sm:text-3xl">
-           Company List
+            {{trans('menu.company_list')}}
         </h1>
         <div>
             {{ $this->table }}

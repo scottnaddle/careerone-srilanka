@@ -10,6 +10,7 @@ use App\Models\Company;
 use App\Models\CompanyRecruiter;
 use App\Models\QNA;
 use App\Models\QnaAttachment;
+use App\Models\SchoolKid;
 use App\Models\TraineeUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +43,9 @@ class QNAController extends Controller
             case 'trainee':
                 $user = TraineeUser::where(['id' => $id])->first();
                 break;
+            case 'schoolkid':
+                $user = SchoolKid::where(['id' => $id])->first();
+                break;
         }
         return $user;
     }
@@ -51,31 +55,31 @@ class QNAController extends Controller
      */
     public function index(Request $request)
     {
-        // Khởi tạo truy vấn
+        // Initialize the query
         $query = QNA::query();
 
-        // Lọc theo tiêu đề nếu có
+        // Filter by title if provided
         if ($request->has('title') && $request->query('title') !== '') {
             $query->where('title', 'ILIKE', '%' . $request->query('title') . '%');
         }
 
-        // Lọc theo loại qna nếu có
+        // Filter by qna type if provided
         if ($request->has('qna_type') && $request->query('qna_type') != '') {
             if ($request->query('qna_type') == 'recently') {
-                // Sắp xếp theo ngày tạo giảm dần
+                // Sort by created date descending
                 $query->orderBy('created_at', 'desc');
             } else {
-                // Nếu qna_type khác, sắp xếp theo ngày tạo tăng dần
+                // For other qna_type values, sort by created date ascending
                 $query->orderBy('created_at', 'asc');
             }
         } else {
-            // Mặc định sắp xếp theo ngày tạo giảm dần
+            // Default to sorting by created date descending
             $query->orderBy('created_at', 'desc');
         }
-        // Phân trang kết quả
+        // Paginate the results
         $qnas = $query->paginate(10);
 
-        // Thêm thông tin tác giả và số lượng phản hồi vào từng mục
+        // Add author information and reply count to each item
         foreach ($qnas as $item) {
             $user = $this->getAuthorQNA($item->system, $item->created_by);
             $item->author = $user;
@@ -86,10 +90,10 @@ class QNAController extends Controller
             }
         }
 
-        // Thêm các tham số truy vấn vào liên kết phân trang
+        // Append the query parameters to the pagination links
         $qnas->appends($request->all());
 
-        // Trả về view với dữ liệu
+        // Return the view with the data
         return view('informations.qnas.qna')->with(['qnas' => $qnas]);
     }
 
@@ -134,7 +138,7 @@ class QNAController extends Controller
                 $storage_path = storage_path('app/public/' . activeGuard() . '/qnas/attachment_details/' . $qna->id);
                 $filename = pathinfo($attachment->getClientOriginalName(), PATHINFO_FILENAME);
                 $extension = $attachment->getClientOriginalExtension();
-                $fileNameToStore = $filename . '.' . $extension;
+                $fileNameToStore = \Illuminate\Support\Str::uuid() . '.' . strtolower($extension);
                 $fileSize = number_format($attachment->getSize() / 1048576, 2) . " MB";
                 $attachment->move($storage_path, $fileNameToStore);
                 $path = 'storage/' . activeGuard() . '/qnas/attachment_details/' . $qna->id . '/' . $fileNameToStore;
@@ -255,7 +259,7 @@ class QNAController extends Controller
                 $storage_path = storage_path('app/public/' . activeGuard() . '/qnas/attachment_details/' . $qNA->id);
                 $filename = pathinfo($attachment->getClientOriginalName(), PATHINFO_FILENAME);
                 $extension = $attachment->getClientOriginalExtension();
-                $fileNameToStore = $filename . '_' . time() . '.' . $extension;
+                $fileNameToStore = \Illuminate\Support\Str::uuid() . '.' . strtolower($extension);
                 $fileSize = number_format($attachment->getSize() / 1048576, 2) . " MB";
                 $attachment->move($storage_path, $fileNameToStore);
                 $path = 'storage/' . activeGuard() . '/qnas/attachment_details/' . $qNA->id . '/' . $fileNameToStore;

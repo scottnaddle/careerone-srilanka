@@ -20,5 +20,9 @@
         'Issue Date' => 'නිකුත් කළ දිනය',
         'Valid until' => 'වලංගු වන තෙක්',
 
-    ]
+            'Career Goals' => 'වෘත්තීය අරමුණු',
+        'Short-term Goals' => 'කෙටි කාලීන අරමුණු',
+        'Long-term Goals' => 'දිගු කාලීන අරමුණු',
+        'Career Fields of Interest' => 'උනන්දුවක් දක්වන වෘත්තීය ක්ෂේත්‍ර',
+]
 ?>

@@ -60,7 +60,7 @@ class NaitaRecruiterSeederTest extends Seeder {
                 'email_verified_at' => now(),
             ]);
 
-            // 3. Gửi Mail (English)
+            // 3. Send mail (English)
             try {
                 Mail::to($recruiter->email)->send(new RecruiterAccountCreated($recruiter, $plainPassword));
                 $this->command->info("Created & Emailed: {$item['email']}");

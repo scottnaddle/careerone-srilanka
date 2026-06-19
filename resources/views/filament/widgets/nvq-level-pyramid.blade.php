@@ -77,7 +77,7 @@
             {{-- 2 Column Layout --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" wire:loading.class="opacity-50 blur-[2px]" wire:target="dateRange, resetDateRange">
 
-                {{-- Chart Column với AlpineJS --}}
+                {{-- Chart Column with AlpineJS --}}
                 <div class="h-full" style="min-height: 450px;">
                     <div wire:ignore
                          class="h-full w-full"

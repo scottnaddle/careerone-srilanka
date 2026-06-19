@@ -211,7 +211,7 @@ class CompaniesImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
                     'company_information' => $companyInfoCode,
                     'district_id' => $districtId,
                     'address' => trim($address),
-                    'slug' => Str::slug($companyName . '-' . uniqid()),
+                    'slug' => Str::slug($companyName . '-' . uniqid(), '-', 'ta'),
                     'active' => true,
                     'verified_by' => auth('admin')->id(),
                     'verified_at' => now(),

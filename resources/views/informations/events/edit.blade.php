@@ -946,7 +946,7 @@
             const removeNewBtn = document.getElementById('remove-new-thumbnail');
             const removeThumbnailHidden = document.getElementById('remove_thumbnail');
 
-            // Hàm hiển thị preview cho ảnh mới
+            // Function to show the preview for the new image
             function previewNewThumbnail(file) {
                 if (file) {
                     const reader = new FileReader();
@@ -959,11 +959,11 @@
                 }
             }
 
-            // Xử lý khi chọn file mới
+            // Handle when a new file is selected
             thumbnailInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
-                    // Kiểm tra định dạng file
+                    // Check the file format
                     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
                     if (!allowedTypes.includes(file.type)) {
                         Toastify({
@@ -978,7 +978,7 @@
                         return;
                     }
 
-                    // Kiểm tra kích thước file (giới hạn 5MB)
+                    // Check the file size (5MB limit)
                     const maxSize = 5 * 1024 * 1024; // 5MB
                     if (file.size > maxSize) {
                         Toastify({
@@ -996,7 +996,7 @@
                     previewNewThumbnail(file);
                     removeThumbnailHidden.value = '0'; // Reset remove flag when new file selected
                 } else {
-                    // Nếu không có file mới, hiển thị lại ảnh cũ (nếu chưa bị xóa)
+                    // If there is no new file, show the old image again (if not yet removed)
                     if (removeThumbnailHidden.value !== '1') {
                         newThumbnailContainer.classList.add('hidden');
                         currentThumbnailContainer.classList.remove('hidden');
@@ -1004,32 +1004,32 @@
                 }
             });
 
-            // Xử lý khi nhấn nút xóa ảnh hiện tại
+            // Handle when the remove current image button is clicked
             removeCurrentBtn.addEventListener('click', function() {
                 currentThumbnailContainer.classList.add('hidden');
                 thumbnailInput.value = '';
                 removeThumbnailHidden.value = '1';
 
-                // Nếu có preview mới đang hiển thị, ẩn nó đi
+                // If a new preview is showing, hide it
                 newThumbnailContainer.classList.add('hidden');
                 newThumbnailPreview.src = '';
             });
 
-            // Xử lý khi nhấn nút xóa ảnh mới preview
+            // Handle when the remove new image preview button is clicked
             removeNewBtn.addEventListener('click', function() {
                 newThumbnailContainer.classList.add('hidden');
                 thumbnailInput.value = '';
                 newThumbnailPreview.src = '';
 
-                // Nếu chưa xóa ảnh cũ, hiển thị lại ảnh cũ
+                // If the old image was not removed, show it again
                 if (removeThumbnailHidden.value !== '1') {
                     currentThumbnailContainer.classList.remove('hidden');
                 }
             });
 
-            // Kiểm tra nếu có lỗi validation, giữ lại trạng thái
+            // Check for validation errors and preserve the state
             @if($errors->has('thumbnail'))
-            // Nếu có lỗi thumbnail, có thể cần xử lý đặc biệt
+            // If there is a thumbnail error, special handling may be needed
             console.log('Thumbnail validation error');
             @endif
         });

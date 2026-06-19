@@ -1,13 +1,13 @@
-@extends('admin/auth/layouts/master')
+@extends('auth.layouts.master')
 
 @section('title', 'Sign Up')
 
 @section('content')
-    <div class="max-w-2xl mx-auto w-screen leading-9 my-20">
-        <div class="bg-white shadow-md border space-y-6 border-gray-200 rounded-xl px-10 py-5 dark:bg-gray-800 dark:border-gray-700">
+    <div class="max-w-2xl mx-auto w-full leading-9 my-20 rounded-xl">
+        <div class="bg-white  space-y-6  px-10 py-5 dark:bg-gray-800 ">
             <div class="flex flex-col gap-6 justify-center items-center">
                 <a href="/" class="flex items-center rtl:space-x-reverse">
-                    <img src="/images/TVET.svg" class="h-8" alt="TVET Logo" />
+                    <img src="/images/TVET.svg" class="h-20" alt="TVET Logo" />
                 </a>
 
                 <p>Your account is not be verified by Admin. Please contact Admin to active you account!</p>

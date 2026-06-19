@@ -37,6 +37,9 @@ class QNAAnswer extends Model
             case 'trainee':
                 $model = TraineeUser::class;
                 break;
+            case 'schoolkid':
+                $model = SchoolKid::class;
+                break;
         }
         return $this->belongsTo($model, 'answer_by');
     }

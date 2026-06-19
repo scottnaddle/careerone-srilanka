@@ -248,7 +248,7 @@
                             </table>
                         </div>
                     </div>
-                    {{--            //cái này gọi tailwind pagination trong vendor ra --}}
+                    {{--            // this renders the tailwind pagination from vendor --}}
                     @if (count($listCounseling) > 0)
                         <div class="mt-3">
                             {{ $listCounseling->onEachSide(1)->links() }}

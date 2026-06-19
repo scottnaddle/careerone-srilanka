@@ -29,6 +29,13 @@ class CounselingController extends Controller
     {
         try {
             $counseling = CgoCounseling::query()->find($request->id);
+            if (!$counseling) {
+                return response()->json(['status' => 'error', 'message' => 'Counseling not found'], 404);
+            }
+            // Only the CGO this counseling is currently assigned to may act on it.
+            if (optional($counseling->cgoUser)->id !== auth('cgo')->id()) {
+                return response()->json(['status' => 'error', 'message' => 'You are not authorized to manage this counseling'], 403);
+            }
             switch ($counseling->status) {
                 case getCodeIdByStringEn('counselling_status', 'confirm'):
                     return response()->json([
@@ -69,6 +76,13 @@ class CounselingController extends Controller
     {
         try {
             $counseling = CgoCounseling::query()->find($request->counselingId);
+            if (!$counseling) {
+                return response()->json(['status' => 'error', 'message' => 'Counseling not found'], 404);
+            }
+            // Only the CGO this counseling is currently assigned to may act on it.
+            if (optional($counseling->cgoUser)->id !== auth('cgo')->id()) {
+                return response()->json(['status' => 'error', 'message' => 'You are not authorized to manage this counseling'], 403);
+            }
             switch ($counseling->status) {
                 case getCodeIdByStringEn('counselling_status', 'confirm'):
                     return response()->json([

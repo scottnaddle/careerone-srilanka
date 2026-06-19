@@ -83,6 +83,7 @@ return [
     'Total records' => 'මුළු වාර්තා ගණන',
     'Custom Range' => 'අභිරුචි කාල සීමාව',
     'Export' => 'අපනයනය කරන්න',
+    'Exporting...' => 'අපනයනය කරමින්...',
     'Admin' => 'පරිපාලක',
     'Verified' => 'සනාථ කරන ලද',
     'Request' => 'ඉල්ලීම',

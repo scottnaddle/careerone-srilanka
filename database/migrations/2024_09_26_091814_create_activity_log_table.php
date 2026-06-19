@@ -16,7 +16,7 @@ class CreateActivityLogTable extends Migration
         $table->string('subject_type')->nullable();
         $table->ulid('subject_id')->nullable();
         $table->string('causer_type')->nullable(); 
-        $table->ulid('causer_id')->nullable(); // ID của causer // Polymorphic causer column with ulid
+        $table->ulid('causer_id')->nullable(); // Causer ID // Polymorphic causer column with ulid
         $table->json('properties')->nullable(); // Nullable JSON properties column
         $table->timestamps(); // Created at and updated at timestamps
         $table->index('log_name'); // Index on log name for better performance

@@ -35,7 +35,7 @@ class EventsTableSeeder extends Seeder
             DB::table('events')->insert([
                 'title' => $faker->sentence,
                 'event_type' => $faker->randomElement(CodeManagement::where('module', 'event_type')->pluck('code_id')->toArray()),
-                'slug' => Str::slug($faker->sentence),
+                'slug' => Str::slug($faker->sentence, '-', 'ta'),
                 'details' => $faker->paragraph,
                 'thumbnail' => 'storage/cgo/events/thumbnails/' . $i . '/' . $imageName,
                 'start_time' => Carbon::parse(now())->format('Y-m-d'),

@@ -651,7 +651,7 @@ class RegisterCompany extends Seeder
         foreach ($companies as $company) {
             Company::create([
                 'name' => $company['name'],
-                'slug' => \Str::slug($company['name']),
+                'slug' => \Str::slug($company['name'], '-', 'ta'),
                 'address' => $company['address'],
                 'business_registration_number' => $company['business_registration_number'],
                 'office_type' => getCodeIdByStringEn('office_type', $company['office_type']),

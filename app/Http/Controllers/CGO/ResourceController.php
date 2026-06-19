@@ -9,6 +9,7 @@ use App\Models\CgoUser;
 use App\Models\CompanyRecruiter;
 use App\Models\Content;
 use App\Models\Resource;
+use App\Models\SchoolKid;
 use App\Models\TraineeUser;
 use App\Services\ContentViewLoggerService;
 use Illuminate\Http\Request;
@@ -24,7 +25,7 @@ class ResourceController extends Controller
 
         $contentsQuery = Resource::query();
 
-        // Lọc theo keyword nếu có
+        // Filter by keyword if provided
         if (!empty($keyword)) {
             $contentsQuery->where(function ($query) use ($keyword) {
                 $query->where('title', 'ilike', "%$keyword%")
@@ -32,19 +33,19 @@ class ResourceController extends Controller
             });
         }
 
-        // Lọc theo category nếu khác 'all'
+        // Filter by category unless it is 'all'
         if ($categoryId !== 'all') {
             $contentsQuery->where('category_id', $categoryId);
         }
 
-        // Sắp xếp theo created_at
+        // Sort by created_at
         $contentsQuery->orderBy('created_at', $order);
 
         $count = $contentsQuery->count();
-        // Phân trang
+        // Paginate
         $contents = $contentsQuery->paginate(9);
 
-        // Lấy danh sách category để truyền ra view
+        // Get the list of categories to pass to the view
         $categories = CareerGuidanceCategory::all();
 
         return view('cgo.information.resource.list', compact(
@@ -92,6 +93,9 @@ class ResourceController extends Controller
             case 'trainee':
                 $user = TraineeUser::where(['id' => $id])->first();
                 break;
+            case 'schoolkid':
+                $user = SchoolKid::where(['id' => $id])->first();
+                break;
         }
         return $user;
     }
@@ -104,7 +108,7 @@ class ResourceController extends Controller
             if ($attachmentDetails && File::exists($attachmentDetails)) {
                 $path = $attachmentDetails;
 
-                // Nếu là PDF thì hiển thị trên trình duyệt
+                // If it is a PDF, display it in the browser
                 if ($document->content_type === 'document' && \Illuminate\Support\Str::endsWith($path, '.pdf')) {
                     return response()->file($path, [
                         'Content-Type' => 'application/pdf',
@@ -112,7 +116,7 @@ class ResourceController extends Controller
                     ]);
                 }
 
-                // Nếu không phải PDF thì tải xuống
+                // If it is not a PDF, download it
                 return response()->download($path);
             }
         }

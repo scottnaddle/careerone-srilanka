@@ -299,11 +299,11 @@ public function selectedTraineeApply(Request $request)
     try {
         $trainee_apply_id = $request->input('trainee_apply_id');
         $traineeApply = OjtTraineeApply::find($trainee_apply_id);
-        $trainee_id = $traineeApply->trainee_id;
-        $ojt_id = $traineeApply->ojt_id;
         if (!$traineeApply) {
             return response()->json(['status' => 'error', 'message' => 'Record not found']);
         }
+        $trainee_id = $traineeApply->trainee_id;
+        $ojt_id = $traineeApply->ojt_id;
         OjtTraineeApply::where('trainee_id', $trainee_id)
         ->where('ojt_id', $ojt_id)
         ->update(['employeed' => NULL,'rejected_at' => now()]);

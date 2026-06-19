@@ -6,7 +6,6 @@ use App\Filament\Resources\CompanyResource\Pages;
 use App\Filament\Resources\CompanyResource\RelationManagers;
 use App\Imports\CompaniesImport;
 use App\Models\Company;
-use App\Models\CompanyRecruiter;
 use App\Models\District;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -15,17 +14,21 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Services\Admin\SearchComponentAdminService;
-use Filament\Forms\Components\DatePicker;
-use Filament\Tables\Actions\Action;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Placeholder;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
-use Filament\Forms\Components\Select;
 use Maatwebsite\Excel\Facades\Excel;
 
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Checkbox;
+use Illuminate\Support\Str;
 class CompanyResource extends Resource
 {
     protected static ?string $model = Company::class;
@@ -34,134 +37,232 @@ class CompanyResource extends Resource
     protected static ?string $navigationGroup = 'Company';
     protected static ?int $navigationSort = 1;
     public static $totalCompany;
+
     public static function form(Form $form): Form
     {
+        $isSuperAdmin = auth('admin')->user()?->hasRole('super_admin');
+
         return $form
             ->schema([
-                Select::make('company_information')
-                ->label(__('auth.Company information'))
-                ->columnSpan('full')
-                    ->options(fn () => collect(getCodeList('company_information'))
-                        ->mapWithKeys(fn ($item) => [$item['code_id'] => $item['code_name']])
-                        ->toArray()
-                    )
+                Section::make('Company Registration')
+                    ->schema([
+                        // Company Information Type
+                        Select::make('company_information')
+                            ->label('Company Information')
+                            ->options(collect(getCodeList('company_information'))
+                                ->mapWithKeys(fn ($item) => [$item['code_id'] => $item['code_name']])
+                                ->toArray()
+                            )
+                            ->reactive()
+                            ->afterStateUpdated(fn (callable $set) => $set('name', null))
+                            ->required()
+                            ->columnSpanFull(),
 
-                ->required(),
+                        // Ministry Fields (for company_information = 1)
+                        Grid::make(1)
+                            ->schema([
+                                TextInput::make('ministry_name')
+                                    ->label('Ministry name')
+                                    ->placeholder('Ministry of Education, Higher Education and Vocational Education')
+                                    ->visible(fn (callable $get) => $get('company_information') == 1)
+                                    ->required(fn (callable $get) => $get('company_information') == 1)
+                                    ->default(function ($record) {
+                                        // When editing, get the name if company_information == 1
+                                        if ($record && $record->company_information == 1) {
+                                            return $record->name;
+                                        }
+                                        return null;
+                                    }),
 
-                TextInput::make('name')
-                    ->label(__('company.name'))
-                    ->columnSpan('full')
-                    ->required(),
-                TextInput::make('business_registration_number')
-                    ->label(__('company.Registration number'))
-                    ->columnSpan('full'),
-                TextInput::make('email')
-                    ->label('Email')
-                    ->columnSpan('full'),
-                Select::make('office_type')
-                    ->label('Office Type')
-                    ->columnSpan('full')
-                    ->options(fn () => collect(getCodeList('office_type'))->pluck('code_name', 'code_id')->toArray()),
+                                TextInput::make('organisation_name')
+                                    ->label('Name of organisation under the Ministry (if applicable)')
+                                    ->placeholder('Tertiary and Vocational Education Commission (TVEC)')
+                                    ->visible(fn (callable $get) => $get('company_information') == 1)
+                                    ->default(function ($record) {
+                                        if ($record && $record->company_information == 1) {
+                                            return $record->co_business;
+                                        }
+                                        return null;
+                                    }),
+                            ]),
 
-//                    Select::make('headquarter_id')
-//                    ->label('Headquarter')
-//                    ->columnSpan('full')
-//                    ->options(fn (callable $get) =>
-//                        Company::query()
-//                            ->whereNotNull('verified_at')
-//                            ->whereNotNull('verified_by')
-//                            ->where('active', true)
-//                            ->orderBy('name', 'asc')
-//                            ->when($get('id'), fn ($query, $id) => $query->where('id', '!=', $id))
-//                            ->pluck('name', 'id')
-//                    )
-//
-//
-//                    ->default(auth()->user()->company_id ?? null),
+                        // Company Name (for non-ministry)
+                        TextInput::make('name')
+                            ->label('Company name')
+                            ->placeholder('Type the company name')
+                            ->visible(fn (callable $get) => $get('company_information') != 1 && !empty($get('company_information')))
+                            ->required(fn (callable $get) => $get('company_information') != 1 && !empty($get('company_information'))),
 
-//                TextInput::make('number_workers')
-//                    ->label('Number of Workers')
-//                    ->columnSpan('full')
-//                    ->numeric()
-//                    ->required(),
-//
-//                    Select::make('company_information')
-//                    ->label('Company Information')
-//                    ->columnSpan('full')
-//                    ->options(collect(getCodeList('company_information'))
-//                        ->mapWithKeys(fn ($item) => [$item['code_id'] => $item['code_name']])
-//                        ->toArray()
-//                    )
-//
-//                    ->required(),
+                        Hidden::make('slug'),
 
+                        // Business Registration Number (for types 4,5,7)
+                        TextInput::make('business_registration_number')
+                            ->label('Business Registration Number')
+                            ->placeholder('XXXX XXXX XXXX')
+                            ->visible(fn (callable $get) => in_array($get('company_information'), ['', 4, 5, 7]))
+                            ->required(fn (callable $get) => in_array($get('company_information'), ['', 4, 5, 7])),
 
-                Select::make('district_id')
-                    ->label('District')
-                    ->relationship('district', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->required()
-                    ->columnSpan('full')
-                    ->placeholder('Select a district'),
-                TextInput::make('address')
-                    ->label('Address')
-                    ->columnSpan('full')
-                    ->required(),
-//                    TextInput::make('website')
-//                    ->label('Website')
-//                    ->columnSpan('full')
-//                    ->required(),
-                Placeholder::make('attachment_details')
-                    ->label('Attachment Details')
-                    ->content(function ($record) {
-                        if (!$record || empty($record->attachment_details)) {
-                            return new HtmlString(
-                                '<div style=" font-size: 14px; color: #999;">No attachment available.</div>'
-                            );
-                        }
+                        // Business Registration Number 1 (for types 2,3,6)
+                        TextInput::make('business_registration_number_1')
+                            ->label('Registration number (if applicable)')
+                            ->placeholder('Type the registration number if applicable')
+                            ->visible(fn (callable $get) => in_array($get('company_information'), [2, 3, 6]))
+                            ->default(function ($record) {
+                                if ($record && in_array($record->company_information, [2, 3, 6])) {
+                                    return $record->business_registration_number;
+                                }
+                                return null;
+                            }),
 
-                        $file = json_decode($record->attachment_details, true);
+                        // Field of Operations (for types 2,3,6)
+                        TextInput::make('co_business')
+                            ->label('Field of operations')
+                            ->placeholder('Environment conservation')
+                            ->visible(fn (callable $get) => in_array($get('company_information'), [2, 3, 6]))
+                            ->required(fn (callable $get) => in_array($get('company_information'), [2, 3, 6])),
 
-                        if (empty($file) || !isset($file['1']['path'])) {
-                            return new HtmlString(
-                                '<div style=" font-size: 14px; color: #999;">No attachment available.</div>'
-                            );
-                        }
+                        // Office Type
+                        Radio::make('office_type')
+                            ->label('Office Type')
+                            ->options(collect(getCodeList('office_type'))->pluck('code_name', 'code_id')->toArray())
+                            ->inline()
+                            ->inlineLabel(false)
+                            ->visible(fn (callable $get) => !empty($get('company_information')) && $get('company_information') != 1)
+                            ->required(fn (callable $get) => !empty($get('company_information')) && $get('company_information') != 1)
+                            ->reactive(),
 
-                        $path = asset($file['1']['path']);
-                        $extension = pathinfo($file['1']['path'], PATHINFO_EXTENSION);
-                        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+                        // Headquarter (for office_type = 2)
+                        Select::make('headquarter_id')
+                            ->label('Headquarter')
+                            ->options(function (callable $get) {
+                                return Company::query()
+                                    ->whereNotNull('verified_at')
+                                    ->whereNotNull('verified_by')
+                                    ->where('active', true)
+                                    ->where('office_type', 1)
+                                    ->when($get('company_information'), function ($query, $info) {
+                                        if (in_array($info, [2, 3, 4, 5, 6, 7])) {
+                                            return $query;
+                                        }
+                                        return $query;
+                                    })
+                                    ->orderBy('name', 'asc')
+                                    ->pluck('name', 'id');
+                            })
+                            ->searchable()
+                            ->preload()
+                            ->visible(fn (callable $get) => $get('office_type') == 2 && !empty($get('company_information')) && $get('company_information') != 1)
+                            ->required(fn (callable $get) => $get('office_type') == 2),
 
-                        if (in_array(strtolower($extension), $imageExtensions)) {
-                            return new HtmlString(
-                                '<div style="text-align: center; margin: 10px 0;">
-                                    <a href="' . e($path) . '" download style="text-decoration: none; color: #4984F6;">
-                                        <img src="' . e($path) . '" alt="Attachment" style="max-width: 150px; height: auto; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 10px;">
-                                        <div style="font-size: 14px; font-weight: bold; margin-top: 5px;">Download Attachment</div>
-                                    </a>
-                                 </div>'
-                            );
-                        }
+                        // Date of Establishment (for types 4,5,7)
+                        DatePicker::make('date_of_establishment')
+                            ->label('Date Of Establishment')
+                            ->maxDate(now())
+                            ->visible(fn (callable $get) => in_array($get('company_information'), ['', 4, 5, 7]))
+                            ->required(fn (callable $get) => in_array($get('company_information'), ['', 4, 5, 7])),
 
-                        return new HtmlString(
-                            '<div style="text-align: center; margin: 10px 0;">
-                                <a href="' . e($path) . '" download style="text-decoration: none; color: #4984F6;">
-                                    <div style="font-size: 16px; font-weight: bold; color: #333;">' . e($file['1']['name'] ?? 'Unnamed File') . '</div>
-                                    <div style="font-size: 14px; color: #888;">File Type: ' . e(strtoupper($extension)) . '</div>
-                                    <div style="margin-top: 10px; background: #4984F6; color: white; padding: 8px 12px; border-radius: 5px; display: inline-block;">Download File</div>
-                                </a>
-                             </div>'
-                        );
-                    }),
+                        // Number of Workers (for types 4,5,7)
+                        TextInput::make('number_workers')
+                            ->label('The number of workers')
+                            ->numeric()
+                            ->default(0)
+                            ->visible(fn (callable $get) => in_array($get('company_information'), ['', 4, 5, 7]))
+                            ->required(fn (callable $get) => in_array($get('company_information'), ['', 4, 5, 7])),
+
+                        // Email
+                        TextInput::make('email')
+                            ->label(function (callable $get) {
+                                $info = $get('company_information');
+                                if ($info == 1) {
+                                    return 'E-mail (official email for recruitment)';
+                                } elseif (in_array($info, [2, 3, 6])) {
+                                    return 'E-mail (your organisation’s email)';
+                                }
+                                return 'E-mail';
+                            })
+                            ->email()
+                            ->placeholder('organisation@email.com')
+                            ->required(),
+
+                        // Website
+                        TextInput::make('website')
+                            ->label('Website')
+                            ->url()
+                            ->placeholder('https://example.com'),
+
+                        // District
+                        Select::make('district_id')
+                            ->label('District')
+                            ->relationship('district', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required(),
+
+                        // Address
+                        TextInput::make('address')
+                            ->label('Address')
+                            ->required(),
+
+                        // Attached File (Business License/Certificate)
+                        FileUpload::make('attachment_details')
+                            ->label(function (callable $get) {
+                                $info = $get('company_information');
+                                if (in_array($info, [2, 3, 6])) {
+                                    return 'Attached file (Certificate)';
+                                }
+                                return 'Attached file (Business License)';
+                            })
+                            ->multiple()
+                            ->directory(fn ($get) => 'company/business_licenses/' . Str::slug($get('name') ?? $get('ministry_name') ?? 'company', '-', 'ta'))
+                            ->preserveFilenames()
+                            ->maxFiles(5)
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'])
+                            ->visible(fn (callable $get) => !empty($get('company_information')) && $get('company_information') != 1),
+
+                        // Logo
+                        FileUpload::make('logo')
+                            ->label('Company Logo')
+                            ->directory(fn ($get) => 'company/logos/' . Str::slug($get('name') ?? $get('ministry_name') ?? 'company', '-', 'ta'))
+                            ->image()
+                            ->maxSize(50048)
+                            ->avatar(),
+
+                        // Naita Company Checkbox - Only visible for Super Admin
+                        Checkbox::make('is_belongs_to_naita')
+                            ->label('Belongs to NAITA')
+                            ->helperText('Check this box if the company belongs to NAITA')
+                            ->default(false)
+                            ->visible($isSuperAdmin)
+                            ->columnSpanFull(),
+
+                        // Active Checkbox - Only shown when editing
+                        Checkbox::make('active')
+                            ->label('Active')
+                            ->helperText('Activate/Deactivate this company')
+                            ->default(false)
+                            ->visible(fn ($record) => $record !== null && ($isSuperAdmin || auth('admin')->user()->hasRole('naita_admin')))
+                            ->columnSpanFull(),
+
+                        // Hidden fields
+                        Hidden::make('verified_by')
+                            ->default(null),
+
+                        Hidden::make('verified_at')
+                            ->default(null),
+
+                        Hidden::make('name_of_representation')
+                            ->default(null),
+
+                        Hidden::make('enterprise_id')
+                            ->default(null),
+                    ])->columns(2),
             ]);
     }
 
     public static function table(Table $table): Table
     {
-
         return $table
-            ->searchPlaceholder('Company name')
+            ->searchPlaceholder(trans('admin/cgo_performance.company'))
             ->columns([
                 Tables\Columns\TextColumn::make('index')
                     ->label(__('admin/dashboard.content.no'))
@@ -174,38 +275,60 @@ class CompanyResource extends Resource
                     ->limit(50)
                     ->url(fn($record) => route('filament.admin.resources.comapny-user-lists.index', ['company_id' => $record->id]), true)
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('district.name')
                     ->label(__('admin/dashboard.company.district'))
                     ->sortable(),
+
+                Tables\Columns\CheckboxColumn::make('is_belongs_to_naita')
+                    ->label('NAITA')
+                    ->disabled(fn () => !auth('admin')->user()->hasRole('naita_admin'))->alignCenter()
+                    ->afterStateUpdated(function ($record, $state) {
+                        \Log::info("Company {$record->id} NAITA status changed to: " . ($state ? 'Yes' : 'No'));
+
+                        Notification::make()
+                            ->title('NAITA status updated')
+                            ->body('Company ' . $record->name . ' NAITA status changed to ' . ($state ? 'Yes' : 'No'))
+                            ->success()
+                            ->send();
+                    }),
+
                 Tables\Columns\TextColumn::make('approval')
                     ->label(__('admin/dashboard.company.approval'))
                     ->getStateUsing(function ($record) {
                         return $record->statusCompanyList();
                     })
                     ->formatStateUsing(fn($state) => match ($state) {
-                        'Verified' => "<span style='font-size:12px;color: #4984F6; background-color: #F2F9FF; padding: 0.2rem 0.4rem; border-radius: 0.25rem;font-weight:600;'>$state</span>",
-                        'Request' => "<span style='font-size:12px;color: #5a5252; background-color: #dfdada; padding: 0.2rem 0.4rem; border-radius: 0.25rem;font-weight:600;'>Request</span>",
-                        default => "<span style='font-size:12px;color: #F34550; background-color: #FFF0F0; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-weight:600;'>Rejected</span>",
+                        'Verified' => "<span style='font-size:12px;color: #4984F6; background-color: #F2F9FF; padding: 0.2rem 0.4rem; border-radius: 0.25rem;font-weight:600;'>".trans('admin/performance.Verified')."</span>",
+                        'Request' => "<span style='font-size:12px;color: #5a5252; background-color: #dfdada; padding: 0.2rem 0.4rem; border-radius: 0.25rem;font-weight:600;'>".trans('admin/performance.Request')."</span>",
+                        default => "<span style='font-size:12px;color: #F34550; background-color: #FFF0F0; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-weight:600;'>".trans('admin/performance.Rejected')."</span>",
                     })
                     ->html(),
+
                 Tables\Columns\TextColumn::make('active')
                     ->label('Status')
                     ->sortable()
                     ->badge()
-                    ->formatStateUsing(fn($state) => $state ? 'Active' : 'Inactive')
+                    ->formatStateUsing(fn($state) => $state ? 'Active' : trans('admin/status.inactive'))
                     ->color(fn($state) => $state ? 'success' : 'danger')
-
-            ])->searchPlaceholder(__('admin/dashboard.company.search_title'))
+            ])
             ->filters([
                 Tables\Filters\SelectFilter::make('district_id')
-                    //            ->relationship('district', 'name')
                     ->options(District::all()->pluck('name', 'id'))
                     ->preload()
                     ->searchable(),
+
+                Tables\Filters\SelectFilter::make('is_belongs_to_naita')
+                    ->label('NAITA Company')
+                    ->options([
+                        '1' => 'Yes',
+                        '0' => 'No',
+                    ]),
+
                 Tables\Filters\Filter::make('created_at')
                     ->form([
                         DatePicker::make('date')
-                            ->label('Created At')
+                            ->label(trans('admin/dashboard.institute.created_at'))
                             ->required(),
                     ])
                     ->query(function (Builder $query, array $data) {
@@ -213,55 +336,37 @@ class CompanyResource extends Resource
                             $query->whereDate('created_at', $data['date']);
                         }
                     }),
-                Tables\Filters\Filter::make('approval')
-                    ->form([
-                        Forms\Components\Select::make('approval')
-                            ->options([
-                                '1' => 'Approved',
-                                '2' => 'Pending Approval',
-                                '3' => 'Rejected'
-                            ])
-                            ->preload()
-                            ->searchable(),
-                    ])
-                    ->query(function (Builder $query, array $data) {
-                        if (!empty($data['approval'])) {
-                            if ($data['approval'] === '1') {
-                                $query->whereNotNull('companies.verified_by')
-                                    ->whereNotNull('companies.verified_at');
-                            } elseif ($data['approval'] === '3') {
-                                $query->whereNull('companies.verified_by')
-                                    ->whereNull('companies.verified_at');
-                            } else {
-                                $query->whereNull('companies.verified_by')
-                                    ->whereNotNull('companies.verified_at');
-                            }
-                        }
-                    }),
             ])
+            ->modifyQueryUsing(function (Builder $query) {
+                $user = auth('admin')->user();
+                if ($user?->hasRole('naita_admin')) {
+                    $query->where('is_belongs_to_naita', true);
+                }
+            })
             ->actions([
                 Tables\Actions\ViewAction::make()->label('View more')->color('primary'),
-                Tables\Actions\EditAction::make()->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
-                Action::make('deactivate')
+                Tables\Actions\EditAction::make()->visible(fn () => auth('admin')->user()->hasRole('super_admin') || auth('admin')->user()->hasRole('naita_admin')),
+                Tables\Actions\Action::make('deactivate')
                     ->label(__('Deactivate'))
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
                     ->requiresConfirmation()
                     ->action(function ($record) {
-                        $record->update(['active' => false]);
+                        $record->update(['active' => false, 'verified_by' => auth()->guard('admin')->user()->id, 'verified_at' => null]);
                     })
                     ->hidden(fn($record) => $record->active === false)
-                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
-                Action::make('activate')
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')|| auth('admin')->user()->hasRole('naita_admin')),
+
+                Tables\Actions\Action::make('activate')
                     ->label(__('Activate'))
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
                     ->action(function ($record) {
-                        $record->update(['active' => true]);
+                        $record->update(['active' => true, 'verified_by' => auth()->guard('admin')->user()->id, 'verified_at' => now()]);
                     })
                     ->hidden(fn($record) => $record->active === true)
-                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')|| auth('admin')->user()->hasRole('naita_admin')),
             ])
             ->headerActions([
                 // Import Action
@@ -353,21 +458,12 @@ class CompanyResource extends Resource
 
             ])
             ->paginated([10, 25, 50, 100])
-            ->defaultSort('updated_at', 'desc')
-            ->reorderable('updated_at')
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->defaultSort('updated_at', 'desc');
     }
-
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
@@ -380,9 +476,15 @@ class CompanyResource extends Resource
         ];
     }
 
+    public static function canCreate(): bool
+    {
+        $user = auth('admin')->user();
+        return $user?->hasRole('super_admin') || $user?->hasRole('naita_admin');
+    }
+
     protected static function generateTemplate()
     {
-        // Bỏ dấu * trực tiếp tại Header để tránh lỗi nhận diện Key từ Laravel-Excel
+        // Remove the * directly from the header to avoid key detection errors in Laravel-Excel
         $headers = [
             'company_name',
             'business_registration_number',
@@ -416,7 +518,7 @@ class CompanyResource extends Resource
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
-        // 1. Tạo Sheet chỉ dẫn (Instructions)
+        // 1. Create the Instructions sheet
         $instructionSheet = $spreadsheet->getActiveSheet();
         $instructionSheet->setTitle('Instructions');
 
@@ -451,11 +553,11 @@ class CompanyResource extends Resource
             $instructionSheet->getStyle($cell)->getFont()->setBold(true);
         }
 
-        // 2. Tạo Sheet nhập liệu (Data)
+        // 2. Create the Data entry sheet
         $dataSheet = $spreadsheet->createSheet();
         $dataSheet->setTitle('Data');
 
-        // Thêm Headers
+        // Add Headers
         foreach (range('A', 'G') as $index => $column) {
             $dataSheet->setCellValue($column . '1', $headers[$index]);
             $dataSheet->getStyle($column . '1')->getFont()->setBold(true);
@@ -465,7 +567,7 @@ class CompanyResource extends Resource
             $dataSheet->getStyle($column . '1')->getFont()->getColor()->setRGB('FFFFFF');
         }
 
-        // Thêm dữ liệu mẫu
+        // Add sample data
         foreach ($sampleData as $rowIndex => $row) {
             foreach (range('A', 'G') as $colIndex => $column) {
                 $dataSheet->setCellValue($column . ($rowIndex + 2), $row[$colIndex]);
@@ -476,7 +578,7 @@ class CompanyResource extends Resource
             $dataSheet->getColumnDimension($column)->setAutoSize(true);
         }
 
-        // Cấu hình Data Validation cho cột District (Cột F) an toàn
+        // Safely configure Data Validation for the District column (Column F)
         if (!empty($districts)) {
             $lastRow = 1000;
             $districtValidation = $dataSheet->getCell('F2')->getDataValidation();
@@ -491,7 +593,7 @@ class CompanyResource extends Resource
             $districtValidation->setPromptTitle('Select District');
             $districtValidation->setPrompt('Select a  valid.');
 
-            // Giới hạn ký tự chuỗi validation để tránh lỗi Excel crash khi danh sách quận huyện quá dài (>255 ký tự)
+            // Limit the validation string length to avoid an Excel crash when the district list is too long (>255 characters)
             $formulaString = '"' . implode(',', array_slice($districts, 0, 20)) . '"';
             $districtValidation->setFormula1($formulaString);
 

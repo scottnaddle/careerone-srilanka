@@ -700,7 +700,7 @@
                 $('#sector-data-tab-1').empty();
             }
 
-            // Hàm để thêm province vào modal
+            // Function to add a province to the modal
             function appendProvince(province, index, isSelected) {
                 const html = itemOptionSlect('province' + index, 'province', province.name, isSelected,
                     `data-index="${index}"`);
@@ -767,7 +767,7 @@
 
             }
 
-            // Hàm để thêm district vào modal
+            // Function to add a district to the modal
             function appendDistrict(districts, district, index, isSelected, url) {
                 const html = itemOptionSlect('district' + index, 'district', district.name, isSelected,
                     `data-index="${index}" data-district-id="${district.id}"`);
@@ -781,7 +781,7 @@
             }
 
 
-            // Hàm để toggle trạng thái chọn
+            // Function to toggle the selected state
             function toggleSelected(allEl, selectedEl) {
                 allEl.find('svg.inline-block').removeClass('inline-block').addClass('hidden');
                 allEl.removeClass('text-[#4984F6] font-semibold dark:text-[#4984F6]').addClass(

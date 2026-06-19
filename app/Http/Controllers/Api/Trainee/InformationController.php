@@ -13,6 +13,7 @@ use App\Models\CompanyRecruiter;
 use App\Models\QNA;
 use App\Models\QNAAnswer;
 use App\Models\QnaAttachment;
+use App\Models\SchoolKid;
 use App\Models\TraineeUser;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -285,6 +286,9 @@ class InformationController extends BaseController
             case 'trainee':
                 $user = TraineeUser::where(['id' => $id])->first();
                 break;
+            case 'schoolkid':
+                $user = SchoolKid::where(['id' => $id])->first();
+                break;
         }
         return $user;
     }
@@ -344,6 +348,9 @@ class InformationController extends BaseController
 
     public function destroyQNA($id){
         $qNA = QNA::where('id', $id)->first();
+        if (!$qNA || $qNA->system !== 'trainee' || $qNA->created_by != auth('sanctum')->id()) {
+            return $this->sendError([], 'Unauthorized');
+        }
         foreach ($qNA->replies as $reply) {
             foreach ($reply->children as $childReply) {
                 $childReply->delete();
@@ -367,6 +374,9 @@ class InformationController extends BaseController
 
     public function destroyQNAComment(QNAAnswer $qNAAnswer)
     {
+        if ($qNAAnswer && ($qNAAnswer->system !== 'trainee' || $qNAAnswer->answer_by != auth('sanctum')->id())) {
+            return $this->sendError([], 'Unauthorized');
+        }
         if ($qNAAnswer) {
             foreach ($qNAAnswer->children as $reply) {
                 $reply->delete();
@@ -382,6 +392,9 @@ class InformationController extends BaseController
     public function updateQNA(QNAUpdateRequest $request, $id)
     {
         $qNA = QNA::find($id);
+        if ($qNA && ($qNA->system !== 'trainee' || $qNA->created_by != auth('sanctum')->id())) {
+            return $this->sendError([], 'Unauthorized');
+        }
         if ($qNA) {
             if ($request->has('attachment_details')) {
                 foreach ($request->file('attachment_details') as $attachment) {
@@ -424,8 +437,7 @@ class InformationController extends BaseController
                     $qnaAttachment->save();
                 }
             }
-            $data = $request->all();
-            $qNA->update($data);
+            $qNA->update($request->only(['title', 'description']));
             return $this->sendResponse($qNA, ['Update QNA successfully!']);
         }else {
             return $this->sendError([], 'QNA does not exist!');

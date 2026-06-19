@@ -15,6 +15,7 @@ use App\Models\Content;
 use App\Models\ContentComment;
 use App\Models\Institute;
 use App\Models\Resource;
+use App\Models\SchoolKid;
 use App\Models\Sector;
 use App\Models\TraineeInstitute;
 use App\Models\TraineeUser;
@@ -480,13 +481,13 @@ class CareerGuidanceController extends BaseController
         $keyword = $request->has('search') ? $request->search : '';
         $categoryId = $categoryId;
 
-        // Lấy thông tin category
+        // Get category information
         $category = CareerGuidanceCategory::where('id', $categoryId)->firstOrFail();
 
-        // Lấy danh sách content đã được approved
+        // Get the list of approved content
         $contentsQuery = $category->contentApproved()->latest();
 
-        // Lọc theo keyword nếu có
+        // Filter by keyword if provided
         if (!empty($keyword)) {
             $contentsQuery->where(function ($query) use ($keyword) {
                 $query->where('title', 'LIKE', "%$keyword%")
@@ -494,8 +495,8 @@ class CareerGuidanceController extends BaseController
             });
         }
 
-        // Lấy dữ liệu
-        $contents = $contentsQuery->paginate(10); // hoặc ->get() nếu không muốn phân trang
+        // Get the data
+        $contents = $contentsQuery->paginate(10); // or ->get() if pagination is not needed
         foreach ($contents as $content) {
             if ($content->content_type != 'video') {
                 $attachments = json_decode($content->attachment_details, true);
@@ -588,6 +589,9 @@ class CareerGuidanceController extends BaseController
             case 'trainee':
                 $user = TraineeUser::where(['id' => $id])->first();
                 break;
+            case 'schoolkid':
+                $user = SchoolKid::where(['id' => $id])->first();
+                break;
         }
         return $user;
     }
@@ -599,14 +603,18 @@ class CareerGuidanceController extends BaseController
     {
         $data = $request->all();
         $data['content_id'] = $data['qna_id'];
-        $activeGuard = auth('sanctum')->check() ? 'trainee' : 'guest';
-
+        $user = auth('sanctum')->check();
+        if ($user && $user->getTable() == 'school_kids') {
+            $activeGuard = 'schoolkid';
+        }elseif($user && $user->getTable() == 'trainee_users') {
+            $activeGuard = 'trainee';
+        }else {
+            $activeGuard = 'guest';
+        }
         if (auth('sanctum')->check()) {
             $data['system'] = $activeGuard;
             $data['answer_by'] = auth('sanctum')->user()->id;
             $userNameReply = !empty(auth('sanctum')->user()->fullName) ? auth('sanctum')->user()->fullName  : auth('sanctum')->user()->first_name.' '.auth('sanctum')->user()->last_name;
-
-
 
             $data['parent_id'] = $data['parent_id'] ?? null;
             $data['type'] = 'content';

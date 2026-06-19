@@ -34,7 +34,7 @@ class AdminUser extends Authenticatable implements FilamentUser, HasName
     ];
     public function getFilamentName(): string
     {
-        return $this->first_name . ' ' . $this->last_name; // Hoặc format khác tùy ý
+        return $this->first_name . ' ' . $this->last_name; // Or any other format you prefer
     }
     public function getFilamentUserName(): string
     {
@@ -125,7 +125,7 @@ public function isFullyVerified()
 //                 ->wherePivot('model_type', AdminUser::class);
 // }
 
-// // Quan hệ nhiều-nhiều với Permission
+// // Many-to-many relationship with Permission
 // public function permissions()
 // {
 //     return $this->belongsToMany(Permission::class, 'model_has_permissions', 'model_id', 'permission_id')
@@ -157,4 +157,16 @@ public function UserReActive()
         ->where('reactive_account_requests.user_type', 'admin');
 }
 
+    public function institutes() {
+        return $this->hasMany(Institute::class, 'institute_head_office', 'tvet_type');
+    }
+    protected static function booted()
+    {
+        static::saving(function ($admin) {
+            // If this is a NAITA Admin, force tvet_type = 'NAITA'
+            if ($admin->hasRole('naita_admin')) {
+                $admin->tvet_type = 'NAITA';
+            }
+        });
+    }
 }

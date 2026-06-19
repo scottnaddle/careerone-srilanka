@@ -84,6 +84,7 @@ return [
     'Total records' => 'Total records',
     'Custom Range' => 'Custom Range',
     'Export' => 'Export',
+    'Exporting...' => 'Exporting...',
     'Admin' => 'Admin',
     'Verified' => 'Verified',
     'Request' => 'Request',

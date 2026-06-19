@@ -180,40 +180,40 @@ class JobService
     private function applyInstituteQuery($jobQuery, $data)
     {
         return $jobQuery
-            // 1. Select các thông tin cần thiết của Institute
+            // 1. Select the necessary Institute information
             ->select([
                 'institutes.id',
                 'institutes.name as institute_name',
                 'institutes.institute_head_office',
             ])
-            // Đếm số lượng match dựa trên bảng trainee_matches
+            // Count the number of matches based on the trainee_matches table
             ->selectRaw('COUNT(trainee_matches.id) as job_match_count')
 
             // 2. INNER JOIN trainee_matches
-            // Logic: Lấy các Job có trong bảng match
+            // Logic: Get the Jobs that exist in the match table
             ->join('trainee_matches', 'jobs.id', '=', 'trainee_matches.job_id')
 
             // 3. INNER JOIN cgo_users
-            // Logic: Tìm xem ai (CGO nào) là người tạo ra match này (created_by)
+            // Logic: Find who (which CGO) created this match (created_by)
             ->join('cgo_users', 'trainee_matches.created_by', '=', 'cgo_users.id')
 
             // 4. INNER JOIN institutes
-            // Logic: CGO đó thuộc về Institute nào
+            // Logic: Which Institute that CGO belongs to
             ->join('institutes', 'cgo_users.institute_id', '=', 'institutes.id')
 
-            // 5. Bộ lọc Head Office (nếu có)
+            // 5. Head Office filter (if any)
             ->when(!empty($data['head_office']), function ($query) use ($data) {
                 $query->where('institutes.institute_head_office', $data['head_office']);
             })
 
-            // 6. Group by để tính count
+            // 6. Group by to compute the count
             ->groupBy(
                 'institutes.id',
                 'institutes.name',
                 'institutes.institute_head_office'
             )
 
-            // 7. Sắp xếp giảm dần theo số lượng match
+            // 7. Sort in descending order by the number of matches
             ->orderByDesc('job_match_count');
     }
     private function applyCompanyQuery($jobQuery, $data)
@@ -260,7 +260,7 @@ class JobService
             $jobQuery->where('jobs.sector_id', $data['sector_id']);
         }
 
-// Order by tùy điều kiện
+// Order by depending on the condition
         if (!empty($data['apply_type']) && $data['apply_type'] === 'job_match') {
             $jobQuery->orderBy('job_match_count', 'DESC');
         } elseif (!empty($data['apply_type']) && $data['apply_type'] === 'apply') {

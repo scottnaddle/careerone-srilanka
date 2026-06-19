@@ -32,6 +32,19 @@ class ComapnyUserListResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     public static $totalCompany;
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        // If naita_admin, only get company users of companies where is_belongs_naita = true
+        if (auth('admin')->user()?->hasRole('naita_admin')) {
+            $query->whereHas('company', function (Builder $q) {
+                $q->where('is_belongs_to_naita', true);
+            });
+        }
+
+        return $query;
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -39,57 +52,82 @@ class ComapnyUserListResource extends Resource
             Forms\Components\Select::make('company_id')
                 ->label(__('company.name'))
                 ->options(function () {
-                    return Company::whereNotNull('verified_by')
+                    $query = Company::whereNotNull('verified_by')
                         ->whereNotNull('verified_at')
-                        ->where('active', true)
-                        ->pluck('name', 'id')
-                        ->toArray();
+                        ->where('active', true);
+
+                    // Check for the naita_admin role
+                    $admin = auth('admin')->user();
+                    if ($admin && $admin->hasRole('naita_admin')) {
+                        $query->where('is_belongs_to_naita', true);
+                    }
+
+                    return $query->pluck('name', 'id')->toArray();
                 })
                 ->searchable()
-                ->getSearchResultsUsing(fn (string $search): array =>
-                Company::where('name', 'ilike', "%{$search}%")
-                    ->whereNotNull('verified_by')
-                    ->whereNotNull('verified_at')
-                    ->where('active', true)
-                    ->limit(50)
-                    ->pluck('name', 'id')
-                    ->toArray()
-                )
-                ->getOptionLabelUsing(fn ($value): ?string =>
-                Company::find($value)?->name
-                )
+                ->getSearchResultsUsing(function (string $search) {
+                    $query = Company::where('name', 'ilike', "%{$search}%")
+                        ->whereNotNull('verified_by')
+                        ->whereNotNull('verified_at')
+                        ->where('active', true);
+
+                    // Check for the naita_admin role
+                    $admin = auth('admin')->user();
+                    if ($admin && $admin->hasRole('naita_admin')) {
+                        $query->where('is_belongs_to_naita', true);
+                    }
+
+                    return $query->limit(50)->pluck('name', 'id')->toArray();
+                })
+                ->getOptionLabelUsing(fn ($value): ?string => Company::find($value)?->name)
                 ->required()
                 ->columnSpan('full')
                 ->placeholder(__('admin/dashboard.company_recruiter_user.select_company')),
 
-            Forms\Components\TextInput::make('first_name')
-                ->label(__('admin/dashboard.company_recruiter_user.first_name'))
-                ->columnSpan('full')
-                ->required(),
+            Forms\Components\Grid::make(2)->schema([
+                Forms\Components\TextInput::make('first_name')
+                    ->label(__('admin/dashboard.company_recruiter_user.first_name'))
+                    ->required(),
 
-            Forms\Components\TextInput::make('last_name')
-            ->columnSpan('full')
-                ->label(__('admin/dashboard.company_recruiter_user.last_name'))
-                ->required(),
+                Forms\Components\TextInput::make('last_name')
+                    ->label(__('admin/dashboard.company_recruiter_user.last_name'))
+                    ->required(),
+            ]),
+            Forms\Components\Grid::make(2)->schema([
+                Forms\Components\TextInput::make('email')
+                    ->label(__('admin/dashboard.company_recruiter_user.email'))
+                    ->email()
+                    ->required()
+                    ->unique(CompanyRecruiter::class, 'email', ignoreRecord: true),
+                Forms\Components\TextInput::make('telephone')
+                    ->label(__('admin/dashboard.company_recruiter_user.telephone'))
+                    ->tel()
+                    ->required(),
+            ]),
 
-            Forms\Components\TextInput::make('email')
-                ->label(__('admin/dashboard.company_recruiter_user.email'))
-                ->columnSpan('full')
-                ->required(),
 
-            Forms\Components\TextInput::make('password')
-                ->columnSpan('full')
-                ->label(__('admin/dashboard.company_recruiter_user.password'))
-                ->password()
-                ->required()
-                ->visible(fn ($record) => $record === null)
-                ->dehydrateStateUsing(fn($state) => Hash::make($state)),
+            Forms\Components\Grid::make(2)->schema([
+                // Password field with toggle visibility
+                Forms\Components\TextInput::make('password')
+                    ->label(__('admin/dashboard.company_recruiter_user.password'))
+                    ->password()
+                    ->revealable()  // Add a toggle button to show/hide the password
+                    ->required()->helperText(trans('auth.password_feeback'))
+                    ->visible(fn ($record) => $record === null),
 
-            Forms\Components\TextInput::make('telephone')
-                ->label(__('admin/dashboard.company_recruiter_user.telephone'))
-                ->columnSpan('full')
-                ->tel()
-                ->required(),
+                // Password confirmation field
+                Forms\Components\TextInput::make('password_confirmation')
+                    ->label(trans('system.form.confirm_password'))
+                    ->password()
+                    ->revealable()  // Also a toggle for the confirmation
+                    ->required()
+                    ->visible(fn ($record) => $record === null)
+                    ->same('password')  // Check that it matches the password
+                    ->dehydrated(false), // Do not save this field to the database
+            ]),
+
+
+
         ]);
     }
 
@@ -103,6 +141,11 @@ class ComapnyUserListResource extends Resource
         $query = $searchService->searchCompanyUser([
             'company_id' => request()->query('company_id', null),
         ]);
+        if (auth('admin')->user()?->hasRole('naita_admin')) {
+            $query->whereHas('company', function (Builder $q) {
+                $q->where('is_belongs_to_naita', true);
+            });
+        }
         self::$totalCompany = $query->count();
 
         return $table
@@ -215,7 +258,7 @@ class ComapnyUserListResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->label('View more')->color('primary'),
-                Tables\Actions\EditAction::make()->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+                Tables\Actions\EditAction::make()->visible(fn () => auth('admin')->user()->hasRole('super_admin') || auth('admin')->user()->hasRole('naita_admin')),
                 Action::make('deactivate')
                 ->label(__('Deactivate'))
                 ->icon('heroicon-o-x-circle')
@@ -225,7 +268,7 @@ class ComapnyUserListResource extends Resource
                     $record->update(['active' => false, 'verify_at' => null, 'verify_by' => auth()->guard('admin')->id()]);
                 })
                 ->hidden(fn ($record) => $record->active === false)
-                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')|| auth('admin')->user()->hasRole('naita_admin')),
             Action::make('activate')
                 ->label(__('Activate'))
                 ->icon('heroicon-o-check-circle')
@@ -235,7 +278,7 @@ class ComapnyUserListResource extends Resource
                     $record->update(['active' => true, 'verify_at' => now(), 'verify_by' => auth()->guard('admin')->id()]);
                 })
                 ->hidden(fn ($record) => $record->active === true)
-                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+                    ->visible(fn () => auth('admin')->user()->hasRole('super_admin')|| auth('admin')->user()->hasRole('naita_admin')),
 
             ])
             ->defaultSort('updated_at', 'desc')

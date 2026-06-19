@@ -291,7 +291,16 @@ class OJTResource extends Resource
                     'end' => request()->query('end', null),
                     'status' => request()->query('status', null)
                 ])
-            )->searchPlaceholder('OJT title')
+            )
+            ->modifyQueryUsing(function ($query) {
+                $admin = auth('admin')->user();
+                if ($admin && $admin->hasRole('naita_admin')) {
+                    $query->whereHas('company', function ($q) {
+                        $q->where('is_belongs_to_naita', true);
+                    });
+                }
+            })
+            ->searchPlaceholder(__('admin/dashboard.ojt.ojt_title'))
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('admin/dashboard.ojt.ojt_title'))
@@ -314,18 +323,18 @@ class OJTResource extends Resource
                     ->label(__('admin/dashboard.ojt.status'))
                     ->getStateUsing(function ($record) {
                         if ($record->status == \App\Enums\JobStatusEnum::COMPLETED->value) {
-                            return 'Completed';
+                            return __('cgo.completed');
                         } elseif ($record->status == \App\Enums\JobStatusEnum::CANCEL->value) {
-                            return 'Cancelled';
+                            return __('company.cancel');
                         } else {
-                            return 'In Progress';
+                            return __('company.progress');
                         }
                     })
                     ->badge()
                     ->color(fn($state) => match($state) {
-                        'In Progress' => 'info',
-                        'Cancelled' => 'danger',
-                        'Completed' => 'success',
+                        __('company.progress') => 'info',
+                        __('company.cancel') => 'danger',
+                        __('cgo.completed') => 'success',
                     })
                     ->alignCenter(),
 
@@ -351,7 +360,7 @@ class OJTResource extends Resource
             ])
             ->actions([
                 ViewAction::make('view-more')
-                    ->label('View more')->color('primary')
+                    ->label(trans('cgo.view_more'))->color('primary')
                     ->url(fn($record) => url('admin/o-j-t-s/' . $record->id . '/view-list-trainee')),
             ])
             ->emptyStateHeading('No OJT found')
@@ -370,9 +379,21 @@ class OJTResource extends Resource
                             ->label('Company name')
                             ->options(function (callable $get) {
                                 $district = $get('district');
-                                return $district
-                                    ? Company::where('district_id', $district)->pluck('name', 'id')
-                                    : Company::pluck('name', 'id');
+                                $admin = auth('admin')->user();
+
+                                $query = $district
+                                    ? Company::where('district_id', $district)
+                                    : Company::query();
+
+                                $query->whereNotNull('verified_by')
+                                    ->whereNotNull('verified_at')
+                                    ->where('active', true);
+
+                                if ($admin && $admin->hasRole('naita_admin')) {
+                                    $query->where('is_belongs_to_naita', true);
+                                }
+
+                                return $query->pluck('name', 'id');
                             })
                             ->preload()
                             ->searchable()

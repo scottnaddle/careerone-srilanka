@@ -29,7 +29,7 @@ class ViewOjt extends ViewRecord
         parent::mount($record);
         $this->record->load('sector', 'company', 'district');
         $this->ojt = $this->record;
-        $this->companyList = Company::whereNotNull('verified_by')->whereNotNull('verified_by')->get();
+        $this->companyList = Company::whereNotNull('verified_at')->whereNotNull('verified_by')->get();
     }
 
     protected function getSectors()

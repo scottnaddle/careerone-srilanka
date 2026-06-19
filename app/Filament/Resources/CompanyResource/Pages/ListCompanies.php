@@ -8,13 +8,13 @@ use Filament\Resources\Pages\ListRecords;
 use App\Models\Sector;
 use App\Models\District;
 use App\Models\Company;
-
+use Filament\Actions\CreateAction;
 
 class ListCompanies extends ListRecords
 {
     protected static string $resource = CompanyResource::class;
     protected static string $view = 'filament.pages.membership.company.company-list';
-
+    protected static ?string $breadcrumb = '';
     protected function getHeaderActions(): array
     {
         return [
@@ -36,5 +36,18 @@ class ListCompanies extends ListRecords
     protected function getTotal()
     {
         return CompanyResource::$totalCompany;
+    }
+    public function getCreateAction(): ?CreateAction
+    {
+        // Check permission before showing the button
+        if (!CompanyResource::canCreate()) {
+            return null;
+        }
+
+        return CreateAction::make()
+            ->label('Add New Company')
+            ->icon('heroicon-o-plus')
+            ->color('primary')
+            ->url(CompanyResource::getUrl('create'));
     }
 }

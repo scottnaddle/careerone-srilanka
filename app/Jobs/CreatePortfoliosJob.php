@@ -36,7 +36,7 @@ class CreatePortfoliosJob implements ShouldQueue
     {
         foreach ($this->nicList as $nic) {
             try {
-                // Tìm trainee theo NIC
+                // Find the trainee by NIC
                 $trainee = TraineeUser::where('nic','ILIKE', $nic)->first();
 
                 if (!$trainee) {
@@ -44,13 +44,13 @@ class CreatePortfoliosJob implements ShouldQueue
                     continue;
                 }
 
-                // Kiểm tra nếu Portfolio đã tồn tại
+                // Check if the Portfolio already exists
                 if (Portfolio::where('trainee_id', $trainee->id)->exists()) {
                     Log::info("Portfolio existed trainee NIC: {$nic}");
                     continue;
                 }
 
-                // Lấy thông tin training history
+                // Get the training history information
                 $traineeTraining = TraineeTrainingHistory::where('trainee_id', $trainee->id)->first();
 
                 $tvecEducations = [];
@@ -96,7 +96,7 @@ class CreatePortfoliosJob implements ShouldQueue
                     }
                 }
 
-                // Tạo portfolio mới
+                // Create a new portfolio
                 Portfolio::create([
                     'trainee_id' => $trainee->id,
                     'data' => [

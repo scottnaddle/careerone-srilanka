@@ -1,3 +1,17 @@
+@php
+    if (!function_exists('safe_print')) {
+        function safe_print($val) {
+            if (is_array($val)) {
+                $localeVal = $val[App::getLocale()] ?? array_values($val)[0] ?? '';
+                return is_array($localeVal) ? json_encode($val) : (string) $localeVal;
+            }
+            if (is_object($val) && !method_exists($val, '__toString')) {
+                return json_encode($val);
+            }
+            return (string) $val;
+        }
+    }
+@endphp
 <div class="relative overflow-x-auto">
     <table class="w-full text-left rtl:text-right table-auto">
         <thead class="bg-[#F5F7FA] dark:bg-[#282828] dark:text-white text-center">
@@ -45,23 +59,32 @@
         <tbody>
             @forelse ($traineeReports as $trainee)
                 <tr class="bg-white dark:bg-[#1E1E1E] border-b border-[#F8F8F8] dark:border-gray-700 text-center">
-                    <td class="px-4 py-3 text-sm font-semibold text-[#201F36] dark:text-white text-left">{{ $trainee->full_name ?? $trainee->first_name . ' ' . $trainee->last_name }}</td>
+                    <td class="px-4 py-3 text-sm font-semibold text-[#201F36] dark:text-white text-left">
+                        @php
+                            $fullName = $trainee->full_name ?? $trainee->first_name . ' ' . $trainee->last_name;
+                        @endphp
+                        {{ safe_print($fullName) }}
+                    </td>
                     <td class="px-4 py-3 text-sm text-[#706F81] dark:text-[#C9CCD4]">{{ $trainee->nic }}</td>
                     <td class="px-4 py-3 text-sm text-[#706F81] dark:text-[#C9CCD4]">{{ $trainee->email }}</td>
                     <td class="px-4 py-3 text-sm text-[#706F81] dark:text-[#C9CCD4]">{{ $trainee->mobile }}</td>
                     <td class="px-4 py-3 text-sm text-[#706F81] dark:text-[#C9CCD4]">
                         @if($trainee->portfolio)
-                            <span class="text-[#62B96A] font-semibold">{{ __('cgo.Yes') }}</span>
+                            <span class="text-[#62B96A] font-semibold">{{ safe_print(__('cgo.Yes')) }}</span>
                         @else
-                            <span class="text-[#91919A]">{{ __('cgo.No') }}</span>
+                            <span class="text-[#91919A]">{{ safe_print(__('cgo.No')) }}</span>
                         @endif
                     </td>
                     <td class="px-4 py-3 text-sm text-[#706F81] dark:text-[#C9CCD4]">
                         @if($trainee->nvqs && $trainee->nvqs->count() > 0)
                             <ul class="text-left space-y-1">
                                 @foreach($trainee->nvqs as $n)
+                                    @php
+                                        $nName = safe_print($n->name);
+                                        $nLevel = safe_print($n->level);
+                                    @endphp
                                     <li class="flex items-start gap-1">
-                                        <span class="leading-tight">- {{ $n->name }} ({{ $n->level }})</span>
+                                        <span class="leading-tight">- {{ $nName }} ({{ $nLevel }})</span>
                                     </li>
                                 @endforeach
                             </ul>
@@ -75,7 +98,10 @@
                     <td colspan="8">
                         <div class="flex flex-col gap-4 justify-center items-center p-4">
                             <img src="{{ asset('/images/empty-box.png') }}" class="opacity-50 h-32" alt="Empty">
-                            <p class="dark:text-white">{{ trans('cgo.job_support.ojt_list.no_record') }}</p>
+                            @php
+                                        $noRecordTrans = safe_print(trans('cgo.job_support.ojt_list.no_record'));
+                            @endphp
+                            <p class="dark:text-white">{{ $noRecordTrans }}</p>
                         </div>
                     </td>
                 </tr>

@@ -155,7 +155,7 @@
                 </div>
             </a>
 
-            <a href="{{route('trainee.career-guidance.portfolios.show')}}">
+            <a href="{{route('trainee.career-guidance.portfolio.get-portfolio')}}">
                 <div class="flex flex-col px-2.5 py-2 lg:px-5 lg:py-4 gap-6 bg-white dark:bg-[#1E1E1E] rounded-xl flex-1 shadow-custom-light dark:shadow-custom-dark items-center justify-between hover:bg-blue-100 dark:hover:bg-gray-700 h-full">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path class="dark:stroke-white" d="M12.5 2H15.2C16.8802 2 17.7202 2 18.362 2.32698C18.9265 2.6146 19.3854 3.07354 19.673 3.63803C20 4.27976 20 5.11984 20 6.8V17.2C20 18.8802 20 19.7202 19.673 20.362C19.3854 20.9265 18.9265 21.3854 18.362 21.673C17.7202 22 16.8802 22 15.2 22H8.8C7.11984 22 6.27976 22 5.63803 21.673C5.07354 21.3854 4.6146 20.9265 4.32698 20.362C4 19.7202 4 18.8802 4 17.2V16.5M16 13H11.5M16 9H12.5M16 17H8M6 10V4.5C6 3.67157 6.67157 3 7.5 3C8.32843 3 9 3.67157 9 4.5V10C9 11.6569 7.65685 13 6 13C4.34315 13 3 11.6569 3 10V6" stroke="#4984F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -196,7 +196,7 @@
             <a href="{{route('trainee.career-guidance.counseling.counseling-history')}}">
                 <div class="flex flex-col px-2.5 py-2 lg:p-5 gap-6 rounded-xl flex-1 shadow-custom-light dark:shadow-custom-dark items-start bg-[#F4F8FF] justify-between hover:bg-blue-200">
                     <div class="flex items-center justify-between w-full">
-                        <!-- Phần văn bản và số ở bên trái -->
+                        <!-- Text and number section on the left -->
                         <div class="flex flex-col justify-start">
                             <span class="text-primary text-sm md:text-base hover:underline h-10 md:h-auto">{{trans('trainee.my_page.my_guidance')}}</span>
 
@@ -207,7 +207,7 @@
                             </div>
                         </div>
 
-                        <!-- Phần SVG ở bên phải -->
+                        <!-- SVG section on the right -->
                         <span class="flex justify-end">
                             <svg xmlns="http://www.w3.org/2000/svg" width="150" height="100" viewBox="0 0 68 43" fill="none">
                                 <path d="M59.0261 8.26041L60.6953 12.1085L61.9043 12.09L63.0826 15.0053C63.0826 15.0053 62.2541 16.6545 63.506 17.0066C64.7579 17.3525 66.691 15.413 66.691 15.413C66.691 15.413 62.7573 5.88239 62.0577 5.77121C61.3519 5.65385 59.0261 8.26041 59.0261 8.26041Z" fill="#4984F6"/>
@@ -234,7 +234,7 @@
             <a href="{{ route('trainee.job-support.job-list.job-list', ['status_job' => 'matched']) }}">
                 <div class="flex flex-col px-2.5 py-2 lg:p-5 gap-6 rounded-xl flex-1 shadow-custom-light dark:shadow-custom-dark items-start bg-[#F4F8FF] justify-between hover:bg-blue-200">
                     <div class="flex items-center justify-between w-full">
-                        <!-- Phần văn bản và số ở bên trái -->
+                        <!-- Text and number section on the left -->
                         <div class="flex flex-col justify-start">
                             <span class="text-primary text-sm md:text-base hover:underline h-10 md:h-auto">{{trans('trainee.my_page.job_match')}}</span>
                             <div class="flex items-center justify-start w-full">
@@ -242,7 +242,7 @@
                             </div>
                         </div>
 
-                        <!-- Phần SVG ở bên phải -->
+                        <!-- SVG section on the right -->
                         <span class="flex justify-end">
                             <svg xmlns="http://www.w3.org/2000/svg" width="150" height="100" viewBox="0 0 68 43" fill="none">
                                 <path d="M15.9601 37.1094L0.935301 53.2648C0.319835 53.9277 0.362109 54.9589 1.0298 55.5687C1.69873 56.1786 2.73943 56.1367 3.35489 55.4751L18.3797 39.3184L15.9601 37.1094Z" fill="#7E88AA"/>
@@ -262,7 +262,7 @@
             <a href="{{route('trainee.job-support.job-list.job-list', ['status_job' => 'applied'])}}">
                 <div class="flex flex-col px-2.5 py-2 lg:p-5 gap-6 rounded-xl flex-1 shadow-custom-light dark:shadow-custom-dark items-start bg-[#F4F8FF] justify-between hover:bg-blue-200">
                     <div class="flex items-center justify-between w-full">
-                        <!-- Phần văn bản và số ở bên trái -->
+                        <!-- Text and number section on the left -->
                         <div class="flex flex-col justify-start">
                             <span class="text-primary text-sm md:text-base hover:underline h-10 md:h-auto">{{trans('trainee.my_page.applied_job')}}</span>
                             <div class="flex items-center justify-start w-full">
@@ -270,7 +270,7 @@
                             </div>
                         </div>
 
-                        <!-- Phần SVG ở bên phải -->
+                        <!-- SVG section on the right -->
                         <span class="flex justify-end">
                             <svg xmlns="http://www.w3.org/2000/svg" width="150" height="100" viewBox="0 0 68 43" fill="none">
                                 <path d="M5.6662 49.1262C24.8768 47.2964 43.036 47.2156 44.7625 49.1262C46.4891 51.0369 42.0583 51.9479 42.1346 53.0425C42.2109 54.137 45.5533 55.3676 43.331 55.8462C41.1099 56.3248 33.0073 54.3423 30.8371 54.7517C28.6668 55.1623 14.4871 56.7508 10.205 55.5729C8.44163 55.0878 9.25659 52.6062 5.02796 52.1866C0.68491 51.7554 4.20538 49.2661 5.6662 49.1262Z" fill="#F0F2F7"/>

@@ -12,9 +12,11 @@ class PortfolioController extends BaseController
 {
     public function show()
     {
-        $portfolio = Portfolio::where('trainee_id', Auth::guard('sanctum')?->id())->first();
+        $portfolio = Portfolio::where('trainee_id', Auth::guard('sanctum')?->id())->latest()->first();
         if($portfolio) {
             $data['existed'] = true;
+            $portfolioData = $portfolio->data;
+            $portfolio->data = $this->normalizePortfolioData($portfolioData);
             $data['data'] = $portfolio;
             return $this->sendResponse($data, 'Success');
         }else {
@@ -23,15 +25,15 @@ class PortfolioController extends BaseController
                 abort(403, 'Unauthorized access');
             }
 
-            // 1. Lấy thông tin trainee
+            // 1. Get trainee information
             $traineeInformations = $current_user;
             $traineeTrainingInformations = TraineeTrainingHistory::where('trainee_id', $current_user->id)->first();
 
-            // Khởi tạo mảng giá trị mặc định
+            // Initialize the default value arrays
             $tvecEducations = [];
             $nvqEducations = [];
 
-            // Xử lý TVEC educations
+            // Handle TVEC educations
             if ($traineeTrainingInformations && !empty($traineeTrainingInformations->content)) {
                 try {
                     $trainingContent = json_decode($traineeTrainingInformations->content);
@@ -53,7 +55,7 @@ class PortfolioController extends BaseController
                 }
             }
 
-            // Xử lý NVQ educations
+            // Handle NVQ educations
             if ($traineeTrainingInformations && !empty($traineeTrainingInformations->nvq_content)) {
                 try {
                     $nvqContent = json_decode($traineeTrainingInformations->nvq_content);
@@ -95,6 +97,8 @@ class PortfolioController extends BaseController
                 'languages' => [],
                 'evidences' => []
             ];
+
+            $portfolioData = $this->normalizePortfolioData($portfolioData);
         }
         $data['existed'] = false;
         $data['data'] = $portfolioData;
@@ -115,27 +119,31 @@ class PortfolioController extends BaseController
             'ojt_experiences' => 'nullable|array',
             'experiences' => 'nullable|array',
             'skills' => 'nullable|array',
+            'technical_skills' => 'nullable|array',
             'languages' => 'nullable|array',
             'evidences' => 'nullable|array',
             'avatar' => 'nullable',
             'cover_photo' => 'nullable',
+            'has_work_experience' => 'nullable',
+            'goal_type' => 'nullable|string',
+            'short_term_goals' => 'nullable|string',
+            'long_term_goals' => 'nullable|string',
+            'career_interests' => 'nullable|array',
+            'references' => 'nullable|array',
         ]);
-        if ($portfolio = Portfolio::where('trainee_id', auth()->guard('sanctum')->id())->first()) {
-            $portfolio->data = $validated;
-            $portfolio->save();
-        }else {
-            $portfolio = Portfolio::create([
-                'trainee_id' => Auth::guard('sanctum')->id(),
-                'data' => $validated
-            ]);
-        }
+        $portfolio = Portfolio::updateOrCreate(
+            ['trainee_id' => Auth::guard('sanctum')->id() ?? auth()->guard('sanctum')->id()],
+            ['data' => $validated]
+        );
 
         return response()->json($portfolio, 201);
     }
 
     public function update(Request $request, Portfolio $portfolio)
     {
-        $this->authorize('update', $portfolio);
+        if ($portfolio->trainee_id !== auth('sanctum')->id()) {
+            abort(403);
+        }
 
         $validated = $request->validate([
             'fullname' => 'sometimes|string|max:255',
@@ -149,10 +157,17 @@ class PortfolioController extends BaseController
             'ojt_experiences' => 'sometimes|array',
             'experiences' => 'sometimes|array',
             'skills' => 'sometimes|array',
+            'technical_skills' => 'sometimes|array',
             'languages' => 'sometimes|array',
             'evidences' => 'sometimes|array',
             'avatar' => 'nullable',
             'cover_photo' => 'nullable',
+            'has_work_experience' => 'nullable',
+            'goal_type' => 'nullable|string',
+            'short_term_goals' => 'nullable|string',
+            'long_term_goals' => 'nullable|string',
+            'career_interests' => 'nullable|array',
+            'references' => 'nullable|array',
         ]);
 
         $portfolio->update([
@@ -163,7 +178,7 @@ class PortfolioController extends BaseController
     }
 
     public function deletePortfolio(Request $request) {
-        $portfolio = Portfolio::where('id', $request->id)->first();
+        $portfolio = Portfolio::where('id', $request->id)->where('trainee_id', auth('sanctum')->id())->first();
         if($portfolio) {
             $portfolio->delete();
             $data = [];
@@ -175,9 +190,11 @@ class PortfolioController extends BaseController
     }
     public function create()
     {
-        // Kiểm tra portfolio đã tồn tại
-        if ($portfolio = Portfolio::where('trainee_id', Auth::guard('sanctum')->id())->first()) {
+        // Check whether the portfolio already exists
+        if ($portfolio = Portfolio::where('trainee_id', Auth::guard('sanctum')->id())->latest()->first()) {
             $data['existed'] = true;
+            $portfolioData = $portfolio->data;
+            $portfolio->data = $this->normalizePortfolioData($portfolioData);
             $data['data'] = $portfolio;
             return $this->sendResponse($data, 'Success');
         }
@@ -187,15 +204,15 @@ class PortfolioController extends BaseController
             abort(403, 'Unauthorized access');
         }
 
-        // 1. Lấy thông tin trainee
+        // 1. Get trainee information
         $traineeInformations = $current_user;
         $traineeTrainingInformations = TraineeTrainingHistory::where('trainee_id', $current_user->id)->first();
 
-        // Khởi tạo mảng giá trị mặc định
+        // Initialize the default value arrays
         $tvecEducations = [];
         $nvqEducations = [];
 
-        // Xử lý TVEC educations
+        // Handle TVEC educations
         if ($traineeTrainingInformations && !empty($traineeTrainingInformations->content)) {
             try {
                 $trainingContent = json_decode($traineeTrainingInformations->content);
@@ -217,7 +234,7 @@ class PortfolioController extends BaseController
             }
         }
 
-        // Xử lý NVQ educations
+        // Handle NVQ educations
         if ($traineeTrainingInformations && !empty($traineeTrainingInformations->nvq_content)) {
             try {
                 $nvqContent = json_decode($traineeTrainingInformations->nvq_content);
@@ -260,17 +277,62 @@ class PortfolioController extends BaseController
             'evidences' => []
         ];
 
+        $portfolioData = $this->normalizePortfolioData($portfolioData);
+
         $data['existed'] = false;
         $data['data'] = $portfolioData;
         return $this->sendResponse($data, 'Success');
     }
     public function edit()
     {
-        // Kiểm tra portfolio đã tồn tại
-        if ($portfolio = Portfolio::where('trainee_id', Auth::guard('sanctum')->id())->first()) {
-
+        // Check whether the portfolio already exists
+        if ($portfolio = Portfolio::where('trainee_id', Auth::guard('sanctum')->id())->latest()->first()) {
+            $portfolioData = $portfolio->data;
+            $portfolio->data = $this->normalizePortfolioData($portfolioData);
             $data['data'] = $portfolio;
             return $this->sendResponse($data, 'Success');
         }
+        return $this->sendError('Portfolio not found', [], 404);
+    }
+
+    private function normalizePortfolioData($portfolioData)
+    {
+        if (!is_array($portfolioData)) {
+            $portfolioData = [];
+        }
+
+        // Migrate old format 'skills' to 'technical_skills'
+        if (!isset($portfolioData['technical_skills']) && isset($portfolioData['skills'])) {
+            $portfolioData['technical_skills'] = $portfolioData['skills'];
+        }
+
+        // Default structures for new wizard fields
+        $portfolioData['technical_skills'] = $portfolioData['technical_skills'] ?? [];
+        $portfolioData['skills'] = $portfolioData['skills'] ?? ($portfolioData['technical_skills'] ?? []);
+        $portfolioData['has_work_experience'] = $portfolioData['has_work_experience'] ?? null;
+        $portfolioData['goal_type'] = $portfolioData['goal_type'] ?? '';
+        $portfolioData['short_term_goals'] = $portfolioData['short_term_goals'] ?? '';
+        $portfolioData['long_term_goals'] = $portfolioData['long_term_goals'] ?? '';
+        
+        $portfolioData['career_interests'] = $portfolioData['career_interests'] ?? [
+            'work_type' => '',
+            'work_mode' => '',
+            'career_fields' => []
+        ];
+        // Ensure career_interests sub-keys
+        if (is_array($portfolioData['career_interests'])) {
+            $portfolioData['career_interests']['work_type'] = $portfolioData['career_interests']['work_type'] ?? '';
+            $portfolioData['career_interests']['work_mode'] = $portfolioData['career_interests']['work_mode'] ?? '';
+            $portfolioData['career_interests']['career_fields'] = $portfolioData['career_interests']['career_fields'] ?? [];
+        }
+
+        $portfolioData['ojt_experiences'] = $portfolioData['ojt_experiences'] ?? [];
+        $portfolioData['experiences'] = $portfolioData['experiences'] ?? [];
+        $portfolioData['educations'] = $portfolioData['educations'] ?? [];
+        $portfolioData['languages'] = $portfolioData['languages'] ?? [];
+        $portfolioData['evidences'] = $portfolioData['evidences'] ?? [];
+        $portfolioData['references'] = $portfolioData['references'] ?? [];
+
+        return $portfolioData;
     }
 }

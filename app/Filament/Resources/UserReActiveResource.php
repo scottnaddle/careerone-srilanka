@@ -8,6 +8,7 @@ use App\Models\AdminUser;
 use App\Models\CgoUser;
 use App\Models\CompanyRecruiter;
 use App\Models\ReactiveAccountRequest;
+use App\Models\SchoolKid;
 use App\Models\TraineeUser;
 use App\Models\UserReActive;
 use Filament\Forms;
@@ -58,6 +59,8 @@ class UserReActiveResource extends Resource
                                 return CgoUser::find($record->user_id)->email ?? '';
                             case 'trainee':
                                 return TraineeUser::find($record->user_id)->email ?? '';
+                            case 'schoolkid':
+                                return SchoolKid::find($record->user_id)->email ?? '';
                             case 'company':
                                 return CompanyRecruiter::find($record->user_id)->email ?? '';
                             default:
@@ -90,6 +93,8 @@ class UserReActiveResource extends Resource
                                 return CgoUser::find($record->user_id)->fullName ?? '';
                             case 'trainee':
                                 return TraineeUser::find($record->user_id)->fullName ?? '';
+                            case 'schoolkid':
+                                return SchoolKid::find($record->user_id)->fullName ?? '';
                             case 'company':
                                 return CompanyRecruiter::find($record->user_id)->fullName ?? '';
                             default:
@@ -123,8 +128,7 @@ class UserReActiveResource extends Resource
                         'cgo' => route('filament.admin.resources.c-g-o-s.view', ['record' => $record->user_id]),
                         default => '',
                     })
-                    ->color('primary')
-                    ->openUrlInNewTab(),
+                    ->color('primary'),
             ])
 
             ->filters([

@@ -9,6 +9,7 @@ use App\Models\CgoUser;
 use App\Models\CompanyRecruiter;
 use App\Models\Content;
 use App\Models\JobInformation;
+use App\Models\SchoolKid;
 use App\Models\Sector;
 use App\Models\TraineeUser;
 use App\Services\ContentViewLoggerService;
@@ -87,13 +88,13 @@ class CareerGuidanceController extends Controller
         $keyword = $request->has('search') ? $request->search : '';
         $categoryId = base64_decode($categoryId);
 
-        // Lấy thông tin category
+        // Get category information
         $category = CareerGuidanceCategory::where('id', $categoryId)->firstOrFail();
 
-        // Lấy danh sách content đã được approved
+        // Get the list of approved content
         $contentsQuery = $category->contentApproved()->latest();
 
-        // Lọc theo keyword nếu có
+        // Filter by keyword if provided
         if (!empty($keyword)) {
             $contentsQuery->where(function ($query) use ($keyword) {
                 $query->where('title', 'LIKE', "%$keyword%")
@@ -101,8 +102,8 @@ class CareerGuidanceController extends Controller
             });
         }
 
-        // Lấy dữ liệu
-        $contents = $contentsQuery->paginate(9); // hoặc ->get() nếu không muốn phân trang
+        // Get the data
+        $contents = $contentsQuery->paginate(9); // or ->get() if pagination is not needed
 
         return view('career-guidance.job-career-information.content-list', compact('contents', 'category', 'keyword'));
     }
@@ -181,6 +182,9 @@ class CareerGuidanceController extends Controller
                 break;
             case 'trainee':
                 $user = TraineeUser::where(['id' => $id])->first();
+                break;
+            case 'schoolkid':
+                $user = SchoolKid::where(['id' => $id])->first();
                 break;
         }
         return $user;

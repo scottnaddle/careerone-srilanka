@@ -32,7 +32,7 @@ class JobInformationSeeder extends Seeder
             $title = $faker->jobTitle;
             JobInformation::create([
                 'title' => $title,
-                'slug' => Str::slug($title),
+                'slug' => Str::slug($title, '-', 'ta'),
                 'sector_id' => $faker->randomElement(Sector::pluck('id')->toArray()),
                 'description' => $faker->paragraph(10),
                 'knowledge' => json_encode($knowledge),

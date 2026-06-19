@@ -101,7 +101,7 @@ class MyPageController extends Controller
 //            $user->disabled = 1;
         }
 
-        return redirect()->route('schoolkid.my-page.personal-information')->with('success', 'SAVED!');
+        return redirect()->route('schoolkid.my-page.personal-information')->with('success', __('system.form.saved'));
     }
 
     public function getMyInformation()

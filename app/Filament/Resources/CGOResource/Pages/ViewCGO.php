@@ -177,7 +177,14 @@ class ViewCGO extends ViewRecord
                 ->warning()
                 ->send();
         }
-        return redirect()->route('filament.admin.resources.user-re-actives.index');
+
+        return redirect(route('filament.admin.resources.user-re-actives.index', [
+            'tableFilters' => [
+                'approval' => [
+                    'value' => 'requested'
+                ]
+            ]
+        ]));
 
     }
 

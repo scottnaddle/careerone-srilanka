@@ -211,10 +211,10 @@
                     maximumSelectionLength: 0
                 });
 
-                // Lấy giá trị institute_id từ server
+                // Get the institute_id value from the server
                 let selectedInstituteId = {{$user->institute_id}};
 
-                // Thiết lập giá trị ngay lập tức, không cần setTimeout
+                // Set the value immediately, no setTimeout needed
                 if (selectedInstituteId) {
                     $('#institute').val(selectedInstituteId).trigger('change');
                 }

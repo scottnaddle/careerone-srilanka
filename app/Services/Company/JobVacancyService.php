@@ -41,9 +41,9 @@ class JobVacancyService
 		$data = $this->setupData($request);
 		$data['company_id'] = auth()->guard('company')->user()->company_id;
 		$data['status'] = 1;
-		$data['slug'] = Str::slug($request['title']);
+		$data['slug'] = Str::slug($request['title'], '-', 'ta');
 		$data['created_by'] = auth()->guard('company')->user()->id;
-		// Xử lý gender
+		// Handle gender
 		$data['gender'] = $request['gender'] ? json_encode($request['gender']) : json_encode([]);
 		$job_vacancy = $this->model->create($data);
 
@@ -174,7 +174,7 @@ class JobVacancyService
                     }
                 }
 
-                if ($job->is_matched && !$status) { // chỉ gán nếu chưa có status
+                if ($job->is_matched && !$status) { // only assign if there is no status yet
                     $matched = $this->traineeAppliesService->getTraineeMatchedByJobId($job_id);
 
                     if ($matched) {
@@ -218,7 +218,7 @@ class JobVacancyService
 
 		$data = $this->setupData($request);
 		$data['status'] = $request['status'] ?? 1;
-		// Xử lý gender
+		// Handle gender
 		$data['gender'] = $request['gender'] ? json_encode($request['gender']) : json_encode([]);
 		if ($job_vacancy) {
 			$job_vacancy->update($data);

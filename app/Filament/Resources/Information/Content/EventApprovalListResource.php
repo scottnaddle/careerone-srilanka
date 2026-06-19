@@ -5,6 +5,9 @@ namespace App\Filament\Resources\Information\Content;
 use App\Filament\Resources\Information\Content\EventApprovalListResource\Pages;
 use App\Filament\Resources\Information\Content\EventApprovalListResource\RelationManagers;
 use App\Models\Event;
+use App\Models\CgoUser;
+use App\Models\Institute;
+use App\Models\TvetType;
 use App\Models\Information\Content\EventApprovalList;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -21,9 +24,7 @@ use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Services\Admin\SearchComponentAdminService;
-
 use Filament\Forms\Components\Hidden;
-
 
 class EventApprovalListResource extends Resource
 {
@@ -31,6 +32,7 @@ class EventApprovalListResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     public static $countEvnet;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -38,18 +40,18 @@ class EventApprovalListResource extends Resource
                 \Filament\Forms\Components\Grid::make()
                     ->schema([
                         Forms\Components\Select::make('event_type')
-                        ->label('Event Type')
-                        ->relationship('categoryModule', 'name')
-                        ->searchable()
-                        ->preload()
-                        ->required()
-                        ->columnSpan('w-1/2'),
+                            ->label('Event Type')
+                            ->relationship('categoryModule', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->columnSpan('w-1/2'),
                         TextInput::make('title')
                             ->label('Title')
                             ->columnSpan('w-2/3')
                             ->required()
                             ->afterStateUpdated(function (callable $set, $state) {
-                                $slug = Str::slug($state);
+                                $slug = Str::slug($state, '-', 'ta');
                                 $set('slug', $slug);
                             }),
                     ])
@@ -68,13 +70,13 @@ class EventApprovalListResource extends Resource
                     ])
                     ->columnSpan('full'),
 
-                // Các ô khác
+                // Other fields
                 Forms\Components\Hidden::make('sort')
-                ->label('Sort')
-                ->default(function () {
-                    $currentSortValue = Event::max('sort');
-                    return ($currentSortValue ?? 0) + 1;
-                }),
+                    ->label('Sort')
+                    ->default(function () {
+                        $currentSortValue = Event::max('sort');
+                        return ($currentSortValue ?? 0) + 1;
+                    }),
                 Hidden::make('system')
                     ->default('admin')
                     ->columnSpan('full'),
@@ -107,28 +109,155 @@ class EventApprovalListResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $user = auth('admin')->user();
+        $isSuperAdmin = $user->hasRole('super_admin');
+        $userTvetType = $user->tvet_type;
+
+        // Build the base query
+        $query = Event::query();
+
+        // Apply the role-based filter for regular admins
+        if (!$isSuperAdmin) {
+            if ($userTvetType) {
+                // Get all institutes belonging to the user's tvet_type
+                $instituteIds = Institute::where('institute_head_office', $userTvetType)
+                    ->pluck('id')
+                    ->toArray();
+
+                // Only show events whose created_by is a CGO user belonging to those institutes
+                // and whose system is 'cgo' (since only CGO events need approval)
+                $query->where('system', 'cgo')
+                    ->whereHas('cgoUsers', function ($q) use ($instituteIds) {
+                        $q->whereIn('institute_id', $instituteIds);
+                    });
+            } else {
+                // If the user has no tvet_type, show nothing
+                $query->whereRaw('1 = 0');
+            }
+        }
+
+        // Apply the search from SearchComponentAdminService
         $searchService = new SearchComponentAdminService(
             new \App\Models\Company(),
             new \App\Models\District(),
             new \App\Models\Sector()
         );
+
         $customQuery = $searchService->searchEvent([
             'search' => request()->query('search', null),
             'type' => request()->query('type', null),
             'member' => request()->query('member', null),
             'search_time' => request()->query('search-time', null),
-        ]);
+        ], $query);
         self::$countEvnet = $customQuery->count();
+        // Build the filters
+        $filters = [];
+
+        if ($isSuperAdmin) {
+            // Filter for super_admin: can choose TVET and Institute
+            $filters[] = Tables\Filters\Filter::make('tvet_type_filter')
+                ->form([
+                    Forms\Components\Select::make('tvet_type')
+                        ->label('Head Office')
+                        ->options(TvetType::all()->pluck('head_office_name', 'head_office_code'))
+                        ->preload()
+                        ->searchable()
+                        ->reactive()
+                        ->afterStateUpdated(function ($state, callable $set) {
+                            $set('institute_select', null);
+                        }),
+
+                    Forms\Components\Select::make('institute_select')
+                        ->label('Institute')
+                        ->options(function ($get) {
+                            $tvetCode = $get('tvet_type');
+                            if ($tvetCode) {
+                                return Institute::where('institute_head_office', $tvetCode)
+                                    ->orderBy('name', 'asc')
+                                    ->pluck('name', 'id');
+                            }
+                            return [];
+                        })
+                        ->preload()
+                        ->searchable()
+                        ->visible(function ($get) {
+                            return !empty($get('tvet_type'));
+                        }),
+                ])
+                ->query(function (Builder $query, array $data) {
+                    if (!empty($data['tvet_type'])) {
+                        $instituteIds = Institute::where('institute_head_office', $data['tvet_type'])
+                            ->pluck('id')
+                            ->toArray();
+                        $query->whereHas('cgoUsers', function ($q) use ($instituteIds) {
+                            $q->whereIn('institute_id', $instituteIds);
+                        });
+                    }
+                    if (!empty($data['institute_select'])) {
+                        $query->whereHas('cgoUsers', function ($q) use ($data) {
+                            $q->where('institute_id', $data['institute_select']);
+                        });
+                    }
+                });
+        } else {
+            // Filter for regular admin: only show institutes belonging to their tvet_type
+            if ($userTvetType) {
+                $instituteOptions = Institute::where('institute_head_office', $userTvetType)
+                    ->orderBy('name', 'asc')
+                    ->pluck('name', 'id')
+                    ->toArray();
+
+                $filters[] = Tables\Filters\Filter::make('institute_filter')
+                    ->form([
+                        Forms\Components\Select::make('institute_select')
+                            ->label('Institute')
+                            ->options($instituteOptions)
+                            ->preload()
+                            ->searchable()
+                            ->placeholder('All Institutes'),
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        if (!empty($data['institute_select'])) {
+                            $query->whereHas('cgoUsers', function ($q) use ($data) {
+                                $q->where('institute_id', $data['institute_select']);
+                            });
+                        }
+                    });
+            }
+        }
+
+        // Add the basic filters
+        $filters[] = Tables\Filters\SelectFilter::make('event_type')
+            ->label('Event Type')
+            ->options(function () {
+                $eventTypes = getCodeList('event_type', 'en');
+                $option = [];
+                foreach ($eventTypes as $type) {
+                    $option[$type->code_id] = $type->code_name;
+                }
+                return $option;
+            })
+            ->placeholder('All Event Types')
+            ->column('event_type');
+
+        $filters[] = Tables\Filters\SelectFilter::make('system')
+            ->label('Select member')
+            ->options([
+                'cgo' => 'CGO',
+                'company' => 'Company',
+                'admin' => 'Admin'
+            ])
+            ->placeholder('All Member')
+            ->column('system');
+
         return $table
-        ->paginated([10, 25, 50, 100])
-            ->query(
-                $customQuery
-            )
+            ->paginated([10, 25, 50, 100])
+            ->query($customQuery)
             ->columns([
                 Tables\Columns\TextColumn::make('index')
-                ->label(__('admin/dashboard.content.no'))
-                ->rowIndex()
-                ->alignCenter(),
+                    ->label(__('admin/dashboard.content.no'))
+                    ->rowIndex()
+                    ->alignCenter(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->sortable()
@@ -141,7 +270,7 @@ class EventApprovalListResource extends Resource
                 Tables\Columns\TextColumn::make('full_name')
                     ->label('Author'),
                 Tables\Columns\TextColumn::make('event_type')
-                ->label(__('admin/dashboard.event.event_type'))
+                    ->label(__('admin/dashboard.event.event_type'))
                     ->html()
                     ->formatStateUsing(function ($record) {
                         return getCodeNameByCodeId('event_type', $record->event_type);
@@ -158,44 +287,23 @@ class EventApprovalListResource extends Resource
                     })
                     ->label(__('admin/dashboard.event.member')),
                 Tables\Columns\TextColumn::make('approval')
-                ->label(__('admin/dashboard.event.status'))
-                ->getStateUsing(fn($record) => $record->status == \App\Enums\StatusEnumsManagement::APPROVED->value ?
-                __('admin/status.approved') :
-                ($record->status == \App\Enums\StatusEnumsManagement::NON_APPROVAL->value ?
-                __('admin/status.non_approval') : __('admin/status.pending_approval')))
-                ->formatStateUsing(function ($state) {
-                    if ($state === 'Approval') {
-                        return "<span style='font-size:12px;color: #4984F6; background-color: #F2F9FF; padding: 0.2rem 0.4rem; border-radius: 0.25rem;font-weight:600;'>$state</span>";
-                    }
-                    return "<span style='font-size:12px;color: #5a5252; background-color: #d3d3d3; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-weight:600;'>$state</span>";
-                })
-                ->html(),
-            ])->searchPlaceholder('Title')
-            ->filters([
-                Tables\Filters\SelectFilter::make('event_type')
-                    ->label('Event Type')
-                    ->options(function () {
-                        $eventTypes = getCodeList('event_type', 'en');
-                        $option = [];
-                        foreach ($eventTypes as $type) {
-                            $option[$type->code_id] = $type->code_name;
+                    ->label(__('admin/dashboard.event.status'))
+                    ->getStateUsing(fn($record) => $record->status == \App\Enums\StatusEnumsManagement::APPROVED->value ?
+                        __('admin/status.approved') :
+                        ($record->status == \App\Enums\StatusEnumsManagement::NON_APPROVAL->value ?
+                            __('admin/status.non_approval') : __('admin/status.pending_approval')))
+                    ->formatStateUsing(function ($state) {
+                        if ($state === 'Approval') {
+                            return "<span style='font-size:12px;color: #4984F6; background-color: #F2F9FF; padding: 0.2rem 0.4rem; border-radius: 0.25rem;font-weight:600;'>$state</span>";
                         }
-                        return $option;
+                        return "<span style='font-size:12px;color: #5a5252; background-color: #d3d3d3; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-weight:600;'>$state</span>";
                     })
-                    ->placeholder('All Event Types')
-                    ->column('event_type'),
-                Tables\Filters\SelectFilter::make('system')
-                    ->label('Select member')
-                    ->options([
-                        'cgo' => 'CGO',
-                        'company' => 'Company',
-                        'admin' => 'Admin'
-                    ])
-                    ->placeholder('All Member')
-                    ->column('system'),
+                    ->html(),
             ])
+            ->searchPlaceholder('Title')
+            ->filters($filters)
             ->actions([
-                //  Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
                 // Tables\Actions\ViewAction::make(),
             ])
             ->defaultSort('updated_at', 'desc')
@@ -204,8 +312,7 @@ class EventApprovalListResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])
-        ;
+            ]);
     }
 
     public static function getRelations(): array
@@ -214,6 +321,7 @@ class EventApprovalListResource extends Resource
             //
         ];
     }
+
     public static function getPages(): array
     {
         return [

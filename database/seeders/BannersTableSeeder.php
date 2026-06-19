@@ -19,7 +19,7 @@ class BannersTableSeeder extends Seeder
             DB::table('banner_categories')->insert([
                 'id' => (string) new Ulid(),
                 'name' => $name,
-                'slug' => Str::slug($name),
+                'slug' => Str::slug($name, '-', 'ta'),
                 'description' => $faker->text(200),
                 'is_active' => $faker->boolean(70),
                 'created_at' => $faker->dateTimeThisYear(),

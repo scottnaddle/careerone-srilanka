@@ -9,7 +9,7 @@
                 wire:target="searchUser"
                 wire:loading.attr="disabled"
             >
-                {{-- Dùng d-loading của Filament để gọn code --}}
+                {{-- Use Filament's d-loading to keep the code concise --}}
                 <span wire:loading.remove wire:target="searchUser">
                     {{ __('emergency.search_btn') }}
                 </span>
@@ -27,7 +27,7 @@
 
     <hr class="my-1 border-gray-200 dark:border-gray-800">
 
-    {{-- Hiển thị Mật khẩu mới sau khi Reset thành công --}}
+    {{-- Show the new password after a successful reset --}}
     @if($newlyGeneratedPassword)
         <div class="mb-6 p-4 bg-success-50 border border-success-200 rounded-xl dark:bg-success-900/20 dark:border-success-800 shadow-sm">
             <div class="flex items-center gap-3 text-success-700 dark:text-success-400">
@@ -44,7 +44,7 @@
         </div>
     @endif
 
-    {{-- Hiển thị thông tin User được tìm thấy --}}
+    {{-- Show the found user's information --}}
     @if($foundUser)
         <div class="p-6 border rounded-xl bg-white dark:bg-gray-900 shadow-sm border-gray-200 dark:border-gray-800">
             <h3 class="text-lg font-bold mb-4 border-b pb-2 text-gray-800 dark:text-gray-200 flex items-center gap-2">
@@ -86,17 +86,17 @@
         </div>
     @endif
 
-    {{-- Cần thiết để hiển thị Modal của Action --}}
+    {{-- Required to display the Action's modal --}}
     <x-filament-actions::modals />
 
     {{-- HIDE THE GLOBAL LOADING BAR ONLY FOR THIS PAGE --}}
     <style>
-        /* Chỉ ẩn thanh progress bar toàn cục trên trang emergency */
+        /* Only hide the global progress bar on the emergency page */
         .livewire-progress-bar {
             display: none !important;
         }
 
-        /* Optional: Ẩn loading indicator của Filament Action nếu muốn chỉ dùng loading của nút */
+        /* Optional: Hide the Filament Action loading indicator if you only want the button's loading state */
         .filament-actions-action-button[wire\:loading] {
             pointer-events: none;
             opacity: 0.7;

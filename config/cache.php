@@ -81,12 +81,12 @@ return [
 //        ],
         'redis' => [
             'driver' => 'redis',
-            'connection' => 'default', // Ghi vào master
+            'connection' => 'default', // Write to master
         ],
 
         'replica' => [
             'driver' => 'redis',
-            'connection' => 'replica', // Đọc từ replica
+            'connection' => 'replica', // Read from replica
         ],
 
         'dynamodb' => [

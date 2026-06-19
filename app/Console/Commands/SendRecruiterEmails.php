@@ -19,7 +19,7 @@ class SendRecruiterEmails extends Command
 
     protected $description = 'Send account creation emails to recruiters with their passwords';
 
-    // Mảng user đầy đủ
+    // Full user array
     private $staffList = [
         ['first_name' => 'Mr.H.A', 'last_name' => 'Ravindra', 'email' => 'haravindra2637@gmail.com', 'password' => 'Welcome_haravindra2637', 'phone' => '0714553768', 'district' => 'Colombo'],
         ['first_name' => 'Mr.G.G.N', 'last_name' => 'Pushpakumara', 'email' => 'ggnpkumara@gmail.com', 'password' => 'Welcome_ggnpkumara', 'phone' => '0714553800', 'district' => 'Colombo'],
@@ -44,7 +44,7 @@ class SendRecruiterEmails extends Command
 
     public function handle()
     {
-        // Lấy company NAITA
+        // Get the NAITA company
         $company = Company::where('name', 'Organization_NAITA')->first();
 
         if (!$company) {
@@ -54,7 +54,7 @@ class SendRecruiterEmails extends Command
         }
 
         if ($this->option('email')) {
-            // Gửi cho 1 email cụ thể
+            // Send to one specific email
             $userData = $this->findUserByEmail($this->option('email'));
             if (!$userData) {
                 $this->error("User not found in staff list: {$this->option('email')}");
@@ -70,7 +70,7 @@ class SendRecruiterEmails extends Command
             $this->sendEmail($recruiter, $userData['password']);
 
         } elseif ($this->option('all')) {
-            // Gửi cho tất cả
+            // Send to all
             $successCount = 0;
             $failCount = 0;
 
@@ -89,8 +89,8 @@ class SendRecruiterEmails extends Command
                     $failCount++;
                 }
 
-                // Delay để tránh rate limit
-                usleep(500000); // 0.5 giây
+                // Delay to avoid rate limiting
+                usleep(500000); // 0.5 seconds
             }
 
             $this->newLine();

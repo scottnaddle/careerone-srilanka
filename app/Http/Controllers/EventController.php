@@ -31,10 +31,10 @@ class EventController extends Controller
             return redirect('/public-event');
         }
         $today = Carbon::today()->toDateString();
-        // Kiểm tra xem người dùng đã đăng nhập chưa
+        // Check whether the user is signed in
         $isSignedIn = Auth::guard(activeGuard())->check();
         $status = $request->has('status') ? $request->status : 'all';
-        // Bắt đầu xây dựng truy vấn cho các sự kiện, sắp xếp theo created_at giảm dần
+        // Start building the events query, sorted by created_at descending
         $query = Event::query();
         if ($isSignedIn) {
             $user = Auth::guard(activeGuard())->user();
@@ -53,7 +53,7 @@ class EventController extends Controller
             $query->where('status', \App\Enums\StatusEnumsManagement::APPROVED->value);
         }
 
-        // Áp dụng bộ lọc theo tiêu đề nếu tham số 'title' có trong truy vấn và không rỗng
+        // Apply the title filter if the 'title' parameter is present in the query and not empty
         if ($request->has('title') && $request->query('title') !== '') {
             $query->where('title', 'ILIKE', '%' . $request->query('title') . '%');
         }
@@ -70,13 +70,13 @@ class EventController extends Controller
             $query->orderBy('created_at', 'desc');
         }
 
-        // Phân trang kết quả
+        // Paginate the results
         $events = $query->paginate(8);
 
-        // Thêm các tham số truy vấn vào các liên kết phân trang
+        // Append the query parameters to the pagination links
         $events->appends($request->all());
 
-        // Trả về view với dữ liệu sự kiện
+        // Return the view with the event data
         return view('informations.events.event')->with(['events' => $events, 'status' => $status]);
     }
     public function getListEventType()
@@ -97,12 +97,12 @@ class EventController extends Controller
     public function getPublicEvent(Request $request)
     {
 
-        // Bắt đầu xây dựng truy vấn cho các sự kiện, sắp xếp theo created_at giảm dần
+        // Start building the events query, sorted by created_at descending
         $query = Event::query();
 
         $query->where('status', \App\Enums\StatusEnumsManagement::APPROVED->value);
 
-        // Áp dụng bộ lọc theo tiêu đề nếu tham số 'title' có trong truy vấn và không rỗng
+        // Apply the title filter if the 'title' parameter is present in the query and not empty
         if ($request->has('title') && $request->query('title') !== '') {
             $query->where('title', 'ILIKE', '%' . $request->query('title') . '%');
         }
@@ -120,13 +120,13 @@ class EventController extends Controller
         }
 
 
-        // Phân trang kết quả
+        // Paginate the results
         $events = $query->paginate(8);
         $event_types = $this->getListEventType();
-        // Thêm các tham số truy vấn vào các liên kết phân trang
+        // Append the query parameters to the pagination links
         $events->appends($request->all());
 
-        // Trả về view với dữ liệu sự kiện
+        // Return the view with the event data
         return view('informations.events.public-event')->with(['event_types' => $event_types, 'events' => $events]);
     }
 
@@ -201,7 +201,7 @@ class EventController extends Controller
             if ($fileType === 'image') {
                 $filePath = saveImageAsWebp($attachment, $directory, $filename);
             } else {
-                $fileNameToStore = $filename . '.' . $extension;
+                $fileNameToStore = Str::uuid() . '.' . strtolower($extension);
                 $relativePath = $directory . '/' . $fileNameToStore;
                 $attachment->storeAs('public/' . $directory, $fileNameToStore);
                 $filePath = 'storage/' . $relativePath;
@@ -322,7 +322,7 @@ private function storeAttachment($attachment, $eventId)
 
     $filename = pathinfo($attachment->getClientOriginalName(), PATHINFO_FILENAME);
     $extension = $attachment->getClientOriginalExtension();
-    $fileNameToStore = $fileType === 'image' ? ($filename . '.webp') : ($filename . '.' . $extension);
+    $fileNameToStore = $fileType === 'image' ? (Str::uuid() . '.webp') : (Str::uuid() . '.' . strtolower($extension));
 
     $storagePath = storage_path('app/public/' . activeGuard() . '/events/attachment_details/' . $eventId);
     if (!file_exists($storagePath)) {

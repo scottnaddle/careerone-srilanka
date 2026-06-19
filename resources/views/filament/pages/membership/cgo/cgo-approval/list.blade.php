@@ -25,7 +25,7 @@
     </div> --}}
 {{--    <form method="get" action="{{ url()->current() }}">--}}
 {{--        <div class="flex gap-4">--}}
-{{--            <!-- Input lớn nhất -->--}}
+{{--            <!-- Largest input -->--}}
 {{--            <input type="text" name="search"--}}
 {{--                class="flex-grow px-4 py-2 border border-gray-300 rounded-lg text-[#91919A] font-medium"--}}
 {{--                value="{{request()->query('search')}}"--}}

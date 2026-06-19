@@ -40,7 +40,7 @@
     <script>
         $(document).ready(function () {
             $('input[type=radio]').on('change', function () {
-                const name = $(this).attr('name'); // ví dụ: "1-2"
+                const name = $(this).attr('name'); // e.g. "1-2"
                 const value = parseFloat($(this).val());
 
                 const $textarea = $(`textarea[name="reason-${name}"]`);

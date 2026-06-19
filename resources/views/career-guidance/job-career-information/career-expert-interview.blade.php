@@ -53,13 +53,13 @@
 {{--                    @forelse ($careerExpertInterviews as $item)--}}
 {{--                        <div class="flex flex-col gap-4 p-2 dark:border dark:border-white rounded-xl justify-center w-full shadow-custom-light dark:shadow-custom-dark">--}}
 {{--                            <div class="relative w-full h-56 rounded-t-xl">--}}
-{{--                                <!-- Layer để bắt click -->--}}
+{{--                                <!-- Layer to capture clicks -->--}}
 {{--                                <div--}}
 {{--                                    class="absolute inset-0 z-10 cursor-pointer"--}}
 {{--                                    onclick="handleVideoClick(this, 'career_expert_interview', '{{ $item->id }}')"--}}
 {{--                                ></div>--}}
 
-{{--                                <!-- iframe nằm dưới -->--}}
+{{--                                <!-- iframe underneath -->--}}
 {{--                                <iframe--}}
 {{--                                    class="w-full h-full rounded-t-xl iframe"--}}
 {{--                                    src="{{ getYoutubeEmbedUrl($item->video_url) }}?enablejsapi=1"--}}
@@ -87,12 +87,12 @@
                     @forelse ($careerExpertInterviews as $item)
                         <div class="flex flex-col gap-4 p-2 dark:border dark:border-white rounded-xl justify-center w-full shadow-custom-light dark:shadow-custom-dark">
                             <div class="relative w-full h-56 rounded-t-xl">
-                                <!-- Thêm lớp overlay để bắt sự kiện click -->
+                                <!-- Add an overlay layer to capture click events -->
                                 <div class="absolute inset-0 z-10 cursor-pointer youtube-overlay"
                                      data-content-type="career_expert_interview"
                                      data-content-id="{{ $item->id }}"></div>
 
-                                <!-- Iframe với ID duy nhất -->
+                                <!-- Iframe with a unique ID -->
                                 <iframe
                                     id="yt-iframe-{{ $item->id }}"
                                     class="w-full h-full rounded-t-xl youtube-iframe"
@@ -216,7 +216,7 @@
                 </div>
 
             </div>
-            {{--            //cái này gọi tailwind pagination trong vendor ra --}}
+            {{--            //this pulls the tailwind pagination out of the vendor folder --}}
            @if ($careerExpertInterviews->count() > 0)
             {{ $careerExpertInterviews->onEachSide(1)->links() }}
           @endif

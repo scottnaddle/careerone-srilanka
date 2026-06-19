@@ -42,7 +42,7 @@ class JobSeeder extends Seeder
                 'required_skills' => $faker->words(5, true),
                 'application_starttime' => $faker->dateTimeBetween('-1 month', '+1 month'),
                 'application_endtime' => $faker->dateTimeBetween('+1 month', '+2 months'),
-                'slug' => Str::slug($title),
+                'slug' => Str::slug($title, '-', 'ta'),
                 'hr_name' => $faker->name,
                 'hr_email' => $faker->email,
                 'hr_contact_info' => $faker->phoneNumber,

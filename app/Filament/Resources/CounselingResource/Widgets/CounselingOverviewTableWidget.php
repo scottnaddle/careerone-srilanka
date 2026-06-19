@@ -19,16 +19,16 @@ class CounselingOverviewTableWidget extends BaseWidget
         $this->counseligService = new CounselingService(new \App\Models\CgoCounseling());
     }
 
-    // --- SỬA LẠI ĐOẠN NÀY ---
+    // --- REVISED THIS SECTION ---
     public function rendering($view, $data)
     {
-        // 1. Lấy Records (Khi phân trang, biến này trả về instance của LengthAwarePaginator)
+        // 1. Get records (when paginated, this returns a LengthAwarePaginator instance)
         $records = $this->getTable()->getRecords();
 
-        // 2. Lấy số trang hiện tại từ Paginator
+        // 2. Get the current page number from the paginator
         $page = $records->currentPage();
 
-        // 3. Gửi số trang sang Chart
+        // 3. Send the page number to the chart
         $this->dispatch('update-chart-page', page: $page);
     }
     // ------------------------
@@ -55,8 +55,8 @@ class CounselingOverviewTableWidget extends BaseWidget
                 Action::make('counseling')->label(__('admin/dashboard.view_more'))->url(url('/admin/counselings'))
                     ->icon('heroicon-o-chevron-right')->iconPosition('after')->extraAttributes(['class' => 'view-more-button'])
             ])
-            // Lưu ý: Đảm bảo số lượng phân trang ở đây khớp với logic cắt dữ liệu bên Chart
-            // Nếu bên Chart bạn để $perPage = 5, thì ở đây nên là paginated([5])
+            // Note: make sure the pagination size here matches the data-slicing logic in the chart
+            // If the chart uses $perPage = 5, this should be paginated([5])
             ->defaultPaginationPageOption(5)
             ->paginated([5])
             ->striped();

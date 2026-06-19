@@ -49,7 +49,7 @@ class SchoolKid extends Authenticatable implements HasName
     {
         return $this->first_name . ' ' . $this->last_name;
     }
-    // sendSMSVerify - KHÔNG retry ở đây
+    // sendSMSVerify - do NOT retry here
     public function sendSMSVerify($token)
     {
         try {
@@ -79,14 +79,14 @@ class SchoolKid extends Authenticatable implements HasName
 
             $message = trans('auth.verification.verify_message', ['code' => $verificationCode->code], 'en');
 
-            // Gọi hàm sendMessagesMultiLang (đã có retry logic bên trong)
+            // Call sendMessagesMultiLang (it already has retry logic inside)
             $status = $sms_service->sendMessagesMultiLang(
                 $session,
                 'TVEC',
                 $message,
                 $this->mobile,
                 0  // messageType
-            // KHÔNG truyền maxRetries và retryDelay ở đây vì đã có default trong hàm
+            // Do NOT pass maxRetries and retryDelay here since the function already has defaults
             );
 
             \Log::info('SMS send response', [
@@ -95,10 +95,10 @@ class SchoolKid extends Authenticatable implements HasName
                 'mobile' => $this->mobile
             ]);
 
-            // Đóng session
+            // Close the session
             $sms_service->closeSession($session);
 
-            // Kiểm tra kết quả
+            // Check the result
             if ($status != 200) {
                 \Log::error('Failed to send verification SMS', [
                     'user_id' => $this->id,

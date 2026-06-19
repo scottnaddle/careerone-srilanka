@@ -14,6 +14,7 @@ use App\Models\OJTMatch;
 use App\Models\Portfolio;
 use App\Models\QNA;
 use App\Models\QNAAnswer;
+use App\Models\SchoolKid;
 use App\Models\TraineeApply;
 use App\Models\TraineeInstitute;
 use App\Models\TraineeMatch;
@@ -81,13 +82,13 @@ class MyPageController extends BaseController
     public function getPortfolio(Request $request)
     {
         $id = $request->pid;
-        $portfolio = Portfolio::where('id', $id)->first();
+        $portfolio = Portfolio::where('id', $id)->where('trainee_id', auth('sanctum')->id())->first();
 
         if ($portfolio) {
             // Define the API endpoint of the external server
             $externalServerUrl = env('EXTERNAL_SERVER_URL') . '/generate-pdf';
 
-            $fullNameSlug = \Str::slug(Auth::guard('sanctum')->user()->fullName);
+            $fullNameSlug = \Str::slug(Auth::guard('sanctum')->user()->fullName, '-', 'ta');
             $fileName = $fullNameSlug . '-portfolio.pdf';
 
             try {
@@ -125,21 +126,41 @@ class MyPageController extends BaseController
     public function editTraineeInformation(Request $request)
     {
         $user = Auth::guard('sanctum')->user();
-        $validator = \Validator::make($request->all(), [
-            'email' => 'required|max:100|email|unique:trainee_users,email,' . $user->id,
-//            'telephone' => 'required',
-            'mobile' => 'required',
-            'avatar' => 'image|max:1024'
-        ], [
-            'email.unique' => 'The email is existed.'
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'data' => null,
-                'message' => $validator->errors(),
-                'status' => true,
+        if ($user->getTable() === 'school_kids') {
+            $validator = \Validator::make($request->all(), [
+                'email' => 'required|max:100|email|unique:school_kids,email,' . $user->id,
+                //            'telephone' => 'required',
+                'mobile' => 'required',
+                'avatar' => 'image|max:1024'
+            ], [
+                'email.unique' => 'The email is existed.'
             ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'data' => null,
+                    'message' => $validator->errors(),
+                    'status' => true,
+                ]);
+            }
+        }else {
+            $validator = \Validator::make($request->all(), [
+                'email' => 'required|max:100|email|unique:trainee_users,email,' . $user->id,
+                //            'telephone' => 'required',
+                'mobile' => 'required',
+                'avatar' => 'image|max:1024'
+            ], [
+                'email.unique' => 'The email is existed.'
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'data' => null,
+                    'message' => $validator->errors(),
+                    'status' => true,
+                ]);
+            }
+
         }
 
         if (!$user) {
@@ -166,10 +187,11 @@ class MyPageController extends BaseController
             $user->email = $request->email;
             $user->save();
 
-//            $user->disabled = 1;
         }
         //Update on CAS
-        $this->traineeCasSyncService->updateUser($user);
+        if($user->getTable() !== 'school_kids') {
+            $this->traineeCasSyncService->updateUser($user);
+        }
 
         $data['data'] = $newUser;
 
@@ -182,12 +204,16 @@ class MyPageController extends BaseController
 
     public function deActiveAccount()
     {
-        $user = TraineeUser::where('id', Auth::guard('sanctum')->user()->id)->first();
+        $u = Auth::guard('sanctum')->user();
+        if ($u->getTable() === 'school_kids') {
+            $user = SchoolKid::where('id', $u->id)->first();
+        }else {
+            $user = TraineeUser::where('id', $u->id)->first();
+        }
+
         if ($user) {
             $user->active = false;
             $user->save();
-//            $user->disabled = 1;
-//            $this->traineeCasSyncService->updateUser($user); //No need to update on CAS
 
             if (isset(Auth::guard('trainee')->user()->id)) {
                 DeviceToken::where('user_id', Auth::guard('trainee')->user()->id)
@@ -202,35 +228,6 @@ class MyPageController extends BaseController
             }
             Auth::guard('sanctum')->user()->tokens()->delete();
         }
-//        if ($user) {
-//            TraineeInstitute::where('trainee_id', $user->id)->delete();
-//            TraineeNVQ::where('trainee_id', $user->id)->delete();
-//            TraineeSector::where('trainee_id', $user->id)->delete();
-//            TraineeRegCourse::where('trainee_id', $user->id)->delete();
-//            TraineeApply::where('trainee_id', $user->id)->delete();
-//            CareerTestTraineeResult::where('trainee_id', $user->id)->delete();
-//            JobBookmark::where('trainee_id', $user->id)->delete();
-//            CompanyBookmark::where('trainee_id', $user->id)->delete();
-//            KeepTrainee::where('trainee_id', $user->id)->delete();
-//            OJTMatch::where('trainee_id', $user->id)->delete();
-//            OjtBookmark::where('trainee_id', $user->id)->delete();
-//            Portfolio::where('trainee_id', $user->id)->delete();
-//            QNAAnswer::where('answer_by', $user->id)->where('system', 'trainee')->delete();
-//            QNA::where('created_by', $user->id)->where('system', 'trainee')->delete();
-//            TraineeMatch::where('trainee_id', $user->id)->delete();
-//            TraineeTrainingHistory::where('trainee_id', $user->id)->delete();
-//
-//            if (isset(Auth::guard('sanctum')->user()->id)) {
-//                DeviceToken::where('user_id', Auth::guard('sanctum')->user()->id)
-//                    ->where('system', 'trainee')
-//                    ->delete();
-//            }
-//            Auth::guard('sanctum')->user()->tokens()->delete();
-//
-//
-//            $user->delete();
-//        }
-
 
         return response()->json([
             'success' => true,

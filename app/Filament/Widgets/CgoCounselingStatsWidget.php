@@ -14,10 +14,10 @@ class CgoCounselingStatsWidget extends Widget
 
     protected int | string | array $columnSpan = 'full';
 
-    // Dữ liệu đầu vào từ Page (để Filament truyền vào)
+    // Input data from the Page (passed in by Filament)
     public ?array $data = [];
 
-    // Đã đổi $data thành $stats để chứa dữ liệu đầu ra, tránh ghi đè dữ liệu đầu vào
+    // Renamed $data to $stats to hold the output data, to avoid overwriting the input data
     public ?array $stats = [];
 
     public ?string $headOfficeFilter = null;
@@ -35,7 +35,7 @@ class CgoCounselingStatsWidget extends Widget
     }
 
     /**
-     * Static method kiểm tra quyền xem widget
+     * Static method to check permission to view the widget
      */
     public static function canView(): bool
     {
@@ -44,7 +44,7 @@ class CgoCounselingStatsWidget extends Widget
     }
 
     /**
-     * Dynamic Getter: Lấy user hiện tại
+     * Dynamic Getter: Get the current user
      */
     protected function getAuthUser()
     {
@@ -70,7 +70,7 @@ class CgoCounselingStatsWidget extends Widget
     }
 
     /**
-     * Khởi tạo head_office filter từ data được truyền vào
+     * Initialize the head_office filter from the passed-in data
      */
     protected function initializeHeadOfficeFilter(): void
     {
@@ -282,7 +282,7 @@ class CgoCounselingStatsWidget extends Widget
             $completedCounseling = (clone $query)->where('status', 3)->count();
             $cancelledCounseling = (clone $query)->where('status', 4)->count();
 
-            // LƯU VÀO $stats THAY VÌ $data
+            // SAVE TO $stats INSTEAD OF $data
             $this->stats = [
                 'total_counseling' => $totalCounseling,
                 'completed_counseling' => $completedCounseling,

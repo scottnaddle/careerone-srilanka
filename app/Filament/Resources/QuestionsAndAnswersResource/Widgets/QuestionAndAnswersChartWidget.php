@@ -29,15 +29,15 @@ class QuestionAndAnswersChartWidget extends ChartWidget
 
     protected function getData(): array
     {
-        // 1. Lấy toàn bộ dữ liệu (Sort DESC - Mới nhất lên đầu)
+        // 1. Get all data (sorted DESC - newest first)
         $allData = $this->getAllQNAsStats();
 
-        // 2. Cắt dữ liệu theo trang hiện tại (5 dòng mỗi trang)
-        // Trang 1: Lấy dòng 1-5 (5 ngày mới nhất)
-        // Trang 2: Lấy dòng 6-10 (5 ngày cũ hơn)
+        // 2. Slice the data by current page (5 rows per page)
+        // Page 1: rows 1-5 (5 most recent days)
+        // Page 2: rows 6-10 (5 older days)
         $chunkData = $allData->forPage($this->currentPage, 5);
 
-        // 3. Đảo ngược lại để hiển thị trên biểu đồ (Ngày cũ bên trái -> Ngày mới bên phải)
+        // 3. Reverse for display on the chart (older dates on the left -> newer dates on the right)
         $chartData = $chunkData->sortBy('date')->values();
 
         return [
@@ -72,8 +72,8 @@ class QuestionAndAnswersChartWidget extends ChartWidget
                 COUNT(*) as total_count
             ")
             ->groupBy(\DB::raw('DATE(created_at)'))
-            ->orderBy('date', 'DESC') // Bắt buộc Sort DESC để khớp thứ tự với Table
-            // KHÔNG CÓ LIMIT Ở ĐÂY
+            ->orderBy('date', 'DESC') // Must sort DESC to match the table order
+            // NO LIMIT HERE
             ->get();
     }
 
@@ -82,7 +82,7 @@ class QuestionAndAnswersChartWidget extends ChartWidget
         return 'bar';
     }
 
-    // ... getOptions giữ nguyên
+    // ... getOptions unchanged
     protected function getOptions(): ?array
     {
         return [

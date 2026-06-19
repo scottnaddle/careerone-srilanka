@@ -212,7 +212,7 @@
                     </table>
 
                 </div>
-                {{--            //cái này gọi tailwind pagination trong vendor ra --}}
+                {{--            // this renders the tailwind pagination from vendor --}}
                 {{ $ojts->onEachSide(1)->links() }}
 
             </div>

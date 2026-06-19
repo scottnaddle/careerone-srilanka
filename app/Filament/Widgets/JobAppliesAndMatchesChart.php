@@ -18,7 +18,7 @@ class JobAppliesAndMatchesChart extends ChartWidget
     }
     protected static ?int $sort = 2;
 
-    // Sử dụng chung 1 filter state mặc định
+    // Share a single default filter state
     public ?string $filter = 'this_month';
 
     protected ?string $startDate = null;
@@ -30,7 +30,7 @@ class JobAppliesAndMatchesChart extends ChartWidget
         return auth()->user()?->hasRole('naita_admin') ?? false;
     }
 
-    // Khởi tạo danh sách filter
+    // Initialize the filter list
     protected function getFilters(): ?array
     {
         $filters = [
@@ -51,7 +51,7 @@ class JobAppliesAndMatchesChart extends ChartWidget
         return $filters;
     }
 
-    // Logic xử lý khoảng thời gian (giống widget Jobs & OJTs)
+    // Time range handling logic (same as the Jobs & OJTs widget)
     protected function applyDateRange(string $filterValue): void
     {
         $now = Carbon::now();
@@ -112,34 +112,34 @@ class JobAppliesAndMatchesChart extends ChartWidget
 
         $naitaCompanyIds = Company::where('is_belongs_to_naita', true)->pluck('id');
 
-        // Base query chung
+        // Shared base query
         $baseQuery = TraineeApply::whereIn('job_id', function($q) use ($naitaCompanyIds) {
             $q->select('id')->from('jobs')->whereIn('company_id', $naitaCompanyIds);
         });
 
-        // Tách query cho Applies và Matches
+        // Split the queries for Applies and Matches
         $appliesQuery = (clone $baseQuery)->where('apply_type', 'apply');
         $matchesQuery = (clone $baseQuery)->where('apply_type', 'job_match');
 
-        // Áp dụng filter thời gian
+        // Apply the time filter
         if ($this->startDate && $this->endDate) {
             $appliesQuery->whereBetween('created_at', [$this->startDate, $this->endDate]);
             $matchesQuery->whereBetween('created_at', [$this->startDate, $this->endDate]);
         }
 
-        // Xử lý hiển thị theo ngày cho This Month / Last Month
+        // Handle day-by-day display for This Month / Last Month
         if ($filterValue === 'this_month' || $filterValue === 'last_month') {
             return $this->getDailyData($appliesQuery, $matchesQuery, Carbon::parse($this->startDate));
         }
 
-        // Giới hạn 12 tháng gần nhất cho All Time
+        // Limit to the most recent 12 months for All Time
         if ($filterValue === 'all_time') {
             $startLimit = now()->subMonths(11)->startOfMonth();
             $appliesQuery->where('created_at', '>=', $startLimit);
             $matchesQuery->where('created_at', '>=', $startLimit);
         }
 
-        // Group theo tháng (YYYY-MM)
+        // Group by month (YYYY-MM)
         $appliesData = $appliesQuery->select(
             DB::raw("TO_CHAR(created_at, 'YYYY-MM') as month"),
             DB::raw('COUNT(*) as total')
@@ -170,7 +170,7 @@ class JobAppliesAndMatchesChart extends ChartWidget
                 $matchesValues[] = $matchesData[$monthStr]->total ?? 0;
             }
         } else {
-            // Theo năm
+            // By year
             $targetYear = $this->selectedYear ?? now()->year;
             for ($month = 1; $month <= 12; $month++) {
                 $monthStr = sprintf('%04d-%02d', $targetYear, $month);
@@ -201,7 +201,7 @@ class JobAppliesAndMatchesChart extends ChartWidget
         ];
     }
 
-    // Hàm support gom dữ liệu theo Ngày
+    // Helper function to aggregate data by day
     protected function getDailyData($appliesQuery, $matchesQuery, Carbon $startMonth): array
     {
         $appliesDaily = $appliesQuery->select(

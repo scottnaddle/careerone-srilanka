@@ -1,6 +1,34 @@
 @extends('homepage.layouts.master')
 @section('title', 'CGO - Job support - OJT List - Trainee Match')
 
+@push('css')
+    <style>
+        .select2-container--default .select2-selection--single {
+            padding: 1.35rem .75rem 1.35rem 1.25rem !important;
+            background: #f8f8f8;
+            border-radius: 0.75rem;
+        }
+
+        .select2-container .select2-selection {
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            color: #706F81 !important;
+            border-color: #EDEDED !important;
+        }
+
+        .select2-selection__placeholder {
+            color: #706F81 !important;
+            font-weight: 600 !important;
+        }
+
+        /* Dark mode styles */
+        .dark .select2-selection__placeholder {
+            color: #ffffff !important;
+            font-weight: 600 !important;
+        }
+    </style>
+@endpush
+
 @section('content')
     <div class="mb-6 flex flex-col">
         {{--        <p class="text-2xl text-[#464559] dark:text-white font-semibold">{{ trans('cgo.job_support.ojt_list.trainee_match.root')}}</p> --}}
@@ -51,12 +79,13 @@
                 @else
                     <p></p>
                 @endif
-                {{--                <select id="trainee_type" name="trainee_type" --}}
-                {{--                    class="bg-[#F8F8F8] font-semibold border border-gray-300 text-[#706F81] text-sm rounded-xl focus:border-primary block p-2.5 dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"> --}}
-                {{--                    <option value="all" @selected(request()->get('trainee_type') == strtolower(trans('cgo.job_support.ojt_list.trainee_match.filter.all')))>{{ trans('cgo.job_support.ojt_list.trainee_match.filter.all') }}</option> --}}
-                {{--                    <option value="keep" @selected(request()->get('trainee_type') == strtolower(trans('cgo.job_support.ojt_list.trainee_match.filter.keep')))>{{ trans('cgo.job_support.ojt_list.trainee_match.filter.keep') }}</option> --}}
-                {{--                    <option value="unkeep" @selected(request()->get('trainee_type') == strtolower(trans('cgo.job_support.ojt_list.trainee_match.filter.unkeep')))>{{ trans('cgo.job_support.ojt_list.trainee_match.filter.unkeep') }}</option> --}}
-                {{--                </select> --}}
+                <select id="reg_course" name="reg_course" style="min-width: 280px;"
+                    class="bg-[#F8F8F8] font-semibold border border-gray-300 text-[#706F81] text-sm rounded-xl focus:border-primary block p-2.5 dark:bg-[#1E1E1E] dark:border-white dark:placeholder-white dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <option value="all" @selected(request()->get('reg_course') == 'all' || request()->get('reg_course') == '')>{{ __('general.All courses') }}</option>
+                    @foreach ($regCourses as $course)
+                        <option value="{{ $course->course_name }}" @selected(request()->get('reg_course') == $course->course_name)>{{ $course->course_name }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="flex flex-col divide-y divide-inherit dark:divide-white lg:divide-y-0">
                 @foreach ($trainees as $item)
@@ -112,7 +141,7 @@
 
             </div>
 
-            {{--            //cái này gọi tailwind pagination trong vendor ra --}}
+            {{--            // this renders the tailwind pagination from vendor --}}
             {{ $trainees->onEachSide(1)->links() }}
         </div>
     </div>
@@ -279,7 +308,26 @@
             }
             window.location.href = url.href;
         });
-        
+
+    </script>
+    <script src="{{ asset('js/select2.js') }}" type="module"></script>
+    <script>
+        $(document).ready(function() {
+            $('#reg_course').select2({
+                placeholder: "{{ __('general.All courses') }}",
+                width: '280px'
+            });
+            $('#reg_course').on('change', function() {
+                let regUrl = new URL(window.location.href);
+                if (regUrl.searchParams.has('reg_course')) {
+                    regUrl.searchParams.set('reg_course', this.value);
+                } else {
+                    regUrl.searchParams.append('reg_course', this.value);
+                }
+                regUrl.searchParams.delete('page');
+                window.location.href = regUrl.href;
+            });
+        });
     </script>
         <script>
             function handleCheckboxChange(checkbox) {

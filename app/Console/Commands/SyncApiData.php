@@ -28,8 +28,8 @@ class SyncApiData extends Command
     }
     public function handle()
     {
-        \Log::info('🔄 Starting synchronization from TVEC (API4)');
-         //Đồng bộ dữ liệu head_office
+        \Log::channel('sync_apidata')->info('🔄 Starting synchronization from TVEC (API4)');
+         //Sync head_office data
          $headOfficesData = $this->apiService->getApiDataHeadOffices();
          if ($headOfficesData) {
              if (is_array($headOfficesData)) {
@@ -64,7 +64,7 @@ class SyncApiData extends Command
          } else {
              $this->error('No data received from API or invalid response structure.');
          }
-        // Đồng bộ dữ liệu INSTITUTE
+        // Sync INSTITUTE data
         $instituteData = $this->apiService->getApiDataInstitute();
         if ($instituteData) {
             if (is_array($instituteData)) {
@@ -116,7 +116,7 @@ class SyncApiData extends Command
             $this->error('No data received from API or invalid response structure.');
         }
 
-        // Đồng bộ dữ liệu REG_COURSES
+        // Sync REG_COURSES data
         $regCoursesData = $this->apiService->getApiDataREGCOURSES();
         if ($regCoursesData) {
             if (is_array($regCoursesData)) {
@@ -147,7 +147,7 @@ class SyncApiData extends Command
         } else {
             $this->error('No RegCourses data received from API or invalid response structure.');
         }
-        // Đồng bộ dữ liệu NVQ_COURSES
+        // Sync NVQ_COURSES data
         $nvqCoursesData = $this->apiService->getApiDataNVQCOURSES();
         if ($nvqCoursesData) {
             if (is_array($nvqCoursesData)) {
@@ -174,7 +174,7 @@ class SyncApiData extends Command
             }
         }
 
-        // Đồng bộ dữ liệu NVQ
+        // Sync NVQ data
         $packagesData = $this->apiService->getApiDataPACKAGES();
         if ($packagesData) {
             if (is_array($packagesData)) {
@@ -202,7 +202,7 @@ class SyncApiData extends Command
             $this->error('No NVQ data received from API or invalid response structure.');
         }
 
-        // Đồng bộ dữ liệu PACKAGE
+        // Sync PACKAGE data
         $packagesData = $this->apiService->getApiDataPACKAGES();
         if ($packagesData) {
             if (is_array($packagesData)) {
@@ -230,6 +230,6 @@ class SyncApiData extends Command
             $this->error('No Packages data received from API or invalid response structure.');
         }
 
-        \Log::info('✅ Synchronization from TVEC (API4) completed.');
+        \Log::channel('sync_apidata')->info('✅ Synchronization from TVEC (API4) completed.');
     }
 }

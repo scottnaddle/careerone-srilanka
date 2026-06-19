@@ -20,5 +20,9 @@
         'Issue Date' => 'Issue Date',
         'Valid until' => 'Valid until',
 
-    ]
+            'Career Goals' => 'Career Goals',
+        'Short-term Goals' => 'Short-term Goals',
+        'Long-term Goals' => 'Long-term Goals',
+        'Career Fields of Interest' => 'Career Fields of Interest',
+]
 ?>

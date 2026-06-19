@@ -12,7 +12,7 @@ class CreateCareerExpertInterview extends CreateRecord
     protected static bool $canCreateAnother = false;
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['slug'] = \Str::slug($data['title']);
+        $data['slug'] = \Str::slug($data['title'], '-', 'ta');
 //        $data['thumbnail'] = 'storage/' . $data['thumbnail'];
         $data['created_by'] = \Auth::guard('admin')->user()->id;
 

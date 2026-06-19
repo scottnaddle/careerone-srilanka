@@ -11,7 +11,10 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Illuminate\Http\Request;
 use App\Models\TraineeInstitute;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-class TraineeListExportCgo implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize
+use Maatwebsite\Excel\Concerns\WithStyles;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+
+class TraineeListExportCgo implements FromCollection, WithHeadings, WithMapping, WithStyles, ShouldAutoSize
 {
     protected $request;
 
@@ -32,7 +35,7 @@ class TraineeListExportCgo implements FromCollection, WithHeadings, WithMapping,
             });
         }
 
-        // Tìm kiếm dựa trên các trường username, first_name, và last_name
+        // Search across the username, first_name, and last_name fields
         if ($request->has('search') && $request->query('search') != '') {
             $searchTerm = '%' . $request->query('search') . '%';
             $query->where(function ($query) use ($searchTerm) {
@@ -52,7 +55,7 @@ class TraineeListExportCgo implements FromCollection, WithHeadings, WithMapping,
             });
         }
 
-        // Lọc theo loại trainee
+        // Filter by trainee type
         if ($request->has('trainee_type') && $request->query('trainee_type') != 'all') {
             $traineeType = $request->query('trainee_type');
             if ($traineeType == 'keep') {
@@ -64,7 +67,7 @@ class TraineeListExportCgo implements FromCollection, WithHeadings, WithMapping,
             }
         }
 
-        // Sắp xếp theo first_name
+        // Sort by first_name
         return $query->orderBy('full_name', 'asc');
     }
 
@@ -86,17 +89,156 @@ class TraineeListExportCgo implements FromCollection, WithHeadings, WithMapping,
 
     public function headings(): array
     {
-        return ['Name', 'Address', 'Mobile', 'Email'];
+        return [
+            ['TRAINEE LIST REPORT'],
+            ['Report Time: ' . now()->format('Y-m-d H:i:s')],
+            ['Period: All Time'],
+            ['Description: This report displays registered trainees under the CGO portal.'],
+            [''],
+            ['No.', 'Full Name', 'Contact Address', 'Mobile', 'Email']
+        ];
     }
 
     public function map($trainee): array
     {
+        static $index = 0;
+        $index++;
+        $unpack = function ($val) {
+            if (is_array($val)) {
+                return $val[app()->getLocale()] ?? array_values($val)[0] ?? '';
+            }
+            return $val;
+        };
+
         return [
-            $trainee->full_name,
-            $trainee->contact_address,
+            $index,
+            $unpack($trainee->full_name),
+            $unpack($trainee->contact_address),
             $trainee->mobile,
             $trainee->email,
         ];
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        $highestColumn = $sheet->getHighestColumn();
+        $highestRow = $sheet->getHighestRow();
+
+        // Merge title, report time, period, and description rows
+        $sheet->mergeCells("A1:{$highestColumn}1");
+        $sheet->mergeCells("A2:{$highestColumn}2");
+        $sheet->mergeCells("A3:{$highestColumn}3");
+        $sheet->mergeCells("A4:{$highestColumn}4");
+
+        // Style the Title (Row 1)
+        $sheet->getStyle("A1")->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'size' => 16,
+                'color' => ['rgb' => '1E293B'],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+
+        // Style Report Time, Period, and Description (Rows 2, 3, 4)
+        $sheet->getStyle("A2:A4")->applyFromArray([
+            'font' => [
+                'size' => 10,
+                'color' => ['rgb' => '475569'],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+
+        // Style the headers (Row 6)
+        $sheet->getStyle("A6:{$highestColumn}6")->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => '4984F6'],
+                'size' => 11,
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'E7EFFF'],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+        ]);
+
+        // Style the data rows (Row 7 onwards)
+        $sheet->getStyle("A7:{$highestColumn}{$highestRow}")->applyFromArray([
+            'font' => [
+                'color' => ['rgb' => '475569'],
+                'size' => 10,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+
+        // Left-align text descriptions in data rows (Full Name, Contact Address, Email)
+        foreach (['B', 'C', 'E'] as $col) {
+            $sheet->getStyle("{$col}7:{$col}{$highestRow}")
+                ->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+        }
+
+        // Apply borders to the table section only
+        $sheet->getStyle("A6:{$highestColumn}{$highestRow}")
+            ->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+
+        // Set custom row heights
+        $sheet->getRowDimension(1)->setRowHeight(30);
+        $sheet->getRowDimension(2)->setRowHeight(20);
+        $sheet->getRowDimension(3)->setRowHeight(20);
+        $sheet->getRowDimension(4)->setRowHeight(20);
+        $sheet->getRowDimension(5)->setRowHeight(15);
+        $sheet->getRowDimension(6)->setRowHeight(25);
+        for ($row = 7; $row <= $highestRow; $row++) {
+            $sheet->getRowDimension($row)->setRowHeight(20);
+        }
+
+        // Add Summary Section
+        $summaryRow = $highestRow + 2;
+        $sheet->setCellValue('A' . $summaryRow, 'SUMMARY');
+        $sheet->getStyle('A' . $summaryRow)->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'size' => 12,
+                'color' => ['rgb' => '1E293B'],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+
+        $summaryRow++;
+        $sheet->setCellValue('A' . $summaryRow, 'Total Trainees:');
+        $sheet->setCellValue('B' . $summaryRow, $highestRow - 6);
+        $sheet->getStyle("A{$summaryRow}:B{$summaryRow}")->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'size' => 10,
+                'color' => ['rgb' => '1E293B'],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+        ]);
+
+        $sheet->getRowDimension($summaryRow - 1)->setRowHeight(20);
+        $sheet->getRowDimension($summaryRow)->setRowHeight(20);
     }
 }
 

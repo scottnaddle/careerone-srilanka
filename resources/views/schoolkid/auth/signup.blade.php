@@ -1,4 +1,4 @@
-@extends('schoolkid.auth.layouts.master')
+@extends('auth.layouts.master')
 
 @section('title', 'Sign Up')
 <link href="{{ asset('css/select2/select2.css') }}" rel="stylesheet" />
@@ -388,20 +388,20 @@
             function validateMobileInput(input) {
                 let value = input.value;
 
-                // Cho phép "+" chỉ ở đầu và loại bỏ các ký tự không phải số
+                // Allow "+" only at the beginning and remove non-numeric characters
                 if (value.startsWith('+')) {
                     value = '+' + value.substring(1).replace(/\D/g, '');
                 } else {
                     value = value.replace(/\D/g, '');
                 }
 
-                // Kiểm tra xem có bắt đầu đúng không
+                // Check whether it starts correctly
                 if (value.startsWith('+94')) {
-                    value = value.substring(0, 12); // +94 + 9 chữ số
+                    value = value.substring(0, 12); // +94 + 9 digits
                 } else if (value.startsWith('0')) {
-                    value = value.substring(0, 10); // 0 + 9 chữ số
+                    value = value.substring(0, 10); // 0 + 9 digits
                 } else {
-                    // Không bắt đầu bằng +94 hoặc 0 => ngăn nhập
+                    // Does not start with +94 or 0 => block input
                     value = '';
                 }
 

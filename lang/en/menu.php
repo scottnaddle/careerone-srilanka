@@ -6,6 +6,7 @@ return [
     'institute_performance' => 'Institute Performance',
     'company_performance' => 'Company Performance',
     'log_performance' => 'Log Performance',
+    'pdm-dashboard' => 'PDM Dashboard',
 
     'career_guidance' => 'Career Guidance',
     'career_test' => 'Career Test',

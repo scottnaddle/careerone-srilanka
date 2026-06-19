@@ -135,7 +135,10 @@
                         @if ($this->company->jobs->isEmpty())
                             <tr>
                                 <td colspan="9" class="text-center py-6 text-sm text-[#201F36] dark:text-white">
-                                    No records found.
+                                    <div class="flex flex-col gap-4 justify-center items-center p-4">
+                                        <img src="{{ asset('/images/empty-box.png') }}" class="opacity-50 h-32" alt="Empty">
+                                        <p class="dark:text-white">No record!</p>
+                                    </div>
                                 </td>
                             </tr>
                         @else
@@ -207,8 +210,12 @@
                 </table>
 
             </div>
-            {{--            //cái này gọi tailwind pagination trong vendor ra --}}
-            {{ $this->company->jobs->onEachSide(1)->links('pagination::custom-pagination-admin') }}
+            {{--            // this renders the tailwind pagination from vendor --}}
+            @if(count($this->company->jobs) > 0)
+                <div class="flex justify-end w-full">
+                    {{ $this->company->jobs->onEachSide(1)->links('pagination::custom-pagination-admin') }}
+                </div>
+            @endif
         </div>
     </div>
     <script>

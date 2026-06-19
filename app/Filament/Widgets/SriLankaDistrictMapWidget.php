@@ -19,18 +19,18 @@ class SriLankaDistrictMapWidget extends Widget
 
     public string $userType = 'cgo';
 
-    // Đổi từ dateFilter sang dateRange cho đồng bộ
+    // Renamed from dateFilter to dateRange for consistency
     public ?string $dateRange = 'this_month';
     public ?string $headOfficeFilter = null;
 
-    // Nhận data từ page
+    // Receive data from the page
     public array $data = [];
 
-    // Lưu thông tin người dùng hiện tại
+    // Store the current user's info
     protected ?string $currentUserRole = null;
     protected ?string $currentUserTvetType = null;
 
-    // Thêm traineeStats
+    // Add traineeStats
     public array $traineeStats = [];
 
     public function mount(): void
@@ -118,7 +118,7 @@ class SriLankaDistrictMapWidget extends Widget
         return [];
     }
 
-    // Bảng dịch ID Database sang ID của thẻ <path> trong file SVG Simplemaps
+    // Mapping table translating database IDs to the <path> tag IDs in the Simplemaps SVG file
     protected function getSvgIdMapping(): array
     {
         return [
@@ -155,11 +155,11 @@ class SriLankaDistrictMapWidget extends Widget
 
         foreach ($districts as $district) {
             $count = $counts[$district->id] ?? 0;
-            // Tính phần trăm dựa trên TỔNG SỐ, không phải giá trị lớn nhất
+            // Compute the percentage based on the TOTAL, not the maximum value
             $percentage = $totalSum > 0 ? round(($count / $totalSum) * 100, 1) : 0;
 
-            // Xác định màu dựa trên phần trăm, KHỚP VỚI LEGEND
-            $color = '#f3f4f6'; // Màu cho 0%
+            // Determine the color based on the percentage, MATCHING THE LEGEND
+            $color = '#f3f4f6'; // Color for 0%
             if ($percentage > 0) {
                 if ($percentage <= 20) $color = '#fee2e2';
                 elseif ($percentage <= 40) $color = '#fecaca';
@@ -215,7 +215,7 @@ class SriLankaDistrictMapWidget extends Widget
                 $query->where('institutes.institute_head_office', $this->headOfficeFilter);
             }
 
-            // Áp dụng bộ lọc thời gian
+            // Apply the time filter
             if ($bounds) {
                 $query->whereBetween('cgo_users.created_at', $bounds);
             }
@@ -241,7 +241,7 @@ class SriLankaDistrictMapWidget extends Widget
                 ->whereIn('cgo_users.institute_id', $allowedInstituteIds)
                 ->join('institutes', 'cgo_users.institute_id', '=', 'institutes.id');
 
-            // Áp dụng bộ lọc thời gian
+            // Apply the time filter
             if ($bounds) {
                 $query->whereBetween('cgo_users.created_at', $bounds);
             }
@@ -277,7 +277,7 @@ class SriLankaDistrictMapWidget extends Widget
             ->where('trainee_users.active', true)
             ->whereIn('institutes.id', $allowedInstituteIds);
 
-        // Áp dụng bộ lọc thời gian
+        // Apply the time filter
         $bounds = $this->getDateRangeBounds();
         if ($bounds) {
             $baseQuery->whereBetween('trainee_users.created_at', $bounds);
@@ -293,7 +293,7 @@ class SriLankaDistrictMapWidget extends Widget
             'total_enrollments' => $totalEnrollments,
         ];
 
-        // Query cho $counts array
+        // Query for the $counts array
         $countsQuery = DB::table('trainee_users')
             ->join('trainee_institutes', 'trainee_users.id', '=', 'trainee_institutes.trainee_id')
             ->join('institutes', 'trainee_institutes.institute_id', '=', 'institutes.id')
@@ -313,7 +313,7 @@ class SriLankaDistrictMapWidget extends Widget
     }
 
     /**
-     * Logic đồng bộ cho các bộ lọc ngày tháng
+     * Shared logic for the date filters
      */
     public function getAvailableYears(): array
     {

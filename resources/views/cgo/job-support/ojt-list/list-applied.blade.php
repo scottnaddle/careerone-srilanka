@@ -60,7 +60,7 @@
                     </thead>
                     <tbody>
 
-                    @foreach ($trainees as $trainee)
+                    @forelse ($trainees as $trainee)
 
                         {{--                            {{ dd($trainee->ojtMatches->selected) }} --}}
                         {{--                            {{ dd($trainee->ojtMatches->employeed) }} --}}
@@ -149,7 +149,16 @@
                                 @endforeach
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="2">
+                                <div class="flex flex-col gap-4 justify-center items-center p-4">
+                                    <img src="{{asset('/images/empty-box.png')}}" class="opacity-50 h-32" alt="Empty">
+                                    <p class="dark:text-white">{{ trans('cgo.no_record') }}</p>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforelse
 
 
                     </tbody>
@@ -157,7 +166,7 @@
 
             </div>
 
-            {{--            //cái này gọi tailwind pagination trong vendor ra --}}
+            {{--            // this renders the tailwind pagination from vendor --}}
             {{ $trainees->onEachSide(1)->links() }}
         </div>
     </div>

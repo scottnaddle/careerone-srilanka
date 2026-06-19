@@ -35,6 +35,17 @@ class ProvincesDistrictsService
      */
     public function getProvinces(): mixed
     {
+        // This builds a large, mostly-static reference tree (provinces → districts →
+        // divisional secretariats → institutes) that previously fired hundreds of queries
+        // on every job-list render. Cache it for an hour. Bust manually after an institute
+        // sync with: Cache::forget('trainee.provinces_tree').
+        return \Illuminate\Support\Facades\Cache::remember('trainee.provinces_tree', 3600, function () {
+            return $this->buildProvincesTree();
+        });
+    }
+
+    private function buildProvincesTree(): mixed
+    {
         $provinces = $this->provinceModel->get();
 
         foreach ($provinces as $province) {

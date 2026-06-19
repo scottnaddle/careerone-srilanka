@@ -26,12 +26,12 @@ class ViewComapnyUserList extends ViewRecord
     protected function getHeaderActions(): array
     {
         $actions = [];
-        if (auth('admin')->user()->hasRole('super_admin')) {
+        if (auth('admin')->user()->hasRole('super_admin') || auth('admin')->user()->hasRole('naita_admin')) {
             $isApprovalPending = is_null($this->record->verify_at);
 
             if ($isApprovalPending) {
                 $actions[] = Actions\Action::make('approve')
-                    ->label('Approve')
+                    ->label(trans('system.form.button.approve'))
                     ->color('primary')
 //                    ->icon('heroicon-s-check')
                     ->requiresConfirmation()
@@ -42,7 +42,7 @@ class ViewComapnyUserList extends ViewRecord
                         ]);
                         $this->notificationManagerCgo->sendMembershipApprovalEmail($this->record);
                         Notification::make()
-                            ->title('Approved successfully!')
+                            ->title(trans("admin/performance.Approved successfully!"))
                             ->success()
                             ->send();
 
@@ -56,7 +56,7 @@ class ViewComapnyUserList extends ViewRecord
 
             if ($canReject) {
                 $actions[] = Actions\Action::make('reject')
-                    ->label(__('Withdrawal'))
+                    ->label(__('admin/performance.Withdrawal'))
                     ->color(Color::hex('#d1d5db'))
                     ->form([
                         Textarea::make('reason')
@@ -75,7 +75,7 @@ class ViewComapnyUserList extends ViewRecord
                         $this->notificationManagerCgo->sendMembershipBlockEmail($this->record,$data['reason']);
 
                         Notification::make()
-                            ->title('Rejected successfully!')
+                            ->title(trans("admin/performance.Rejected successfully!"))
                             ->success()
                             ->send();
 
@@ -89,7 +89,7 @@ class ViewComapnyUserList extends ViewRecord
 
             if ($canactive) {
                 $actions[] = Actions\Action::make('approve')
-                ->label('Approve Active')
+                ->label(__('admin/performance.Approve Active'))
                 ->color('primary')
 //                ->requiresConfirmation()
                 ->action(function () {
@@ -106,7 +106,7 @@ class ViewComapnyUserList extends ViewRecord
                         ]);
                     if ($updatedRows1 > 0 && $updatedRows2) {
                         Notification::make()
-                            ->title('Approved successfully!')
+                            ->title(trans("admin/performance.Approved successfully!"))
                             ->success()
                             ->send();
                     } else {
@@ -115,7 +115,13 @@ class ViewComapnyUserList extends ViewRecord
                             ->warning()
                             ->send();
                     }
-                    $this->redirectRoute('filament.admin.resources.user-re-actives.index');
+                    $this->redirectRoute('filament.admin.resources.user-re-actives.index', [
+                        'tableFilters' => [
+                            'approval' => [
+                                'value' => 'requested'
+                            ]
+                        ]
+                    ]);
                 });
 
             }

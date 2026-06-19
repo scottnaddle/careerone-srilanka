@@ -24,11 +24,11 @@ class SendInactiveCgoReminder extends Command
 
         $this->info("Checking CGOs inactive for >= {$days} days...");
 
-        // Lấy danh sách CGO chưa login trong vòng $days ngày
-        // VÀ chưa được gửi reminder trong vòng 7 ngày qua
+        // Get the list of CGOs who have not logged in within the last $days days
+        // AND have not been sent a reminder in the past 7 days
         $inactiveCgos = CgoUser::where(function($query) use ($days) {
             $query->where('last_login_at', '<', Carbon::now()->subDays($days))
-                ->orWhereNull('last_login_at'); // Chưa bao giờ login
+                ->orWhereNull('last_login_at'); // Never logged in
         })
             ->where(function($query) {
                 $query->whereNull('last_login_reminder_sent_at')
@@ -58,22 +58,22 @@ class SendInactiveCgoReminder extends Command
 
         foreach ($inactiveCgos as $cgo) {
             try {
-                // Tính số ngày inactive thực tế
+                // Calculate the actual number of inactive days
                 $inactiveDays = $cgo->last_login_at
                     ? Carbon::parse($cgo->last_login_at)->diffInDays(now())
                     : $days;
 
-                // Gửi email
+                // Send the email
                 Mail::to($cgo->email)->send(new CgoInactiveReminder($cgo, $inactiveDays));
 
-                // Cập nhật thời gian đã gửi reminder
+                // Update the time the reminder was sent
                 $cgo->update(['last_login_reminder_sent_at' => now()]);
 
                 $sentCount++;
-                Log::info("Sent inactive reminder to CGO: {$cgo->email}");
+                Log::channel('cgo_reminder')->info("Sent inactive reminder to CGO: {$cgo->email}");
 
             } catch (\Exception $e) {
-                Log::error("Failed to send reminder to {$cgo->email}: " . $e->getMessage());
+                Log::channel('cgo_reminder')->error("Failed to send reminder to {$cgo->email}: " . $e->getMessage());
                 $this->error("\nFailed: {$cgo->email}");
             }
 

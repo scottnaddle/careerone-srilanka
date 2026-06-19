@@ -14,7 +14,7 @@ class CounselingOverviewChartWidget extends ChartWidget
     protected static string $view = 'filament.widgets.custom-chart-widget';
     protected CounselingService $counseligService;
 
-    // Biến lưu trang hiện tại, mặc định là 1
+    // Variable storing the current page, defaults to 1
     public int $currentPage = 1;
 
     public function __construct()
@@ -23,7 +23,7 @@ class CounselingOverviewChartWidget extends ChartWidget
         self::$heading =__('admin/dashboard.counseling.title');
     }
 
-    // --- NHẬN SỰ KIỆN SỐ TRANG ---
+    // --- RECEIVE THE PAGE NUMBER EVENT ---
     #[On('update-chart-page')]
     public function updateChartPage(int $page = 1): void
     {
@@ -34,14 +34,14 @@ class CounselingOverviewChartWidget extends ChartWidget
 
     protected function getData(): array
     {
-        // Lấy tất cả dữ liệu
+        // Get all data
         $allData = $this->counseligService->getCounselingChart();
 
-        // Cắt dữ liệu theo trang
+        // Slice the data by page
         $perPage = 5;
         $chunkData = $allData->forPage($this->currentPage, $perPage);
 
-        // Đảo ngược để hiển thị ngày cũ bên trái, mới bên phải (nếu cần)
+        // Reverse so older dates show on the left, newer on the right (if needed)
         $chartData = $chunkData->sortBy('date')->values();
 
         return [

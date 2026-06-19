@@ -14,13 +14,13 @@ class TraineeExporter extends Exporter
 {
     protected static ?string $model = TraineeUser::class;
 
-    // Lấy user hiện tại từ guard admin
+    // Get the current user from the admin guard
     public function getUser(): ?\Illuminate\Contracts\Auth\Authenticatable
     {
         return auth('admin')->user();
     }
 
-    // Modify query dựa trên phân quyền
+    // Modify the query based on access permissions
     public static function modifyQuery(Builder $query): Builder
     {
         $user = auth('admin')->user();
@@ -37,8 +37,8 @@ class TraineeExporter extends Exporter
     public static function getColumns(): array
     {
         return [
-            ExportColumn::make('id')
-                ->label('ID'),
+//            ExportColumn::make('id')
+//                ->label('ID'),
 
             ExportColumn::make('nic')
                 ->label('NIC'),

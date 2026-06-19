@@ -34,7 +34,7 @@ class AdministratorApprovalListtable extends BaseWidget
     }
     protected function getTableHeading(): ?string
     {
-        return ''; // Ẩn tiêu đề của bảng
+        return ''; // Hide the table heading
     }
     public static function canView(): bool
     {

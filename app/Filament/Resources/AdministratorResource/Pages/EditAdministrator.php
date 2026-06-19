@@ -18,6 +18,18 @@ class EditAdministrator extends EditRecord
 //            Actions\DeleteAction::make(),
         ];
     }
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        // Set is_naita_admin based on the role
+        $data['is_naita_admin'] = $this->record->hasRole('naita_admin');
+
+        // Set tvet_type if this is a NAITA Admin
+        if ($data['is_naita_admin']) {
+            $data['tvet_type'] = 'NAITA';
+        }
+
+        return $data;
+    }
     protected function mutateFormDataBeforeSave(array $data): array
     {
         if (isset($data['password']) && !empty($data['password'])) {
@@ -26,10 +38,26 @@ class EditAdministrator extends EditRecord
 
             unset($data['password']);
         }
+        if (isset($data['is_naita_admin']) && $data['is_naita_admin'] === true) {
+            $data['tvet_type'] = 'NAITA';
+        }
+        $data['active'] = true;
+        $data['verify_at'] = now();
+        $data['verify_by'] = auth()->guard('admin')->id() ?? null;
         return $data;
     }
     protected function getRedirectUrl(): ?string
     {
         return $this->getResource()::getUrl('index');
+    }
+    protected function afterSave(): void
+    {
+        $administrator = $this->record;
+        $data = $this->form->getRawState();
+
+        // Call handleRoleAssignment to handle role and tvet_type
+        if (isset($data['is_naita_admin'])) {
+            AdministratorResource::handleRoleAssignment($administrator, $data['is_naita_admin'], $data);
+        }
     }
 }

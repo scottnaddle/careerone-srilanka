@@ -1,5 +1,5 @@
 <div id="sector-web" class="hidden md:block">
-    <div class="flex flex-col gap-6 md:mt-48">
+    <div class="flex flex-col gap-6 @if(!auth()->guard('schoolkid')->check()) md:mt-48 @endif">
         <div class="flex justify-between">
             <span class="text-[#201F36] dark:text-white text-2xl font-semibold">{{ __('general.Our sector') }}</span>
         </div>
@@ -10,7 +10,7 @@
                         <img src="{{$sector['thumbnail']}}" class="object-cover rounded-xl h-48" @if($key == 0) loading="eager" @else loading="lazy" @endif alt="Thumbnail">
                     </a>
                     <div class="flex flex-col gap-2" data-tooltip-target="tooltip-{{$key}}" data-tooltip-style="light">
-                        <a href="{{$sector['url']}}" class="text-primary dark:text-white text-xl font-semibold">{{\Str::limit($sector['name'], 20)}}</a>
+                        <a href="{{$sector['url']}}" class="text-primary dark:text-white text-xl font-semibold hover:text-blue-600">{{\Str::limit($sector['name'], 20)}}</a>
                         {{--                        <p class="text-[#91919A] dark:text-white">{{\Str::limit($sector['short_description'], 60)}} </p>--}}
                     </div>
                     {{-- id="tooltip-{{$key}}" --}}

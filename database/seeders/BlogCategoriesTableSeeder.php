@@ -24,7 +24,7 @@ class BlogCategoriesTableSeeder extends Seeder
             DB::table('blog_categories')->insert([
                 'id' => (string) new Ulid(),
                 'name' => $name,
-                'slug' => Str::slug($name),
+                'slug' => Str::slug($name, '-', 'ta'),
                 'description' => $faker->optional()->sentence($nbWords = 6, $variableNbWords = true),
                 'is_active' => $faker->boolean(70),
                 'seo_title' => $faker->optional()->text($maxNbChars = 60),

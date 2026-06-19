@@ -36,8 +36,8 @@ class Event extends Model
    }
    public function getFullNameAttribute()
    {
-       $author = $this->author; // Lấy đối tượng tác giả
-       return $author ? "{$author->first_name} {$author->last_name}" : 'Unknown'; // Trả về tên đầy đủ hoặc 'Unknown' nếu không tìm thấy
+       $author = $this->author; // Get the author object
+       return $author ? "{$author->first_name} {$author->last_name}" : 'Unknown'; // Return the full name, or 'Unknown' if not found
    }
 
     public function recruiter() {
@@ -58,6 +58,11 @@ class Event extends Model
                     ->where('module', 'event_type')
                     ->select('code_id as id', \DB::raw("$moduleColumn as name"))
                     ->orderBy('name', 'asc');
+    }
+
+    public function cgoUsers()
+    {
+        return $this->belongsTo(CgoUser::class, 'created_by', 'id')->where('system', 'cgo');
     }
 
 

@@ -6,6 +6,7 @@ return [
     'institute_performance' => 'ආයතන කාර්ය සාධනය',
     'company_performance' => 'සමාගම් කාර්ය සාධනය',
     'log_performance' => 'ලොග් කාර්ය සාධනය',
+    'pdm-dashboard' => 'PDM පුවරුව',
 
     'career_guidance' => 'වෘත්තීය මාර්ගෝපදේශනය',
     'career_test' => 'වෘත්තීය පරීක්ෂණය',

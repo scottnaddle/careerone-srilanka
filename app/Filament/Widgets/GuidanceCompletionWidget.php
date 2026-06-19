@@ -21,10 +21,10 @@ class GuidanceCompletionWidget extends Widget
 
     protected int | string | array $columnSpan = 'full';
 
-    // Dữ liệu đầu vào từ Page (để Filament truyền vào)
+    // Input data from the Page (passed in by Filament)
     public ?array $data = [];
 
-    // Biến output để lưu dữ liệu thống kê, tránh ghi đè input
+    // Output variable for storing statistics data, to avoid overwriting the input
     public ?array $stats = [];
 
     public ?string $headOfficeFilter = null;
@@ -47,7 +47,7 @@ class GuidanceCompletionWidget extends Widget
     }
 
     /**
-     * Static method kiểm tra quyền xem widget
+     * Static method to check permission to view the widget
      */
     public static function canView(): bool
     {
@@ -56,7 +56,7 @@ class GuidanceCompletionWidget extends Widget
     }
 
     /**
-     * Khởi tạo quyền của người dùng hiện tại
+     * Initialize the current user's permissions
      */
     protected function initializeUserPermissions(): void
     {
@@ -80,7 +80,7 @@ class GuidanceCompletionWidget extends Widget
     }
 
     /**
-     * Khởi tạo head_office filter từ data được truyền vào
+     * Initialize the head_office filter from the passed-in data
      */
     protected function initializeHeadOfficeFilter(): void
     {
@@ -100,7 +100,7 @@ class GuidanceCompletionWidget extends Widget
     }
 
     /**
-     * Khởi tạo các filter ngày tháng
+     * Initialize the date filters
      */
     public function getAvailableYears(): array
     {
@@ -177,7 +177,7 @@ class GuidanceCompletionWidget extends Widget
     }
 
     /**
-     * Đảm bảo permissions được khởi tạo trước khi dùng
+     * Ensure permissions are initialized before use
      */
     protected function ensurePermissionsInitialized(): void
     {
@@ -234,7 +234,7 @@ class GuidanceCompletionWidget extends Widget
             $q->whereIn('institutes.id', $allowedInstituteIds);
         });
 
-        // Note: Không filter theo created_at cho Trainee vì ta thường muốn tính completion rate dựa trên TỔNG SỐ trainee đang active
+        // Note: Don't filter Trainees by created_at, since we usually want to compute the completion rate based on the TOTAL number of active trainees
         return $query;
     }
 
@@ -249,7 +249,7 @@ class GuidanceCompletionWidget extends Widget
 
         $query->whereIn('institute_id', $allowedInstituteIds);
 
-        // Áp dụng filter thời gian
+        // Apply the time filter
         if ($this->startDate && $this->endDate) {
             $query->whereBetween('created_at', [$this->startDate, $this->endDate]);
         }
@@ -287,7 +287,7 @@ class GuidanceCompletionWidget extends Widget
             ->where('trainee_users.active', true)
             ->select('cgo_counselings.*');
 
-        // Áp dụng filter thời gian
+        // Apply the time filter
         if ($this->startDate && $this->endDate) {
             $query->whereBetween('cgo_counselings.created_at', [$this->startDate, $this->endDate]);
         }
@@ -333,7 +333,7 @@ class GuidanceCompletionWidget extends Widget
             ->where('trainee_users.active', true)
             ->select('portfolios.*');
 
-        // Áp dụng filter thời gian
+        // Apply the time filter
         if ($this->startDate && $this->endDate) {
             $query->whereBetween('portfolios.created_at', [$this->startDate, $this->endDate]);
         }
@@ -388,7 +388,7 @@ class GuidanceCompletionWidget extends Widget
         }
     }
 
-    // Các hàm Helper xử lý date dropdown
+    // Helper functions handling the date dropdown
     public function updatedDateRange($value): void
     {
         $this->dateRange = $value;
@@ -443,7 +443,7 @@ class GuidanceCompletionWidget extends Widget
         return '';
     }
 
-    // Lấy thông tin completion
+    // Get completion info
     public function getCompletionRate(string $type): float
     {
         return $this->stats[$type]['percentage'] ?? 0;

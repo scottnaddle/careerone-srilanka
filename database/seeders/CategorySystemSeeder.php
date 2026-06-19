@@ -13,7 +13,7 @@ class CategorySystemSeeder extends Seeder
      */
     public function run()
     {
-        // Mảng dữ liệu mẫu
+        // Sample data array
         $data = [
             //Office type
             [

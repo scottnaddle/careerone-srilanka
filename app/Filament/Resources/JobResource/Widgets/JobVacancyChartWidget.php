@@ -5,7 +5,7 @@ namespace App\Filament\Resources\JobResource\Widgets;
 use App\Services\Admin\JobService;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
-use Livewire\Attributes\On; // <--- Import attribute này
+use Livewire\Attributes\On; // <--- Import this attribute
 
 class JobVacancyChartWidget extends ChartWidget
 {
@@ -14,7 +14,7 @@ class JobVacancyChartWidget extends ChartWidget
     protected static ?string $maxHeight = '500px';
     protected JobService $jobService;
 
-    // Biến lưu trữ danh sách ID các Job đang hiển thị bên Table
+    // Variable storing the list of Job IDs currently shown in the table
     public array $filterIds = [];
 
     public function __construct()
@@ -25,37 +25,37 @@ class JobVacancyChartWidget extends ChartWidget
         self::$heading = __('admin/dashboard.job_vacancy_title');
     }
 
-    // Hàm lắng nghe sự kiện từ Table
+    // Method listening for the event from the table
     #[On('update-job-chart')]
     public function updateChartFilters(array $ids): void
     {
         $this->filterIds = $ids;
-        $this->updateChartData(); // Refresh lại chart
+        $this->updateChartData(); // Refresh the chart
     }
 
     protected function getData(): array
     {
         // LOGIC:
-        // 1. Nếu có filterIds (từ table gửi sang), ta query những Job có ID trong danh sách đó.
-        // 2. Nếu không (mặc định ban đầu), ta lấy dữ liệu mặc định (nên limit 5 để khớp với table trang 1).
+        // 1. If filterIds is set (sent from the table), query the Jobs whose IDs are in that list.
+        // 2. Otherwise (initial default), get the default data (should limit to 5 to match table page 1).
 
         if (!empty($this->filterIds)) {
-            // Lấy các Job theo ID đã nhận được
-            // Lưu ý: Cần order theo date desc để khớp thứ tự hiển thị
+            // Get the Jobs by the received IDs
+            // Note: order by date desc to match the display order
             $data = \App\Models\Job::whereIn('id', $this->filterIds)
                 ->orderBy('jobs.created_at', 'desc')
                 ->get();
         } else {
-            // Mặc định: Lấy dữ liệu gốc nhưng limit 5 dòng (vì table mặc định paginated 5)
-            // Giả sử getJobChart trả về collection hoặc builder, ta xử lý tương tự
+            // Default: get the original data but limit to 5 rows (because the table defaults to paginated 5)
+            // Assuming getJobChart returns a collection or builder, handle it similarly
             $data = $this->jobService->getAllJobPosting()
                 ->orderBy('jobs.created_at', 'desc')
                 ->limit(5)
                 ->get();
 
-            // Lưu ý: Nếu method getJobChart() của bạn đã có logic phức tạp,
-            // bạn có thể dùng nó nhưng cần đảm bảo nó hỗ trợ limit/filter.
-            // Ở đây tôi query trực tiếp Model hoặc dùng getAllJobPosting để dễ control.
+            // Note: if your getJobChart() method already has complex logic,
+            // you can use it but must ensure it supports limit/filter.
+            // Here I query the model directly or use getAllJobPosting for easier control.
         }
 
         return [

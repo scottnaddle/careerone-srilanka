@@ -29,7 +29,9 @@ Route::controller(\App\Http\Controllers\Admin\Auth\RegisterController::class)->g
     Route::group(['prefix' => 'career-test', 'as' => 'career-test.'], function(){
         Route::get('/view-result/{id}', [CareerTestController::class, 'viewResult'])->name('view-result');
         Route::get('/download-result/{id}', [CareerTestController::class, 'downloadResult'])->name('download-result');
-    });
+        Route::get('/export', [CareerTestController::class, 'export'])->name('career-tests.export');
+    })->withoutMiddleware('admin');
+    Route::get('/career-tests/export', [CareerTestController::class, 'export'])->name('career-tests.export');
     Route::group(['prefix' => 'admin-api', 'as' => 'admin-api.'], function(){
         Route::post('/show-district/{id}', [SearchAdminController::class, 'showDistrict'])->name('show-district');
         Route::post('/show-division/{id}', [SearchAdminController::class, 'showDivision'])->name('show-division');

@@ -78,6 +78,7 @@ class TraineeUser extends Authenticatable implements HasName
     {
         return $this->belongsToMany(NVQLevel::class, TraineeNVQ::class, 'trainee_id', 'nvq_id');
     }
+
     public function institutes() {
         return $this->belongsToMany(Institute::class, TraineeInstitute::class, 'trainee_id', 'institute_id')->orderBy('name', 'asc');
     }
@@ -152,6 +153,11 @@ class TraineeUser extends Authenticatable implements HasName
         return $this->hasMany(OjtTraineeApply::class, 'trainee_id', 'id');
     }
 
+    public function traineeRegCourses()
+    {
+        return $this->hasMany(TraineeRegCourse::class, 'trainee_id', 'id');
+    }
+
 
     protected function fullName(): Attribute
     {
@@ -201,4 +207,8 @@ class TraineeUser extends Authenticatable implements HasName
     {
         return $this->hasMany(OjtTraineeApply::class, 'trainee_id', 'id')->where('ojt_id',$ojt_id);
     }
+    public function traineeInstitutes() {
+        return $this->hasMany(TraineeInstitute::class, 'trainee_id');
+    }
+
 }

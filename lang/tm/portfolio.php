@@ -18,5 +18,9 @@ return [
     'Supporting Documents' => 'துணை ஆவணங்கள்',
     'Issued by' => 'வழங்கியது',
     'Issue Date' => 'வெளியீட்டு தேதி',
-    'Valid until' => 'செல்லுபடியாகும் until'
+    'Valid until' => 'செல்லுபடியாகும் until',
+        'Career Goals' => 'தொழில் இலக்குகள்',
+        'Short-term Goals' => 'குறுகிய கால இலக்குகள்',
+        'Long-term Goals' => 'நீண்ட கால இலக்குகள்',
+        'Career Fields of Interest' => 'ஆர்வமுள்ள தொழில் துறைகள்',
 ];

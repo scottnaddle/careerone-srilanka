@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Portfolio Builder</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    @vite(['resources/css/app.css', 'resources/js/vue/main.js'])
-</head>
-<body>
-<div id="app" data-portfolio='@json($portfolioData)' data-lang="{{ app()->getLocale() }}"></div>
-</body>
-</html>
+@extends('homepage.layouts.master')
+@section('title', 'Portfolio Builder')
+
+@push('css')
+    @vite(['resources/js/vue/main.js'])
+@endpush
+
+@section('content')
+    <div id="app" data-portfolio='@json($portfolioData)' data-districts='@json($districts ?? [])' data-genders='@json($genders ?? [])' data-lang="{{ app()->getLocale() }}"></div>
+@endsection

@@ -42,6 +42,7 @@ use Kenepa\TranslationManager\TranslationManagerPlugin;
 use Illuminate\Support\Facades\Blade;
 use Filament\View\PanelsRenderHook;
 use Filament\Navigation\MenuItem;
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -53,14 +54,9 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::hex('#4984F6'),
             ])
-            //            ->emailVerification()
-//            ->profile(isSimple: false)
-                ->profile(EditProfile::class, isSimple: false)
+            ->profile(EditProfile::class, isSimple: false)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-            //            ->pages([
-            //                Pages\Dashboard::class,
-            //            ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
@@ -87,7 +83,6 @@ class AdminPanelProvider extends PanelProvider
             ->authGuard('admin')
             ->login(Login::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
-//            ->font('Poppins')
             ->brandLogo(asset('images/careerone-logo.png'))
             ->homeUrl(url('/admin/overview'))
             ->brandLogoHeight('2rem')
@@ -103,21 +98,27 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins(array_filter([
                 \TomatoPHP\FilamentMediaManager\FilamentMediaManagerPlugin::make()
-                ->allowSubFolders(),
+                    ->allowSubFolders(),
                 TranslationManagerPlugin::make(),
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
                 \BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin::make(),
                 FilamentMenuBuilderPlugin::make()
                     ->addMenuItemFields([
                         ...(
-                            Schema::hasTable('roles')
+                        Schema::hasTable('roles')
                             ? [
-                                Select::make('capability')
-                                    ->options(Role::all()->pluck('name', 'name'))
-                                    ->preload()
-                                    ->searchable(),
-                                TextInput::make('icon'),
-                            ]
+                            Select::make('capability')
+                                ->options(Role::all()->pluck('name', 'name'))
+                                ->preload()->multiple()
+                                ->formatStateUsing(function ($state) {
+                                    if (is_string($state)) {
+                                        return array_map('trim', explode(',', $state));
+                                    }
+                                    return $state;
+                                })->dehydrateStateUsing(fn ($state) => is_array($state) ? implode(',', $state) : $state)
+                                ->searchable(),
+                            TextInput::make('icon'),
+                        ]
                             : []
                         ),
                     ])
@@ -126,14 +127,31 @@ class AdminPanelProvider extends PanelProvider
             ]))
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 $menuHeader = Menu::location('header');
+
+                // Helper function to check if user has any of the required capabilities
+                $userHasCapability = function($capabilities) {
+                    if (empty($capabilities)) {
+                        return true; // No capability required
+                    }
+
+                    // Split capabilities by comma and trim whitespace
+                    $capabilityArray = array_map('trim', explode(',', $capabilities));
+
+                    // Check if user has super_admin role or any of the required capabilities
+                    return auth('admin')->user()->hasRole('super_admin') ||
+                        collect($capabilityArray)->contains(function($capability) {
+                            return auth('admin')->user()->hasRole($capability);
+                        });
+                };
+
                 if (!empty($menuHeader)) {
                     $builder->items(
-                        $menuHeader->menuItems->map(function ($item) {
+                        $menuHeader->menuItems->map(function ($item) use ($userHasCapability) {
                             $icon = DB::table(config('filament-menu-builder.tables.menu_icon'))
                                 ->where('menu_item_id', $item->id)
                                 ->value('icon');
-                            $isVisible = auth('admin')->user()->hasRole('super_admin') ||
-                                        (!empty($item->capability) && auth('admin')->user()->hasRole($item->capability));
+
+                            $isVisible = $userHasCapability($item->capability);
                             $title = is_array($item->title) ? $item->title['default'] : $item->title;
 
                             return NavigationSubItem::make(__($title))
@@ -142,27 +160,21 @@ class AdminPanelProvider extends PanelProvider
                                 ->icon($icon)
                                 ->isActiveWhen(fn(): bool => str_starts_with(request()->getPathInfo(), $item->url))
                                 ->subItems(
-                                    $item->children->map(function ($child) {
-                                        $isChildVisible = auth('admin')->user()->hasRole('super_admin') ||
-                                                          (!empty($child->capability) && auth('admin')->user()->hasRole($child->capability));
+                                    $item->children->map(function ($child) use ($userHasCapability) {
+                                        $isChildVisible = $userHasCapability($child->capability);
 
-                                        return $isChildVisible ?  NavigationSubItem::make(__($child->title))
-                                            // ->visible(fn() => $isChildVisible)
+                                        return $isChildVisible ? NavigationSubItem::make(__($child->title))
                                             ->url($child->url)
-
                                             ->isActiveWhen(fn(): bool => str_starts_with(request()->getPathInfo(), $child->url))
                                             ->subItems(
-                                                $child->children->map(function ($grandChild) {
-                                                    $isGrandChildVisible = auth('admin')->check() && (
-                                                        auth('admin')->user()->hasRole('super_admin') ||
-                                                        (!empty($grandChild->capability) && auth('admin')->user()->hasRole($grandChild->capability))
-                                                    );
+                                                $child->children->map(function ($grandChild) use ($userHasCapability) {
+                                                    $isGrandChildVisible = $userHasCapability($grandChild->capability);
 
                                                     return $isGrandChildVisible ? NavigationItem::make(__($grandChild->title))
                                                         ->url($grandChild->url)
                                                         ->isActiveWhen(fn(): bool => str_starts_with(request()->getPathInfo(), $grandChild->url))
                                                         : null;
-                                            })->filter()->toArray()
+                                                })->filter()->toArray()
                                             ) : null;
                                     })->filter()->toArray()
                                 );
@@ -170,21 +182,21 @@ class AdminPanelProvider extends PanelProvider
                     );
                 }
                 return $builder;
-            })->renderHook(
+            })
+            ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_BEFORE,
                 fn (): string => Blade::render('@livewire(\'Accessibility\')'),
-            ) ->sidebarCollapsibleOnDesktop()
+            )
+            ->sidebarCollapsibleOnDesktop()
             ->userMenuItems([
                 'profile' => MenuItem::make()->label('My page'),
                 MenuItem::make()
-                ->label(__('admin/dashboard.download_user_manual'))
+                    ->label(__('admin/dashboard.download_user_manual'))
                     ->icon('heroicon-o-arrow-down')
                     ->url('/admin/download-user-manual')
                     ->openUrlInNewTab(),
             ])
             ->darkMode(false)
             ->globalSearch(false);
-
-
     }
 }

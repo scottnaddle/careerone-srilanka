@@ -30,7 +30,7 @@ class EditNewsletter extends EditRecord
     }
     protected function mutateFormDataBeforeFill(array $data): array
 {
-    // Bỏ 'storage/' khi hiển thị lại trong form edit
+    // Strip 'storage/' when displaying again in the edit form
     if (!empty($data['attachment'])) {
         $data['attachment'] = str_replace('storage/', '', $data['attachment']);
     }

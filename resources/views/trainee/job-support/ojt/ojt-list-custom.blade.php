@@ -492,13 +492,13 @@
                 url.searchParams.delete('page');
                 window.location.href = url.href;
             })
-            // Xử lý bookmark job
+            // Handle job bookmark
             $('.btn-bookmark-job').on('click', function() {
                 const svgElement = $(this).find('svg');
                 svgElement.addClass('fill-primary');
             });
 
-            // Xử lý khi mở modal
+            // Handle modal opening
             $('#district-modal').on('click', function() {
                 const modal = createModal('default-modal', {
                     onHide: () => {
@@ -564,7 +564,7 @@
                 modal.show();
             });
 
-            // Xử lý toggle sector (tạm thời rỗng, có thể thêm sau)
+            // Handle sector toggle (currently empty, may be added later)
             $('#sector-modal-open').on('click', function() {
                 const modal = createModal('sector-modal', {
                     onHide: () => {
@@ -601,7 +601,7 @@
             });
         });
 
-        // Hàm để làm sạch nội dung modal
+        // Function to clear modal content
         function clearModalContent() {
             $('#tab-1').empty();
             $('#tab-2').empty();
@@ -611,7 +611,7 @@
             $('#sector-data-tab-1').empty();
         }
 
-        // Hàm để thêm province vào modal
+        // Function to add a province to the modal
         function appendProvince(province, index, isSelected) {
             const html = itemOptionSlect('province' + index, 'province', province.name, isSelected,
                 `data-index="${index}"`);
@@ -677,7 +677,7 @@
 
         }
 
-        // Hàm để thêm district vào modal
+        // Function to add a district to the modal
         function appendDistrict(districts, district, index, isSelected, url) {
             const html = itemOptionSlect('district' + index, 'district', district.name, isSelected,
                 `data-index="${index}" data-district-id="${district.id}"`);
@@ -702,7 +702,7 @@
             url.searchParams.delete('page');
         }
 
-        // Hàm để toggle trạng thái chọn
+        // Function to toggle selected state
         function toggleSelected(allEl, selectedEl) {
             allEl.find('svg.inline-block').removeClass('inline-block').addClass('hidden');
             allEl.removeClass('text-[#4984F6] font-semibold dark:text-[#4984F6]').addClass(
@@ -712,7 +712,7 @@
                 'text-[#4984F6] font-semibold dark:text-[#4984F6]');
         }
 
-        // Xử lý lưu trainee vào job
+        // Handle saving trainee to job
         function handleKeepTrainee(button) {
             console.log(button)
             const traineeId = button.getAttribute('data-trainee-id');
@@ -761,7 +761,7 @@
                     `;
         }
 
-        // Hiển thị thông báo Toast
+        // Display Toast notification
         function showToast(message, duration, status) {
             const bgColor = status === 'success' ?
                 'linear-gradient(to right, #00b09b, #96c93d)' :
@@ -784,7 +784,7 @@
             }).showToast();
         }
 
-        // Tạo modal
+        // Create modal
         function createModal(id, options = null) {
             clearModalContent();
             const targetEl = document.getElementById(id);

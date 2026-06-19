@@ -31,7 +31,7 @@ class CareerExpertInterviewFactory extends Factory
         // Store the image in the public storage
         Storage::disk('public')->put('cgo/career_expert_interview/thumbnails/' . $imageName, $imageContents);
         $title = $this->faker->name;
-        $slug = Str::slug($title);
+        $slug = Str::slug($title, '-', 'ta');
         $system = $this->faker->randomElement(['cgo', 'admin', 'company']);
         $created_by = 1;
         switch($system) {

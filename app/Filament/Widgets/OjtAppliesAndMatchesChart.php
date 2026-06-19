@@ -17,7 +17,7 @@ class OjtAppliesAndMatchesChart extends ChartWidget
     }
     protected static ?int $sort = 3;
 
-    // Sử dụng chung 1 filter state mặc định
+    // Share a single default filter state
     public ?string $filter = 'this_month';
 
     protected ?string $startDate = null;
@@ -29,7 +29,7 @@ class OjtAppliesAndMatchesChart extends ChartWidget
         return auth()->user()?->hasRole('naita_admin') ?? false;
     }
 
-    // Khởi tạo danh sách filter
+    // Initialize the filter list
     protected function getFilters(): ?array
     {
         $filters = [
@@ -43,7 +43,7 @@ class OjtAppliesAndMatchesChart extends ChartWidget
         $currentYear = (int) Carbon::now()->year;
         $startYear = 2025;
 
-        // Thêm các năm vào dropdown list
+        // Add the years into the dropdown list
         for ($year = $currentYear - 1; $year >= $startYear; $year--) {
             $filters['year_' . $year] = (string) $year;
         }
@@ -51,7 +51,7 @@ class OjtAppliesAndMatchesChart extends ChartWidget
         return $filters;
     }
 
-    // Xử lý logic parse filter thành startDate và endDate
+    // Logic for parsing the filter into startDate and endDate
     protected function applyDateRange(string $filterValue): void
     {
         $now = Carbon::now();
@@ -112,34 +112,34 @@ class OjtAppliesAndMatchesChart extends ChartWidget
 
         $naitaCompanyIds = Company::where('is_belongs_to_naita', true)->pluck('id');
 
-        // Base query chung sử dụng table o_j_t_s
+        // Shared base query using the o_j_t_s table
         $baseQuery = OjtTraineeApply::whereIn('ojt_id', function($q) use ($naitaCompanyIds) {
             $q->select('id')->from('o_j_t_s')->whereIn('company_id', $naitaCompanyIds);
         });
 
-        // Tách query cho Applies và Matches
+        // Split the queries for Applies and Matches
         $appliesQuery = (clone $baseQuery)->where('apply_type', 'apply');
         $matchesQuery = (clone $baseQuery)->where('apply_type', 'ojt_match');
 
-        // Áp dụng filter thời gian
+        // Apply the time filter
         if ($this->startDate && $this->endDate) {
             $appliesQuery->whereBetween('created_at', [$this->startDate, $this->endDate]);
             $matchesQuery->whereBetween('created_at', [$this->startDate, $this->endDate]);
         }
 
-        // Xử lý hiển thị theo ngày cho This Month / Last Month
+        // Handle day-by-day display for This Month / Last Month
         if ($filterValue === 'this_month' || $filterValue === 'last_month') {
             return $this->getDailyData($appliesQuery, $matchesQuery, Carbon::parse($this->startDate));
         }
 
-        // Giới hạn 12 tháng gần nhất cho All Time
+        // Limit to the most recent 12 months for All Time
         if ($filterValue === 'all_time') {
             $startLimit = now()->subMonths(11)->startOfMonth();
             $appliesQuery->where('created_at', '>=', $startLimit);
             $matchesQuery->where('created_at', '>=', $startLimit);
         }
 
-        // Group theo tháng (YYYY-MM)
+        // Group by month (YYYY-MM)
         $appliesData = $appliesQuery->select(
             DB::raw("TO_CHAR(created_at, 'YYYY-MM') as month"),
             DB::raw('COUNT(*) as total')
@@ -163,7 +163,7 @@ class OjtAppliesAndMatchesChart extends ChartWidget
         $matchesValues = [];
 
         if ($filterValue === 'all_time') {
-            // Build dải 12 tháng gần nhất
+            // Build the span of the most recent 12 months
             for ($i = 11; $i >= 0; $i--) {
                 $monthStr = now()->subMonths($i)->format('Y-m');
                 $labels[] = now()->subMonths($i)->format('M Y');
@@ -171,7 +171,7 @@ class OjtAppliesAndMatchesChart extends ChartWidget
                 $matchesValues[] = $matchesData[$monthStr]->total ?? 0;
             }
         } else {
-            // Build 12 tháng của một năm cụ thể
+            // Build the 12 months of a specific year
             $targetYear = $this->selectedYear ?? now()->year;
             for ($month = 1; $month <= 12; $month++) {
                 $monthStr = sprintf('%04d-%02d', $targetYear, $month);
@@ -202,7 +202,7 @@ class OjtAppliesAndMatchesChart extends ChartWidget
         ];
     }
 
-    // Hàm support gom dữ liệu theo Ngày
+    // Helper function to aggregate data by day
     protected function getDailyData($appliesQuery, $matchesQuery, Carbon $startMonth): array
     {
         $appliesDaily = $appliesQuery->select(

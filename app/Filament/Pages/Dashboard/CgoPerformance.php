@@ -11,8 +11,11 @@ use App\Filament\Resources\CounselingResource\Widgets\CounselingOverviewTableWid
 use App\Filament\Resources\EventResource\Widgets\EventTableWidget;
 use App\Filament\Resources\JobResource\Widgets\JobVacancyChartWidget;
 use App\Filament\Resources\JobResource\Widgets\JobVacancyTableWidget;
+use App\Filament\Widgets\CgoCounselingStatsWidget;
+use App\Filament\Widgets\CgoUserHeatmapWidget;
 use App\Filament\Widgets\MemberSignupChartWidget;
 use App\Filament\Widgets\MemberSignupTableWidget;
+use App\Filament\Widgets\SriLankaDistrictMapWidget;
 use App\Models\District;
 use App\Models\HeadOfficeModel;
 use App\Models\TvetType;
@@ -38,17 +41,32 @@ class CgoPerformance extends Page
 
     public function mount()
     {
-        $this->data = [
-            'keywords_search' => request()->query('keywords_search', null),
-            'sector_id' => request()->query('sector_id', null),
-            'head_office' => request()->query('head_office', null),
+        $user = auth('admin')->user();
 
+        $headOffice = request()->query('head_office');
+
+        if ($headOffice === null) {
+            if ($user->hasRole('naita_admin')) {
+                $headOffice = 'NAITA';
+            } elseif (! $user->hasRole('super_admin')) {
+                $headOffice = $user->tvet_type;
+            }
+        }
+
+        $this->data = [
+            'keywords_search' => request()->query('keywords_search'),
+            'sector_id' => request()->query('sector_id'),
+            'head_office' => $headOffice,
         ];
     }
 
     protected function getFooterWidgets(): array
     {
         return [
+            CgoCounselingStatsWidget::make([
+                'data' => $this->data
+            ]),
+            CgoUserHeatmapWidget::class,
             CareerGuidanceTableWidget::make([
                 'data' => $this->data,
                 'type' => 'cgo',
@@ -78,9 +96,6 @@ class CgoPerformance extends Page
                 'data' => $this->data,
                 'type' => 'cgo',
             ]),
-
-
-
         ];
     }
 }

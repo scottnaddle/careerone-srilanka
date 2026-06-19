@@ -11,7 +11,7 @@ class EditJobInformation extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $data['slug'] = \Str::slug($data['title']);
+        $data['slug'] = \Str::slug($data['title'], '-', 'ta');
         $data['skills'] = json_encode($data['skills']);
         $data['knowledge'] = json_encode($data['knowledge']);
         $data['related_occupations'] = json_encode($data['related_occupations']);

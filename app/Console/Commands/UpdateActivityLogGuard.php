@@ -25,11 +25,11 @@ class UpdateActivityLogGuard extends Command
 
         $this->info('Bắt đầu cập nhật guard và causer cho activity_log...');
 
-        // Định nghĩa các bảng và cấu trúc cột
+        // Define the tables and column structure
         $tables = [
             'cgo_users' => [
                 'guard' => 'cgo',
-                'model' => 'App\\Models\\CGOUser', // Hoặc model class tương ứng
+                'model' => 'App\\Models\\CGOUser', // Or the corresponding model class
                 'has_full_name' => $this->checkColumnExists('cgo_users', 'full_name'),
                 'has_first_name' => $this->checkColumnExists('cgo_users', 'first_name') || $this->checkColumnExists('cgo_users', 'firstname'),
                 'has_last_name' => $this->checkColumnExists('cgo_users', 'last_name') || $this->checkColumnExists('cgo_users', 'lastname'),
@@ -65,7 +65,7 @@ class UpdateActivityLogGuard extends Command
             ],
         ];
 
-        // Loại bỏ các bảng không tồn tại
+        // Remove tables that do not exist
         $tables = array_filter($tables, function($info, $tableName) {
             if (!Schema::hasTable($tableName)) {
                 $this->warn("Không tìm thấy bảng: {$tableName}");
@@ -79,7 +79,7 @@ class UpdateActivityLogGuard extends Command
             return 1;
         }
 
-        // Hiển thị thông tin cấu trúc bảng
+        // Display the table structure information
         $this->info("\nCấu trúc các bảng:");
         foreach ($tables as $tableName => $info) {
             $cols = [];
@@ -92,7 +92,7 @@ class UpdateActivityLogGuard extends Command
             $this->line("  - {$tableName} (" . $info['guard'] . "): " . implode(', ', $cols));
         }
 
-        // Lấy tất cả logs cần xử lý
+        // Get all logs that need processing
         $logs = DB::table('activity_log')
             ->where('log_name', 'Access')
             ->where(function($query) {
@@ -108,17 +108,17 @@ class UpdateActivityLogGuard extends Command
         if ($dryRun || $showUnknown || $exportUnknown) {
             $this->warn('=== DRY RUN MODE - Sẽ không có thay đổi thực tế ===');
 
-            // Thu thập thông tin chi tiết về các record
+            // Collect detailed information about the records
             $details = $this->getDetailedStats($logs, $tables);
 
-            // Hiển thị stats tổng hợp
+            // Display the aggregated stats
             $stats = [];
             foreach ($details['guards'] as $guard => $count) {
                 $stats[] = [$guard, $count];
             }
             $this->table(['Guard', 'Số lượng'], $stats);
 
-            // Hiển thị chi tiết unknown records nếu có yêu cầu
+            // Display unknown record details if requested
             if ($showUnknown && !empty($details['unknown_records'])) {
                 $this->info("\n=== CHI TIẾT UNKNOWN RECORDS ({$details['unknown_count']} records) ===");
 
@@ -135,7 +135,7 @@ class UpdateActivityLogGuard extends Command
                 $this->table(['ID', 'Description', 'Properties', 'Created At'], $unknownData);
             }
 
-            // Export unknown records ra file CSV nếu có yêu cầu
+            // Export unknown records to a CSV file if requested
             if ($exportUnknown && !empty($details['unknown_records'])) {
                 $filename = $exportUnknown;
                 if ($filename === true) {
@@ -149,7 +149,7 @@ class UpdateActivityLogGuard extends Command
             return 0;
         }
 
-        // Xác nhận từ người dùng
+        // Confirm with the user
         if (!$this->confirm("Bạn có chắc chắn muốn cập nhật " . count($logs) . " bản ghi?")) {
             $this->info('Đã hủy thao tác.');
             return 0;
@@ -164,7 +164,7 @@ class UpdateActivityLogGuard extends Command
             'like_match' => 0
         ];
 
-        // Xử lý theo chunks để tránh quá tải bộ nhớ
+        // Process in chunks to avoid memory overload
         foreach (array_chunk($logs->toArray(), $chunkSize) as $chunk) {
             foreach ($chunk as $log) {
                 $result = $this->updateSingleLog($log, $tables, $matchedBy);
@@ -194,7 +194,7 @@ class UpdateActivityLogGuard extends Command
     }
 
     /**
-     * Lấy thống kê chi tiết
+     * Get the detailed statistics
      */
     private function getDetailedStats($logs, $tables)
     {
@@ -208,7 +208,7 @@ class UpdateActivityLogGuard extends Command
             } else {
                 $guards['unknown'] = ($guards['unknown'] ?? 0) + 1;
 
-                // Lưu thông tin unknown record
+                // Save the unknown record information
                 $unknownRecords[] = [
                     'id' => $log->id,
                     'description' => $log->description,
@@ -227,16 +227,16 @@ class UpdateActivityLogGuard extends Command
     }
 
     /**
-     * Export unknown records ra file CSV
+     * Export unknown records to a CSV file
      */
     private function exportToCsv($records, $filename)
     {
         $file = fopen($filename, 'w');
 
-        // Ghi header
+        // Write the header
         fputcsv($file, ['ID', 'Description', 'Properties', 'Created At', 'Extracted User Name']);
 
-        // Ghi dữ liệu
+        // Write the data
         foreach ($records as $record) {
             fputcsv($file, [
                 $record['id'],
@@ -251,7 +251,7 @@ class UpdateActivityLogGuard extends Command
     }
 
     /**
-     * Kiểm tra cột có tồn tại trong bảng không
+     * Check whether a column exists in the table
      */
     private function checkColumnExists($table, $column)
     {
@@ -262,7 +262,7 @@ class UpdateActivityLogGuard extends Command
     }
 
     /**
-     * Lấy tên cột first_name (có thể là first_name hoặc firstname)
+     * Get the first_name column name (may be first_name or firstname)
      */
     private function getFirstNameColumn($table)
     {
@@ -280,7 +280,7 @@ class UpdateActivityLogGuard extends Command
     }
 
     /**
-     * Lấy tên cột last_name (có thể là last_name hoặc lastname)
+     * Get the last_name column name (may be last_name or lastname)
      */
     private function getLastNameColumn($table)
     {
@@ -298,11 +298,11 @@ class UpdateActivityLogGuard extends Command
     }
 
     /**
-     * Cập nhật một log duy nhất
+     * Update a single log
      */
     private function updateSingleLog($log, $tables, &$matchedBy)
     {
-        // Tìm user và guard dựa trên description
+        // Find the user and guard based on the description
         $result = $this->findGuardAndUser($log->description, $tables);
 
         if (!$result) {
@@ -315,22 +315,22 @@ class UpdateActivityLogGuard extends Command
             $properties = [];
         }
 
-        // Thêm guard vào properties
+        // Add the guard to properties
         $properties['guard'] = $result['guard'];
 
-        // Cập nhật causer_id và causer_type
+        // Update causer_id and causer_type
         $updateData = [
             'properties' => json_encode($properties),
             'causer_id' => $result['user_id'],
             'causer_type' => $result['model']
         ];
 
-        // Ghi nhận phương thức ghép
+        // Record the matching method
         if (isset($result['method'])) {
             $matchedBy[$result['method']] = ($matchedBy[$result['method']] ?? 0) + 1;
         }
 
-        // Cập nhật
+        // Update
         DB::table('activity_log')
             ->where('id', $log->id)
             ->update($updateData);
@@ -339,21 +339,21 @@ class UpdateActivityLogGuard extends Command
     }
 
     /**
-     * Tìm guard và user dựa trên description
+     * Find the guard and user based on the description
      */
     private function findGuardAndUser($description, $tables)
     {
-        // Loại bỏ " logged in" khỏi description
+        // Strip " logged in" from the description
         $userName = str_replace(' logged in', '', trim($description));
 
-        // TH1: Tìm theo full_name trước
+        // Case 1: Match by full_name first
         foreach ($tables as $table => $info) {
             if ($info['has_full_name']) {
                 $user = DB::table($table)
                     ->where('full_name', $userName)
                     ->orWhere('full_name', 'like', '%' . $userName . '%')
                     ->orWhere(DB::raw("LOWER(full_name)"), strtolower($userName))
-                    ->first(['id']); // Chỉ lấy id để tối ưu
+                    ->first(['id']); // Only fetch the id for optimization
 
                 if ($user) {
                     return [
@@ -366,12 +366,12 @@ class UpdateActivityLogGuard extends Command
             }
         }
 
-        // Tách họ và tên
+        // Split into first and last name
         $nameParts = explode(' ', $userName);
         $lastName = array_pop($nameParts);
         $firstName = implode(' ', $nameParts);
 
-        // TH2: Tìm theo first_name + last_name
+        // Case 2: Match by first_name + last_name
         foreach ($tables as $table => $info) {
             if ($info['has_first_name'] && $info['has_last_name']) {
                 $firstNameCol = $info['first_name_col'];
@@ -404,7 +404,7 @@ class UpdateActivityLogGuard extends Command
             }
         }
 
-        // TH3: Tìm LIKE đơn giản hơn
+        // Case 3: Simpler LIKE-based match
         foreach ($tables as $table => $info) {
             if ($info['has_first_name'] && $info['has_last_name']) {
                 $firstNameCol = $info['first_name_col'];

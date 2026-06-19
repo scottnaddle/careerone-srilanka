@@ -11,7 +11,7 @@ class EditCareerGuideCategory extends EditRecord
     protected static string $resource = CareerGuideCategoryResource::class;
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $data['slug'] = \Str::slug($data['name']);
+        $data['slug'] = \Str::slug($data['name'], '-', 'ta');
         return $data;
     }
     protected function getHeaderActions(): array

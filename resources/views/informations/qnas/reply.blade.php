@@ -865,7 +865,7 @@
             @endif
             `;
 
-            // Thêm form mới vào DOM
+            // Add the new form to the DOM
             $(".reply-new").append(newForm);
         }
 

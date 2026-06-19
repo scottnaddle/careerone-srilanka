@@ -11,6 +11,11 @@ class ListAdministrators extends ListRecords
 {
     protected static string $resource = AdministratorResource::class;
     protected static string $view = 'filament.pages.membership.admin.admin-list';
+//    protected static ?string $title = '';
+    public function getTitle(): string
+    {
+        return '';
+    }
 
     protected function getHeaderActions(): array
     {

@@ -13,7 +13,7 @@ class PermissionSeeder extends Seeder
      */
     public function run()
     {
-        // Tạo quyền
+        // Create permissions
         Permission::create(['name' => 'manage roles']);
         Permission::create(['name' => 'manage permissions']);
     }

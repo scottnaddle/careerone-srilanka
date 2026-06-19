@@ -44,13 +44,29 @@ class TraineeReportExportCgo implements FromCollection, WithHeadings, WithMappin
 
     public function map($trainee): array
     {
+        $unpack = function ($val) {
+            if (is_array($val)) {
+                $localeVal = $val[app()->getLocale()] ?? array_values($val)[0] ?? '';
+                return is_array($localeVal) ? json_encode($val) : (string) $localeVal;
+            }
+            if (is_object($val) && !method_exists($val, '__toString')) {
+                return json_encode($val);
+            }
+            return (string) $val;
+        };
+
+        $fullName = $unpack($trainee->full_name ?? $trainee->first_name . ' ' . $trainee->last_name);
         $portfolioStatus = $trainee->portfolio ? 'Yes' : 'No';
-        $nvqLevels = $trainee->nvqs ? $trainee->nvqs->map(fn($n) => '• ' . $n->name . ' (' . $n->level . ')')->implode("\n") : '';
+        $nvqLevels = $trainee->nvqs ? $trainee->nvqs->map(function($n) use ($unpack) {
+            $name = $unpack($n->name);
+            $level = $unpack($n->level);
+            return '• ' . $name . ' (' . $level . ')';
+        })->implode("\n") : '';
         $careerTestCount = (string) ($trainee->career_test_count ?? 0);
         $counselingCount = (string) ($trainee->cgo_counseling_count ?? 0);
 
         return [
-            $trainee->full_name ?? $trainee->first_name . ' ' . $trainee->last_name,
+            $fullName,
             $trainee->nic,
             $trainee->email,
             $trainee->mobile,

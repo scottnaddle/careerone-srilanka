@@ -19,7 +19,7 @@ class CasServiceProvider extends ServiceProvider
 
         phpCAS::setNoCasServerValidation();
 
-        // Đừng setServerLoginURL ở đây
+        // Do not call setServerLoginURL here
         $this->app->singleton('cas.loginUrl', function () {
             $locale = app()->getLocale();
             return sprintf(

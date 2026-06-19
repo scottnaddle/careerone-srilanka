@@ -33,7 +33,8 @@ Route::group(['prefix' => 'trainee'], function () {
     Route::get('/register', [AuthController::class, 'getRegister']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/delete-user', [CommonController::class, 'deleteTraineeUser']);
-    Route::post('/login', [App\Http\Controllers\Api\Trainee\AuthController::class, 'login'])->name('login');
+//    Route::post('/login', [App\Http\Controllers\Api\Trainee\AuthController::class, 'login'])->name('login');
+//    Route::post('/login', [App\Http\Controllers\Api\Trainee\AuthController::class, 'login']);
     Route::post('/forget-password', [AuthController::class, 'forgetPassword']);
     Route::post('/verify-email', [AuthController::class, 'verifyEmail'])->name('verification.verify');
     Route::post('/resend-verification', [AuthController::class, 'resendVerification']);
@@ -113,7 +114,7 @@ Route::group(['prefix' => 'trainee'], function () {
             });
         });
     });
-    //Guest truy cap dc
+    //Guest can access
     Route::group(['prefix' => 'career-guidance'], function () {
         Route::group(['prefix' => 'career-test'], function () {
             Route::get('/list', [CareerGuidanceController::class, 'getCareerTestList']);
@@ -149,9 +150,9 @@ Route::group(['prefix' => 'trainee'], function () {
         Route::get('/portfolios', [\App\Http\Controllers\Api\Trainee\PortfolioController::class, 'show'])->name('portfolios.show');
         Route::get('/portfolios/create', [\App\Http\Controllers\Api\Trainee\PortfolioController::class, 'create'])->name('portfolios.create');
         Route::get('/portfolios/edit', [\App\Http\Controllers\Api\Trainee\PortfolioController::class, 'edit'])->name('portfolios.edit');
-        Route::post('/portfolios', [\App\Http\Controllers\Api\Trainee\PortfolioController::class, 'store'])->name('portfolios.store');
-        Route::put('/portfolios/{portfolio}', [\App\Http\Controllers\Api\Trainee\PortfolioController::class, 'update'])->name('portfolios.update');
-        Route::post('/portfolios/delete', [\App\Http\Controllers\Api\Trainee\PortfolioController::class, 'deletePortfolio']);
+        Route::post('/portfolios', [\App\Http\Controllers\Api\Trainee\PortfolioController::class, 'store'])->name('portfolios.store')->middleware('auth:sanctum');
+        Route::put('/portfolios/{portfolio}', [\App\Http\Controllers\Api\Trainee\PortfolioController::class, 'update'])->name('portfolios.update')->middleware('auth:sanctum');
+        Route::post('/portfolios/delete', [\App\Http\Controllers\Api\Trainee\PortfolioController::class, 'deletePortfolio'])->middleware('auth:sanctum');
         Route::post('/portfolios/upload-image', function(Illuminate\Http\Request $request) {
             $request->validate([
                 'file' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -214,7 +215,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['prefix' => 'cgo'], function () {
+// These endpoints are invoked by the session-authenticated CGO web panel (jQuery/select2),
+// not by token clients. The default `api` group has no session, so start one and enforce the
+// CGO guard. CSRF is intentionally not enforced here (the existing AJAX sends no token); the
+// controllers additionally derive the acting CGO from auth('cgo') and verify record ownership.
+Route::group(['prefix' => 'cgo', 'middleware' => [
+    \App\Http\Middleware\EncryptCookies::class,
+    \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+    \Illuminate\Session\Middleware\StartSession::class,
+    'cgo.auth',
+]], function () {
     Route::get('search-institutes', [App\Http\Controllers\Api\Cgo\CounselingController::class, 'searchInstitutes']);
     Route::get('search-nvq-course', [App\Http\Controllers\Api\Cgo\CounselingController::class, 'searchNvqCourse']);
     Route::get('search-tvec-course', [App\Http\Controllers\Api\Cgo\CounselingController::class, 'searchTvecCourse']);

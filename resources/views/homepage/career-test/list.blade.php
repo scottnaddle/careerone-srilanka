@@ -42,14 +42,14 @@
                                 <img src="{{asset('images/test3.webp')}}" alt="Interest and Ability Test" class="h-64 object-cove rounded-xl">
                                 <p class="text-base md:text-2xl text-primary font-semibold text-center">{{ __('general.Interest and Ability Test') }}</p>
                             </div>
-                            <a href="https://www.lankaeducator.com/ctest/moreinfo4.html" target="_blank" class="w-full text-white bg-primary hover:bg-blue-700 focus:ring-4 focus:ring-blue-300  rounded-full text-base md:text-lg px-2.5 py-1.5 md:px-5 md:py-3 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 text-center">{{ __('general.Test now') }}</a>
+                            <a href="https://guidance.nie.ac.lk/ctest/moreinfo4.html" target="_blank" class="w-full text-white bg-primary hover:bg-blue-700 focus:ring-4 focus:ring-blue-300  rounded-full text-base md:text-lg px-2.5 py-1.5 md:px-5 md:py-3 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 text-center">{{ __('general.Test now') }}</a>
                     </div>
                     <div class="w-full flex flex-col bg-[#E8F1FF] gap-6 px-2 py-3 md:px-4 md:py-6 justify-between items-center rounded-xl">
                         <div class="gap-2 flex flex-col items-center justify-center">
                             <img src="{{asset('images/test4.webp')}}" alt="Interest, Ability and Personality Test" class="h-64 object-cove rounded-xl">
                             <p class="text-base md:text-2xl text-primary font-semibold text-center">{{ __('general.Interest, Ability and Personality Test') }}</p>
                         </div>
-                        <a href="https://www.lankaeducator.com/ctest/moreinfo5.html" target="_blank" class="w-full text-white bg-primary hover:bg-blue-700 focus:ring-4 focus:ring-blue-300  rounded-full text-base md:text-lg px-2.5 py-1.5 md:px-5 md:py-3 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 text-center">{{ __('general.Test now') }}</a>
+                        <a href="https://guidance.nie.ac.lk/ctest/moreinfo5.html" target="_blank" class="w-full text-white bg-primary hover:bg-blue-700 focus:ring-4 focus:ring-blue-300  rounded-full text-base md:text-lg px-2.5 py-1.5 md:px-5 md:py-3 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 text-center">{{ __('general.Test now') }}</a>
 
                     </div>
                 </div>

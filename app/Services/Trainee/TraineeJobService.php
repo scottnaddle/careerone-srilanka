@@ -38,17 +38,17 @@ class TraineeJobService
         $trainee = $request->bearerToken() ? auth('sanctum')->user() : \Auth::guard('trainee')->user();
         $traineeId = $trainee?->id;
     
-        // Nếu không có status_job thì mặc định lọc theo status PROGRESS
+        // If there is no status_job, filter by PROGRESS status by default
         if (!$request->filled('status_job')) {
             $jobs->where('status', JobStatusEnum::PROGRESS->value);
         }
     
-        // Lọc theo title
+        // Filter by title
         if ($title = $request->query('title')) {
             $jobs->where('title', 'ILIKE', "%$title%");
         }
     
-        // Lọc theo trạng thái job (applied hoặc matched)
+        // Filter by job status (applied or matched)
         if ($statusJob = $request->query('status_job')) {
             match ($statusJob) {
                 'applied' => $jobs->whereIn('jobs.id', function ($q) use ($traineeId) {
@@ -66,12 +66,12 @@ class TraineeJobService
             $jobs->where('status', 1);
         }
     
-        // Lọc theo status
+        // Filter by status
         if ($request->filled('status')) {
             $jobs->where('status', $request->query('status'));
         }
     
-        // Lọc theo province và district
+        // Filter by province and district
         if ($request->filled('province')) {
             $jobs->whereHas('company.district', function ($query) use ($request) {
                 $query->where('prov_id', $request->query('province'));
@@ -81,12 +81,12 @@ class TraineeJobService
             });
         }
     
-        // Lọc theo sector
+        // Filter by sector
         if ($request->filled('sector')) {
             $jobs->where('jobs.sector_id', $request->query('sector'));
         }
     
-        // Lọc theo trạng thái bookmark
+        // Filter by bookmark status
         if ($request->filled('bookmark') && $request->query('bookmark') !== 'all') {
             $jobs->where(function ($subQuery) use ($request, $traineeId) {
                 if ($request->query('bookmark') === 'mark') {
@@ -97,7 +97,7 @@ class TraineeJobService
             });
         }
     
-        // JOIN và SELECT thêm các trường bổ sung
+        // JOIN and SELECT the additional fields
         $jobs->select('jobs.*')
             ->addSelect([
                 'companies.name as company_name',
@@ -110,7 +110,7 @@ class TraineeJobService
             ->join('sectors', 'sectors.id', '=', 'jobs.sector_id')
             ->join('company_recruiters', 'company_recruiters.id', '=', 'jobs.created_by');
     
-        // Thêm các trường phụ là is_bookmark, is_apply nếu có trainee
+        // Add the extra fields is_bookmark and is_apply if a trainee is present
         if ($traineeId) {
             $jobs->selectSub(function ($query) use ($traineeId) {
                 $query->from('job_bookmarks')
@@ -134,7 +134,7 @@ class TraineeJobService
         // Paginate
         $jobs = $jobs->paginate(10)->appends($request->query());
     
-        // Format lại logo
+        // Reformat the logo
         foreach ($jobs as $job) {
             $job->company_logo = filter_var($job->company_logo, FILTER_VALIDATE_URL)
                 ? $job->company_logo

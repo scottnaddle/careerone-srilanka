@@ -335,7 +335,7 @@ return [
             'search' => 'සෙවීම',
             'filterResult' => 'ප්‍රතිඵල',
             'searchPlaceholder' => 'සෙවීම',
-            'no_record' => 'No record!',
+            'no_record' => 'වාර්තා හමු නොවීය!',
             'filter' => [
                 'district' => 'දිස්ත්‍රික්කය',
                 'recently' => 'මෑතකදී',
@@ -485,28 +485,28 @@ return [
                 'not_limitation' => 'සීමා නැත',
             ],
             'candidate_list' => [
-                'title' => 'Candidate list',
-                'search' => 'Search',
-                'filterResult' => 'Results',
-                'no_record' => 'No record!',
+                'title' => 'අපේක්ෂක ලැයිස්තුව',
+                'search' => 'සොයන්න',
+                'filterResult' => 'ප්‍රතිඵල',
+                'no_record' => 'වාර්තා හමු නොවීය!',
                 'filter' => [
-                    'all_type' => 'Type',
-                    'candidate' => 'Candidate',
-                    'job_match' => 'Job match'
+                    'all_type' => 'වර්ගය',
+                    'candidate' => 'අපේක්ෂකයා',
+                    'job_match' => 'ගැලපෙන රැකියා'
                 ],
                 'modal' => [
-                    'title' => 'Resume',
+                    'title' => 'සාරාංශය (Resume)',
                 ],
-                'updated' => 'Updated',
-                'job_title' => 'Job title'
+                'updated' => 'යාවත්කාලීන කරන ලදී',
+                'job_title' => 'තනතුර'
             ],
         ],
         'ojt_list' => [
             'root' => 'OJT තොරතුරු',
             'search' => 'සෙවීම',
-            'filterResults' => 'Results',
-            'no_record' => 'No record!',
-            'not_limitation' => 'Not limit',
+            'filterResults' => 'ප්‍රතිඵල',
+            'no_record' => 'වාර්තා හමු නොවීය!',
+            'not_limitation' => 'සීමාවක් නොමැත',
             'filter' => [
                 'nvq_level' => 'NVQ මට්ටම',
                 'district' => 'දිස්ත්‍රික්කය',

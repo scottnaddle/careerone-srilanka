@@ -32,7 +32,7 @@ class TraineeCounselingController extends BaseController
     }
     public function storeJson(Request $request)
     {
-        // Validate dữ liệu đầu vào
+        // Validate the input data
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:200',
             'available_date' => 'required|date|after_or_equal:today',

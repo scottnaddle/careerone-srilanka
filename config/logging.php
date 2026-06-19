@@ -133,6 +133,48 @@ return [
             'level' => 'debug',
             'days' => 7,
         ],
+
+        'sync_apidata' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/sync-apidata.log'),
+            'level' => 'debug',
+            'days' => 14,
+        ],
+
+        'sync_trainee' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/sync-trainee-data.log'),
+            'level' => 'debug',
+            'days' => 14,
+        ],
+
+        'cgo_reminder' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/cgo-reminder.log'),
+            'level' => 'debug',
+            'days' => 14,
+        ],
+
+        'monthly_report' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/monthly-report.log'),
+            'level' => 'debug',
+            'days' => 14,
+        ],
+
+        'change_status_job' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/change-status-job.log'),
+            'level' => 'debug',
+            'days' => 14,
+        ],
+
+        'cas_sync' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/cas-sync.log'),
+            'level' => 'debug',
+            'days' => 14,
+        ],
     ],
 
 ];

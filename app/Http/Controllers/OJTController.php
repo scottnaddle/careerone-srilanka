@@ -41,29 +41,29 @@ class OJTController extends Controller
             $data['application_endtime'] = $request->filled('application_endtime')
                 ? Carbon::parse($data['application_endtime'])->format('Y-m-d')
                 : null;
-            $data['slug'] = Str::slug($data['title']);
+            $data['slug'] = Str::slug($data['title'], '-', 'ta');
             $data['created_by'] = Auth::guard(activeGuard())->user()->id;
             $data['company_id'] = Auth::guard(activeGuard())->user()->company_id;
             $data['system'] = activeGuard();
 
-            // Xử lý gender
+            // Handle gender
             $data['gender'] = $request->has('gender') ? json_encode($request->input('gender')) : json_encode([]);
 
-            // Xử lý age_limitation
+            // Handle age_limitation
             $data['age_limitation'] = $request->has('age_limitation') ? true : false;
             if (!$data['age_limitation']) {
                 $data['min_age'] = null;
                 $data['max_age'] = null;
             }
 
-            // Xử lý work_experience_limitation
+            // Handle work_experience_limitation
             $data['work_experience_limitation'] = $request->has('work_experience_limitation') ? true : false;
             if ($data['work_experience_limitation']) {
                 $data['min_work_experience'] = null;
                 $data['max_work_experience'] = null;
             }
 
-            // Xử lý trạng thái theo ngày
+            // Determine status based on the date
             $currentDate = Carbon::now()->format('Y-m-d');
             $data['status'] = 1;
             if ($data['application_starttime'] && $data['application_endtime']) {
@@ -72,7 +72,7 @@ class OJTController extends Controller
                 }
             }
 
-            // Lưu dữ liệu
+            // Save the data
             $result=OJT::create($data);
             SendOJTRegistrationNotificationJob::dispatch($result->id);
             return redirect()->route('company.job-support.ojt-list.list')->with('success', __('company.Published OJT vacancy successfully'));
@@ -108,7 +108,7 @@ class OJTController extends Controller
         if (activeGuard() == 'company' && Auth::guard(activeGuard())->check()) {
             $data['application_starttime'] = $data['application_starttime'] ? Carbon::parse($data['application_starttime'])->format('Y-m-d') : null;
             $data['application_endtime'] = $data['application_endtime'] ? Carbon::parse($data['application_endtime'])->format('Y-m-d') : null;
-            // Xử lý gender
+            // Handle gender
             $data['gender'] = $request->has('gender') ? json_encode($request->input('gender')) : json_encode([]);
             $currentDate = Carbon::now()->format('Y-m-d');
 //

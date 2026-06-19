@@ -52,7 +52,7 @@ class ViewJobCandidate extends ViewRecord
             ])
             ->groupBy('trainee_id');
     
-        // Nếu có từ khóa tìm kiếm
+        // If there are search terms
         if (!empty($searchTerms)) {
             $applies->whereHas('user', function ($query) use ($searchTerms) {
                 $query->where(function ($query) use ($searchTerms) {
@@ -65,10 +65,10 @@ class ViewJobCandidate extends ViewRecord
             });
         }
     
-        // Sắp xếp theo thời gian apply
+        // Sort by apply time
         $applies->orderBy('latest_apply_date', $searchTime === 'asc' ? 'ASC' : 'DESC');
     
-        // Lọc theo status nếu có
+        // Filter by status if present
         $statusFilters = [
             'read' => 'read',
             'selected' => 'selected',
@@ -79,7 +79,7 @@ class ViewJobCandidate extends ViewRecord
             $applies->where('status', '', $status);
         }
     
-        // Lấy kết quả và xử lý apply_types
+        // Get the results and process apply_types
         $results = $applies->paginate(10);
     
         foreach ($results as $result) {

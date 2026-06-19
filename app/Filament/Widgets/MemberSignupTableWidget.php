@@ -28,24 +28,24 @@ class MemberSignupTableWidget extends BaseWidget
         );
     }
 
-    // --- THÊM ĐOẠN NÀY ---
-    // Hàm này chạy mỗi khi component chuẩn bị render ra view
+    // --- ADD THIS BLOCK ---
+    // This function runs every time the component is about to render the view
     public function rendering($view, $data)
     {
-        // Lấy danh sách các bản ghi đang hiển thị trên trang hiện tại của bảng
+        // Get the list of records currently displayed on the table's current page
         $records = $this->getTable()->getRecords();
 
-        // Lấy ra danh sách các ngày (date)
+        // Extract the list of dates
         $dates = $records->pluck('date')->values()->toArray();
 
-        // Bắn sự kiện sang Chart Widget kèm theo danh sách ngày
+        // Fire an event to the Chart Widget along with the list of dates
         $this->dispatch('update-chart-dates', dates: $dates);
     }
     // ---------------------
 
     protected function getTableQuery(): Builder|Relation|null
     {
-        return $this->memberSignupService->getMemberSignupTableData();
+        return $this->memberSignupService->getMemberSignupTableData(auth('admin')->user()->hasRole('admin'));
     }
 
     public function getTableRecordKey(\Illuminate\Database\Eloquent\Model $record): string
@@ -65,8 +65,8 @@ class MemberSignupTableWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('date')->label(__('admin/dashboard.member_signup.date'))->sortable()->alignCenter(),
                 Tables\Columns\TextColumn::make('cgo_total')->label(__('admin/dashboard.member_signup.cgo'))->alignCenter(),
                 Tables\Columns\TextColumn::make('trainee_total')->label(__('admin/dashboard.member_signup.trainee'))->alignCenter(),
-                Tables\Columns\TextColumn::make('company_total')->label(__('admin/dashboard.member_signup.company'))->alignCenter(),
-                Tables\Columns\TextColumn::make('admin_total')->label(__('admin/dashboard.member_signup.admin'))->alignCenter(),
+                Tables\Columns\TextColumn::make('company_total')->label(__('admin/dashboard.member_signup.company'))->visible(auth('admin')->user()->hasRole('super_admin'))->alignCenter(),
+                Tables\Columns\TextColumn::make('admin_total')->label(__('admin/dashboard.member_signup.admin'))->visible(auth('admin')->user()->hasRole('super_admin'))->alignCenter(),
                 Tables\Columns\TextColumn::make('total_users')->label(__('admin/dashboard.member_signup.total'))->alignCenter(),
             ])
             ->heading(

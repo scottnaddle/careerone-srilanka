@@ -29,6 +29,11 @@ class CheckCgoUserLoggedIn
                 Auth::guard('cgo')->logout();
                 return response()->view('auth-verification.reactive-account-form', compact('token', 'u_type'));
             }
+            // Block CGOs whose admin approval has been revoked / not granted.
+            if (!$user->verify_at) {
+                Auth::guard('cgo')->logout();
+                return redirect()->route('cgo.auth.login')->with('error', 'Your account is not verified by administrator!');
+            }
         }
         return $next($request);
     }

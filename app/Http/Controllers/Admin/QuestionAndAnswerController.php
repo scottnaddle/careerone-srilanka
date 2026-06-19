@@ -10,6 +10,11 @@ use App\Models\QnaAttachment;
 use Illuminate\Support\Facades\File;
 class QuestionAndAnswerController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('admin.auth');
+    }
+
     /**
      * Remove the specified resource from storage.
      */
@@ -31,6 +36,9 @@ class QuestionAndAnswerController extends Controller
     {
         // dd($id);
         $qNA = QNA::where('id', $id)->first();
+        if (!$qNA) {
+            return redirect()->route('filament.admin.resources.information.q-as.index')->withErrors('Q&A not found or already deleted.');
+        }
         foreach ($qNA->replies as $reply) {
             foreach ($reply->children as $childReply) {
                 $childReply->delete();

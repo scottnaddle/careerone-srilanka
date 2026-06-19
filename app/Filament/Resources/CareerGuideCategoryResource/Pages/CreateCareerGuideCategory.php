@@ -12,7 +12,7 @@ class CreateCareerGuideCategory extends CreateRecord
     protected static bool $canCreateAnother = false;
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['slug'] = \Str::slug($data['name']);
+        $data['slug'] = \Str::slug($data['name'], '-', 'ta');
         return $data;
     }
     protected function getRedirectUrl(): string

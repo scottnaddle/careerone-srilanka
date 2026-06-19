@@ -68,7 +68,7 @@ class ContentService
         SUM(CASE WHEN contents.content_type != 'video' THEN 1 ELSE 0 END)
     ) DESC");
 
-// Where với từ khóa tìm kiếm
+// Where with the search keyword
             if (!empty($data['keywords_search'])) {
                 $contentQuery->whereRaw('LOWER(institutes.name) LIKE ?', ['%' . strtolower($data['keywords_search']) . '%']);
             }

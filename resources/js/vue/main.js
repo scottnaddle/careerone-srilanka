@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import Portfolio from './components/Portfolio.vue';
+import FlowbiteDatepicker from './components/FlowbiteDatepicker.vue';
 import axios from 'axios';
 import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
@@ -14,12 +15,17 @@ export function initializeVueApps() {
     if (el) {
         try {
             const initialPortfolio = JSON.parse(el.dataset.portfolio || '{}');
+            const initialDistricts = JSON.parse(el.dataset.districts || '[]');
+            const initialGenders = JSON.parse(el.dataset.genders || '[]');
             const app = createApp(Portfolio, {
-                initialPortfolio
+                initialPortfolio,
+                initialDistricts,
+                initialGenders
             });
 
-            // Cung cấp axios cho toàn bộ app
+            // Provide axios to the entire app
             app.config.globalProperties.$axios = axios;
+            app.component('flowbite-datepicker', FlowbiteDatepicker);
             app.use(Toast, {
                 timeout: 3000,
                 closeOnClick: false,
@@ -47,7 +53,7 @@ export function initializeVueApps() {
     }
 }
 
-// Gọi khởi tạo
+// Call initialization
 if (import.meta.hot) {
     import.meta.hot.accept();
 }

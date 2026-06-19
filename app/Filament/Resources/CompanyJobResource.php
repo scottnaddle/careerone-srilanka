@@ -50,6 +50,20 @@ class CompanyJobResource extends Resource
                     'status' => request()->query('status', null)
                 ])
             )
+            ->modifyQueryUsing(function ($query) {
+                $admin = auth('admin')->user();
+                if ($admin && $admin->hasRole('naita_admin')) {
+                    $query->where('is_belongs_to_naita', true);
+                }
+
+                // Eager-load district (used by district.name) and count the
+                // applies/matches relations up-front to avoid N+1 queries.
+                // jobs() is intentionally NOT counted here: it is not a plain
+                // Eloquent relationship (returns a raw query for headquarters),
+                // so withCount cannot be used for it.
+                $query->with('district')
+                    ->withCount(['applies', 'matches']);
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('index')
                     ->label(__('admin/dashboard.compnay_job.no'))
@@ -72,27 +86,27 @@ class CompanyJobResource extends Resource
 
                 Tables\Columns\TextColumn::make('applies')
                     ->label(__('admin/dashboard.compnay_job.applied'))
-                    ->getStateUsing(fn($record) => $record->applies()->count())->alignCenter(),
+                    ->getStateUsing(fn($record) => $record->applies_count)->alignCenter(),
 
                 Tables\Columns\TextColumn::make('matches')
                     ->label(__('admin/dashboard.compnay_job.matched'))
-                    ->getStateUsing(fn($record) => $record->matches()->count())->alignCenter(),
+                    ->getStateUsing(fn($record) => $record->matches_count)->alignCenter(),
                     Tables\Columns\TextColumn::make('approval')
                     ->label(__('admin/dashboard.company.approval'))
                     ->getStateUsing(function ($record) {
                         return $record->statusCompanyList();
                     })
                     ->formatStateUsing(fn($state) => match ($state) {
-                        'Verified' => "<span style='font-size:12px;color: #4984F6; background-color: #F2F9FF; padding: 0.2rem 0.4rem; border-radius: 0.25rem;font-weight:600;'>$state</span>",
-                        'Request' => "<span style='font-size:12px;color: #5a5252; background-color: #dfdada; padding: 0.2rem 0.4rem; border-radius: 0.25rem;font-weight:600;'>Request</span>",
-                        default => "<span style='font-size:12px;color: #F34550; background-color: #FFF0F0; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-weight:600;'>Rejected</span>",
+                        'Verified' => "<span style='font-size:12px;color: #4984F6; background-color: #F2F9FF; padding: 0.2rem 0.4rem; border-radius: 0.25rem;font-weight:600;'>".trans('admin/performance.Verified')."</span>",
+                        'Request' => "<span style='font-size:12px;color: #5a5252; background-color: #dfdada; padding: 0.2rem 0.4rem; border-radius: 0.25rem;font-weight:600;'>".trans('admin/performance.Request')."</span>",
+                        default => "<span style='font-size:12px;color: #F34550; background-color: #FFF0F0; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-weight:600;'>".trans('admin/performance.Rejected')."</span>",
                     })
                     ->html(),
                 Tables\Columns\TextColumn::make('active')
                     ->label('Status')
                     ->sortable()
                     ->badge()
-                    ->formatStateUsing(fn($state) => $state ? 'Active' : 'Inactive')
+                    ->formatStateUsing(fn($state) => $state ? trans('auth.active') : trans('admin/status.inactive'))
                     ->color(fn($state) => $state ? 'success' : 'danger')
             ])
             ->searchPlaceholder(__('admin/dashboard.compnay_job.search_placeholder'))
@@ -100,19 +114,44 @@ class CompanyJobResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('district_id')
                     ->label('District')
-                    ->options(District::all()->pluck('name', 'id'))
+                    ->options(function () {
+                        $admin = auth('admin')->user();
+                        $districtQuery = District::query();
+
+                        if ($admin && $admin->hasRole('naita_admin')) {
+                            // Only get districts that contain companies belonging to Naita
+                            $districtQuery->whereHas('companies', function ($q) {
+                                $q->where('is_belongs_to_naita', true);
+                            });
+                        }
+
+                        return $districtQuery->pluck('name', 'id');
+                    })
                     ->searchable(),
 
                 Tables\Filters\SelectFilter::make('sector')
                     ->label(__('admin/dashboard.compnay_job.job_category'))
-                    ->options(Sector::pluck('name', 'id')->toArray())
+                    ->options(function () {
+                        $admin = auth('admin')->user();
+                        $sectorQuery = Sector::query();
+
+                        if ($admin && $admin->hasRole('naita_admin')) {
+                            // Only get sectors that have jobs belonging to Naita companies
+                            $sectorQuery->whereHas('jobCompanies.company', function ($q) {
+                                $q->where('is_belongs_to_naita', true);
+                            });
+                        }
+
+                        return $sectorQuery->pluck('name', 'id');
+                    })
                     ->query(function (\Illuminate\Database\Eloquent\Builder $query, array $data) {
                         if (isset($data['value']) && !empty($data['value'])) {
                             $query->whereHas('jobs', function ($query) use ($data) {
                                 $query->where('jobs.sector_id', $data['value']);
                             });
                         }
-                    })->searchable(),
+                    })
+                    ->searchable(),
             ])
             ->actions([
                 ViewAction::make()

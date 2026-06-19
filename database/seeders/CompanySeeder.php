@@ -38,7 +38,7 @@ class CompanySeeder extends Seeder
                 'co_business' =>  "",
                 'enterprise_id' =>  $faker->randomElement(Enterprise::pluck('id')->toArray()),
                 'district_id' => $faker->randomElement(District::pluck('id')->toArray()),
-                'slug' => Str::slug($name),
+                'slug' => Str::slug($name, '-', 'ta'),
                 'verified_at' => now(),
                 'verified_by' => 1,
                 'created_at' => now(),

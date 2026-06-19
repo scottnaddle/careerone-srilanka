@@ -88,7 +88,7 @@ Route::group(['prefix' => 'company', 'as' => 'company.'], function () {
 
     });
 
-    Route::group(['prefix' => 'job-support', 'as' => 'job-support.'], function () {
+    Route::group(['prefix' => 'job-support', 'as' => 'job-support.', 'middleware' => ['company.auth']], function () {
         Route::group(['prefix' => 'job-vacancy', 'as' => 'job-vacancy.'], function () {
             Route::group(['prefix' => 'candidate-list', 'as' => 'candidate-list.'], function () {
                 // Route::get('/', [JobSupportController::class, 'getCandidateList']);
@@ -118,8 +118,6 @@ Route::group(['prefix' => 'company', 'as' => 'company.'], function () {
             Route::get('/ojt-registration', [JobSupportController::class, 'ojtRegistration'])->name('registration');
             Route::get('/ojt-detail/{slug}', [JobSupportController::class, 'ojtDetail'])->name('detail');
             Route::post('/ojt-registration', [OJTController::class, 'store'])->name('postRegistration');
-            Route::get('/list-matched/{slug}', [JobSupportController::class, 'ojtListMatched'])->name('list-matched');
-            Route::get('/trainee-match/{slug}', [JobSupportController::class, 'ojtTraineeMatch'])->name('trainee-match');
             Route::get('/trainee-information/{slug}/{trainee}', [OJTMatchController::class, 'ojtTraineeInformation'])->name('trainee-information');
             Route::post('/trainee-match', [OJTMatchController::class, 'store'])->name('match-trainee');
             Route::get('/ojt-detail/download/{id}', [OJTAttachmentController::class, 'download'])->name('ojt-detail.download');

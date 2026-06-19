@@ -67,7 +67,7 @@
                 </div>
 
 
-                <!-- Hiển thị thông báo lỗi nếu có -->
+                <!-- Show error message if any -->
                 @if ($errors->has('available_date'))
                     <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('available_date') }}</span>
                 @endif

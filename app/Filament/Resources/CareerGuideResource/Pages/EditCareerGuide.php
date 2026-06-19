@@ -21,7 +21,7 @@ class EditCareerGuide extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $data['slug'] = \Str::slug($data['title']);
+        $data['slug'] = \Str::slug($data['title'], '-', 'ta');
         // $data['thumbnail'] = str_starts_with($data['thumbnail'], 'storage/') ? $data['thumbnail'] : 'storage/' . $data['thumbnail'];
         return $data;
     }

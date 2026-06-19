@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\Admin\api;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ExternalApiService
 {
@@ -21,7 +22,9 @@ class ExternalApiService
         foreach ($objects as $object) {
             $jsonData = json_decode($object, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                dd('JSON decode error: ' . json_last_error_msg(), $object);
+                // Skip malformed fragments instead of halting the whole sync.
+                Log::warning('ExternalApiService JSON decode error: ' . json_last_error_msg(), ['fragment' => $object]);
+                continue;
             }
             $data[] = $jsonData;
         }

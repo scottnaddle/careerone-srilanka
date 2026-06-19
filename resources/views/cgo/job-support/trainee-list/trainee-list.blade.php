@@ -170,7 +170,7 @@
                 @endforelse
 
             </div>
-            {{--            //cái này gọi tailwind pagination trong vendor ra --}}
+            {{--            // this renders the tailwind pagination from vendor --}}
             {{ $trainees->onEachSide(1)->links() }}
         </div>
     </div>
@@ -333,7 +333,7 @@
         });
 
         $('#portfolio-check').on('change', function () {
-            const selectedValue = $(this).val(); // lấy value của select
+            const selectedValue = $(this).val(); // get the select's value
 
             if (selectedValue === 'all') {
                 url.searchParams.delete('has-portfolio');
@@ -398,7 +398,7 @@
             var buttons = document.querySelectorAll('.trainee-name-btn');
 
             function applyNameLimit() {
-                var isMobile = window.innerWidth <= 768; // 768px là một kích thước phổ biến cho mobile
+                var isMobile = window.innerWidth <= 768; // 768px is a common breakpoint for mobile
                 buttons.forEach(function(button) {
                     var fullName = button.getAttribute('data-full-name');
                     var limitedName = button.getAttribute('data-limited-name');
@@ -406,8 +406,8 @@
                 });
             }
 
-            applyNameLimit(); // Áp dụng khi tải trang
-            window.addEventListener('resize', applyNameLimit); // Áp dụng khi thay đổi kích thước màn hình
+            applyNameLimit(); // Apply on page load
+            window.addEventListener('resize', applyNameLimit); // Apply on screen resize
         });
     </script>
     <script type="module">

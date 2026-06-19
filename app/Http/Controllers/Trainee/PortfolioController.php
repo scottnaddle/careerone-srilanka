@@ -21,7 +21,7 @@ use App\Jobs\CreatePortfoliosJob;
 class PortfolioController extends Controller
 {
     public function __construct(TraineeInformationService $traineeInformationService, TraineeTrainingSyncService $traineeSyncService) {
-        $this->middleware('trainee.auth')->except('previewResume', 'previewPortfolio','show');
+        $this->middleware('trainee.auth')->except('previewResume', 'previewPortfolio', 'show', 'exportPortfolio');
         $this->traineeInformationService = $traineeInformationService;
         $this->traineeSyncService = $traineeSyncService;
     }
@@ -36,129 +36,9 @@ class PortfolioController extends Controller
         $resumes = Resume::where('trainee_id', Auth::guard('trainee')->user()->id)->paginate(10);
         return view('trainee.career-guidance.portfolio.resume-list', compact('resumes'));
     }
-//    public function createPortfolio() {
-//        if (Portfolio::where('trainee_id', Auth::guard('trainee')->user()->id)->exists()) {
-//            return redirect()->route('trainee.career-guidance.portfolio.get-portfolio')->withErrors( "Your portfolio has existed!");
-//        }
-//        $portfolioDatas = array(
-//            'fullname' => 'Luu Nguyen',
-//            'description' => 'I am the best of electric',
-//            'summary' => 'Web Designer | NVQ5 | Tourism',
-//            'basic_information' => [
-//                'fullname' => 'Luu Nguyen',
-//                'email' => 'oscar@videabiz.com',
-//                'phone' => '0356465883',
-//                'address' => '37403 Haven Locks Predovichaven, KY 12472-2496'
-//            ],
-//            'about_me' => 'I have many dreams to grow as a technical expert in TVET sector in Sri Lanka. I want to grow as a professional with specialized skills.',
-//            'tvec_educations' => array(
-//                [
-//                    'institute' => 'Sri Lanka Forestry Institute',
-//                    'industry_sector' => '(A) Agriculture, Hunting and Forestry',
-//                    'course_name' => 'Forestry',
-//                    'from' => '2017-01-02',
-//                    'to' => '2018-01-02'
-//                ],
-//                [
-//                    'institute' => 'Sri Lanka Forestry Institute',
-//                    'industry_sector' => '(A) Agriculture, Hunting and Forestry',
-//                    'course_name' => 'Forestry',
-//                    'from' => '2017-01-02',
-//                    'to' => '2018-01-02'
-//                ]
-//            ),
-//            'nvq_educations' => array(
-//                [
-//                    'qualification_name' => 'Forestry',
-//                    'effective_date' => '2021-07-27',
-//                    'level' => 'L6',
-//                ],
-//            )
-//            ,
-//            'educations' => array(
-//                [
-//                    'school_name' => 'Primary School',
-//                    'district' => 'D10',
-//                    'province' => 'Colombo',
-//                    'from' => '2022-09-09',
-//                    'to' => '2023-09-09'
-//                ],
-//                [
-//                    'school_name' => 'Secondary School',
-//                    'district' => 'D10',
-//                    'province' => 'Colombo',
-//                    'from' => '2023-09-09',
-//                    'to' => '2024-09-09'
-//                ],
-//                [
-//                    'school_name' => 'High School',
-//                    'district' => 'D10',
-//                    'province' => 'Colombo',
-//                    'from' => '2024-09-09',
-//                    'to' => '2026-09-09'
-//                ],
-//            ),
-//            'ojt_experiences' => array(
-//                [
-//                    'time' => 'April 2022',
-//                    'ojt_name' => 'Completed an OJT course of AWS',
-//                    'ojt_description' => 'Get started with dozens of web components and interactive elements built on top of Tailwind CSS.'
-//                ],
-//                [
-//                    'time' => 'March 2022',
-//                    'ojt_name' => 'Completed an OJT course of Figma',
-//                    'ojt_description' => 'All of the pages and components are first designed in Figma and we keep a parity between the two versions even as we update the project.'
-//                ],
-//                [
-//                'time' => 'April 2022',
-//                'ojt_name' => 'Completed web development training',
-//                'ojt_description' => 'Get access to over 20+ pages including a dashboard layout, charts, kanban board, calendar, and pre-order E-commerce & Marketing pages.'
-//                ]
-//            ),
-//            'experiences' => array(
-//                [
-//                    'time' => 'April 2022',
-//                    'experience_name' => 'E-Commerce UI code in Tailwind CSS',
-//                    'experience_description' => 'Get started with dozens of web components and interactive elements built on top of Tailwind CSS.'
-//                ],
-//                [
-//                    'time' => 'March 2022',
-//                    'experience_name' => 'Marketing UI design in Figma',
-//                    'experience_description' => 'All of the pages and components are first designed in Figma and we keep a parity between the two versions even as we update the project.'
-//                ],
-//                [
-//                    'time' => 'April 2022',
-//                    'experience_name' => 'Application UI code in Tailwind CSS',
-//                    'experience_description' => 'Get access to over 20+ pages including a dashboard layout, charts, kanban board, calendar, and pre-order E-commerce & Marketing pages.'
-//                ]
-//            ),
-//            'skills' => array(
-//                [
-//                    'name' => 'Administration',
-//                    'description' => 'Human Resources Administrator at Point Avenue'
-//                ],
-//                [
-//                    'name' => 'Administration',
-//                    'description' => 'Human Resources Administrator at Point Avenue'
-//                ]
-//            ),
-//            'languages' => [
-//               'english','tamil','sinhala'
-//            ],
-//            'evidences' => array(
-//                [
-//                    'name' => 'Certificate of Completion ICT Training OJT',
-//                    'attachment_path' => '/images/certificate-sample.webp',
-//                    'time' => '2023-2024',
-//                    'description' => 'This training enhanced the trainee’s practical knowledge in areas such as networking, programming, database management, and IT support. It also helped improve their problem-solving skills, communication abilities, and adaptability in a dynamic work setting.'
-//                ]
-//            )
-//        );
-//        return view('portfolio.template.linkedin', compact('portfolioDatas'));
-//    }
     public function create()
     {
-        // Kiểm tra portfolio đã tồn tại
+        // Check whether the portfolio already exists
         if (Portfolio::where('trainee_id', Auth::guard('trainee')->id())->exists()) {
             return redirect()->route('trainee.career-guidance.portfolios.show');
         }
@@ -168,15 +48,15 @@ class PortfolioController extends Controller
             abort(403, 'Unauthorized access');
         }
 
-        // 1. Lấy thông tin trainee
+        // 1. Get trainee information
         $traineeInformations = $current_user;
         $traineeTrainingInformations = TraineeTrainingHistory::where('trainee_id', $current_user->id)->first();
 
-        // Khởi tạo mảng giá trị mặc định
+        // Initialize the default value arrays
         $tvecEducations = [];
         $nvqEducations = [];
 
-        // Xử lý TVEC educations
+        // Handle TVEC educations
         if ($traineeTrainingInformations && !empty($traineeTrainingInformations->content)) {
             try {
                 $trainingContent = json_decode($traineeTrainingInformations->content);
@@ -198,7 +78,7 @@ class PortfolioController extends Controller
             }
         }
 
-        // Xử lý NVQ educations
+        // Handle NVQ educations
         if ($traineeTrainingInformations && !empty($traineeTrainingInformations->nvq_content)) {
             try {
                 $nvqContent = json_decode($traineeTrainingInformations->nvq_content);
@@ -227,7 +107,9 @@ class PortfolioController extends Controller
                 'fullname' => $traineeInformations->fullName ?? '',
                 'email' => $traineeInformations->email ?? '',
                 'phone' => $traineeInformations->mobile ?? '',
-                'address' => $traineeInformations->contact_address ?? ''
+                'address' => $traineeInformations->contact_address ?? '',
+                'gender' => $traineeInformations->gender ? (string) $traineeInformations->gender : '',
+                'district' => $traineeInformations->district->name ?? ''
             ],
             'about_me' => '',
             'tvec_educations' => $tvecEducations,
@@ -241,16 +123,55 @@ class PortfolioController extends Controller
             'evidences' => []
         ];
 
-        return view('portfolio.create', compact('portfolioData'));
+        $districts = \App\Models\District::all(['id', 'name']);
+        $genders = getCodeList('gender');
+
+        return view('portfolio.create', compact('portfolioData', 'districts', 'genders'));
     }
     public function edit()
     {
-        // Kiểm tra portfolio đã tồn tại
-        if ($portfolio = Portfolio::where('trainee_id', Auth::guard('trainee')->id())->first()) {
+        // Check whether the portfolio already exists
+        if ($portfolio = Portfolio::where('trainee_id', Auth::guard('trainee')->id())->latest()->first()) {
 
             $portfolioData = $portfolio->data;
+            if (is_string($portfolioData)) {
+                $portfolioData = json_decode($portfolioData, true);
+            }
+            if (!is_array($portfolioData)) {
+                $portfolioData = [];
+            }
 
-            return view('portfolio.create', compact('portfolioData'));
+            // === Migrate old format to new wizard format ===
+            // Old format used 'skills', new wizard uses 'technical_skills'
+            if (!isset($portfolioData['technical_skills']) && isset($portfolioData['skills'])) {
+                $portfolioData['technical_skills'] = $portfolioData['skills'];
+            }
+
+            // Ensure new required fields have defaults if missing
+            $portfolioData['technical_skills'] = $portfolioData['technical_skills'] ?? [];
+            $portfolioData['has_work_experience'] = $portfolioData['has_work_experience'] ?? null;
+            $portfolioData['goal_type'] = $portfolioData['goal_type'] ?? '';
+            $portfolioData['career_interests'] = $portfolioData['career_interests'] ?? [
+                'work_type' => '',
+                'work_mode' => '',
+                'career_fields' => []
+            ];
+            // Ensure career_interests sub-keys
+            if (is_array($portfolioData['career_interests'])) {
+                $portfolioData['career_interests']['work_type'] = $portfolioData['career_interests']['work_type'] ?? '';
+                $portfolioData['career_interests']['work_mode'] = $portfolioData['career_interests']['work_mode'] ?? '';
+                $portfolioData['career_interests']['career_fields'] = $portfolioData['career_interests']['career_fields'] ?? [];
+            }
+            $portfolioData['ojt_experiences'] = $portfolioData['ojt_experiences'] ?? [];
+            $portfolioData['experiences'] = $portfolioData['experiences'] ?? [];
+            $portfolioData['educations'] = $portfolioData['educations'] ?? [];
+            $portfolioData['languages'] = $portfolioData['languages'] ?? [];
+            // === End migration ===
+
+            $districts = \App\Models\District::all(['id', 'name']);
+            $genders = getCodeList('gender');
+
+            return view('portfolio.create', compact('portfolioData', 'districts', 'genders'));
         }
         return redirect()->route('trainee.career-guidance.portfolios.show');
 
@@ -269,14 +190,14 @@ class PortfolioController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Invalid JSON data'], 400);
         }
 
-        if (isset($jsonData['pid']) && $jsonData['pid'] != '') {
-            $portfolio = Portfolio::where('id', $jsonData['pid'])->first();
-        } else {
+        $trainee_id = Auth::guard('trainee')->user()->id;
+        $portfolio = Portfolio::where('trainee_id', $trainee_id)->latest()->first();
+        if (!$portfolio) {
             $portfolio = new Portfolio();
         }
 
         // Ensure each key exists before assigning
-        $portfolio->data = json_encode($jsonData['data'] ?? []); // Store as JSON string
+        $portfolio->data = $jsonData['data'] ?? []; // Store as array (Laravel casts to JSON automatically)
         $portfolio->html = $jsonData['html'] ?? '';
         $portfolio->css = $jsonData['css'] ?? '';
         $portfolio->trainee_id = Auth::guard('trainee')->user()->id;
@@ -313,7 +234,9 @@ class PortfolioController extends Controller
     public function deleteResume(Request $request) {
         $result = Resume::where('trainee_id', Auth::guard('trainee')->user()->id)->where('id', $request->id)->first();
         if ($result) {
-            unlink($result->attachment);
+            if (is_file($result->attachment)) {
+                unlink($result->attachment);
+            }
             $result->delete();
             return redirect()->route('trainee.career-guidance.portfolio.get-resume')->with('success', trans('system.information.content_management.deleted'));
         }else {
@@ -334,7 +257,9 @@ class PortfolioController extends Controller
         if ($portfolio) {
             $externalServerUrl = env('EXTERNAL_SERVER_URL') . '/generate-pdf';
 
-            $fullNameSlug = \Str::slug(Auth::guard('trainee')->user()->fullName);
+            $trainee = $portfolio->trainee ?? (Auth::guard('trainee')->user());
+            $fullName = $trainee ? $trainee->fullName : 'candidate';
+            $fullNameSlug = \Str::slug($fullName, '-', 'ta');
             $fileName = $fullNameSlug . '-portfolio.pdf';
 
             try {
@@ -376,6 +301,9 @@ class PortfolioController extends Controller
         $portfolio = Portfolio::where('id', $id)->first();
         if ($portfolio) {
             $portfolioDatas = $portfolio->data;
+            if (is_string($portfolioDatas)) {
+                $portfolioDatas = json_decode($portfolioDatas, true);
+            }
             return view('portfolio.preview', compact('portfolioDatas', 'portfolio'));
 
         }else{
@@ -435,17 +363,17 @@ class PortfolioController extends Controller
 
         if ($request->has('attachment')) {
             $file = $request->file('attachment');
-            $fullName = $file->getClientOriginalName();
+            $safeName = \Illuminate\Support\Str::uuid() . '.' . strtolower($file->getClientOriginalExtension());
             $storage_path = storage_path('app/public/'.activeGuard().'/career-guidance/resume/'.Auth::guard(activeGuard())->user()->id.'/');
             if (!Storage::exists($storage_path)) {
                 Storage::makeDirectory($storage_path);
             }
-            $file->move($storage_path, $fullName);
-            $path = 'storage/'.activeGuard().'/career-guidance/resume/'.Auth::guard(activeGuard())->user()->id.'/'.$fullName;
+            $file->move($storage_path, $safeName);
+            $path = 'storage/'.activeGuard().'/career-guidance/resume/'.Auth::guard(activeGuard())->user()->id.'/'.$safeName;
             $result->attachment = $path;
         }
         if ($result->save()) {
-            if ($old_attachment != '') {
+            if ($old_attachment != '' && is_file($old_attachment)) {
                 unlink($old_attachment);
             }
             return redirect()->route('trainee.career-guidance.portfolio.get-resume')->with('success', trans('system.information.content_management.saved'));
@@ -453,8 +381,21 @@ class PortfolioController extends Controller
     }
     public function previewResume(Request $request) {
         $id = base64_decode($request->cid);
-        $resume = Resume::where('id', $id)->first();
+        $trainee = Auth::guard('trainee')->user();
+        if (!$trainee) {
+            abort(404);
+        }
+        $resume = Resume::where('id', $id)->where('trainee_id', $trainee->id)->first();
         if ($resume) {
+            $resumeDir = storage_path('app/public/'.activeGuard().'/career-guidance/resume/');
+            // Defence-in-depth: if the path resolves, ensure it stays inside the resume dir.
+            // (Don't fail closed when realpath can't resolve — the symlink may be absent on some
+            // hosts; ownership scoping above is the primary control.)
+            $realPath = realpath($resume->attachment);
+            $realResumeDir = realpath($resumeDir);
+            if ($realPath !== false && $realResumeDir !== false && !str_starts_with($realPath, $realResumeDir)) {
+                abort(404);
+            }
             if (file_exists($resume->attachment)) {
                 return response()->file($resume->attachment);
             }
@@ -475,7 +416,7 @@ class PortfolioController extends Controller
 
     public function show()
     {
-        $portfolio = Portfolio::where('trainee_id', Auth::guard('trainee')?->id())->first();
+        $portfolio = Portfolio::where('trainee_id', Auth::guard('trainee')?->id())->latest()->first();
         if($portfolio) {
             $portfolioDatas = $portfolio->data;
             return view('portfolio.show', compact('portfolioDatas', 'portfolio'));
@@ -504,15 +445,10 @@ class PortfolioController extends Controller
             'avatar' => 'nullable',
             'cover_photo' => 'nullable',
         ]);
-        if ($portfolio = Portfolio::where('trainee_id', auth()->guard('trainee')->id())->first()) {
-            $portfolio->data = $validated;
-            $portfolio->save();
-        }else {
-            $portfolio = Portfolio::create([
-                'trainee_id' => Auth::guard('trainee')->id(),
-                'data' => $validated
-            ]);
-        }
+        $portfolio = Portfolio::updateOrCreate(
+            ['trainee_id' => Auth::guard('trainee')->id() ?? auth()->guard('trainee')->id()],
+            ['data' => $validated]
+        );
 
         return response()->json($portfolio, 201);
     }
@@ -542,91 +478,5 @@ class PortfolioController extends Controller
         ]);
 
         return response()->json($portfolio);
-    }
-
-    public function generatePortfolios()
-    {
-        $nic = [
-            '200325411257',
-            '200324900226',
-            '200076501371',
-            '200473400050',
-            '200282802767',
-            '200123003080',
-            '200008702976',
-            '200154503414',
-            '947021265V',
-            '200479400015',
-            '200119700813',
-            '200380611796',
-            '200124100269',
-            '200214903428',
-            '200412103898',
-            '200508203305',
-            '200312312501',
-            '200355211630',
-            '200512900343',
-            '200720102068',
-            '200480703757',
-            '200303102541',
-            '200183001321',
-            '200460604424',
-            '200372811091',
-            '200517701414',
-            '200534701760',
-            '200473104912',
-            '200476904197',
-            '200268300562',
-            '200508603439',
-            '200566301572',
-            '200301902341',
-            '200551101990',
-            '200321000649',
-            '200161703075',
-            '200258603602',
-            '987960671V',
-            '200220703996',
-            '200207503108',
-            '200316512403',
-            '988301906V',
-            '200122500342',
-            '200382700341',
-            '199721503710',
-            '200179602030',
-            '200160303532',
-            '200430000786',
-            '200268100898',
-            '996751740V',
-            '200420601781',
-            '200120401271',
-            '200433400692',
-            '200301100051',
-            '200058300848',
-            '200283602418',
-            '200432803311',
-            '200469402014',
-            '200470503523',
-            '200400111887',
-            '200377100330',
-            '200314013560',
-            '200271600412',
-            '200310212094',
-            '200114001444',
-            '200419704430',
-            '991940367V',
-            '917674418V',
-            '199927210452',
-            '200126003539',
-            '200009102986',
-            '200403100490',
-            '200015202596',
-            '200112100010',
-        ];
-        // Dispatch job để xử lý trong hàng đợi
-        CreatePortfoliosJob::dispatch($nic);
-
-        return response()->json([
-            'message' => 'Portfolio generation job has been dispatched!'
-        ]);
     }
 }

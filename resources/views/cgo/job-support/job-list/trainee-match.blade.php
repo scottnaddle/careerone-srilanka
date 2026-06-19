@@ -112,7 +112,7 @@
 
             </div>
 
-            {{--            //cái này gọi tailwind pagination trong vendor ra --}}
+            {{--            // this renders the tailwind pagination from vendor --}}
             {{ $trainees->onEachSide(1)->links() }}
         </div>
     </div>

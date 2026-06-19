@@ -10,6 +10,7 @@ use Filament\Notifications\Notification;
 use App\Services\Cgo\NotificationManager as NotificationManagerCgo;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\IconPosition;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 use Filament\Infolists\Components\TextEntry;
 
@@ -17,7 +18,11 @@ class ViewCompanyRecruiterApproval extends ViewRecord
 {
     protected static string $resource = CompanyRecruiterApprovalResource::class;
     protected NotificationManagerCgo $notificationManagerCgo;
-    protected static ?string $title = 'Company Recruiter';
+    protected static ?string $title = null;
+    public function getTitle(): string|Htmlable {
+        return trans('menu.company_recruiter');
+    }
+
     public function __construct()
     {
         $this->notificationManagerCgo = app(NotificationManagerCgo::class);
@@ -31,7 +36,7 @@ class ViewCompanyRecruiterApproval extends ViewRecord
         if ($isApprovalPending) {
 
             $actions[] = Actions\Action::make('reject')
-            ->label('Reject')
+            ->label(trans('admin/performance.Reject'))
             ->color(Color::hex('#d1d5db'))
             ->modalWidth('md')
             ->modalHeading(new HtmlString('
@@ -43,8 +48,8 @@ class ViewCompanyRecruiterApproval extends ViewRecord
                         </svg><!--[if ENDBLOCK]><![endif]-->
                     </div>
                 </div>
-                <p class="text-center font-normal">
-                    Please write the reason for non-approval</p>
+                <p class="text-center font-normal">'.trans("admin/performance.Please write the reason for non-approval").'
+              </p>
             </div>
             <style>
             .fi-modal-header {
@@ -63,12 +68,12 @@ class ViewCompanyRecruiterApproval extends ViewRecord
             ->modalIconColor('primary')
 
             ->iconPosition(IconPosition::After)
-            ->modalCancelActionLabel('Cancel')
-            ->modalSubmitActionLabel('Confirm')
+            ->modalCancelActionLabel(trans('system.form.button.cancel'))
+            ->modalSubmitActionLabel(trans('system.form.button.confirm'))
             ->form([
                 Textarea::make('reason')
                     ->label(false)
-                    ->placeholder('Please provide additional comments (optional)')
+                    ->placeholder(trans("admin/performance.Please provide additional comments (optional)"))
                     ->rows(5)
                     ->extraAttributes([
                         'class' => 'rounded-md border-gray-300',
@@ -92,7 +97,7 @@ class ViewCompanyRecruiterApproval extends ViewRecord
                 ]);
                 $this->notificationManagerCgo->sendMembershipRejectEmail($this->record, $data['reason']);
                 Notification::make()
-                    ->title('Rejected successfully!')
+                    ->title(trans("admin/performance.Rejected successfully!"))
                     ->success()
                     ->send();
 
@@ -104,7 +109,7 @@ class ViewCompanyRecruiterApproval extends ViewRecord
             ]);
             if ($this->record->is_company_verified) {
                 $actions[] = Actions\Action::make('approve')
-                    ->label('Approve')
+                    ->label(trans('system.form.button.approve'))
                     ->color('primary')
                     ->action(function () {
                         $this->record->update([
@@ -114,7 +119,7 @@ class ViewCompanyRecruiterApproval extends ViewRecord
                         ]);
                         $this->notificationManagerCgo->sendMembershipApprovalEmail($this->record);
                         Notification::make()
-                            ->title('Approved successfully!')
+                            ->title(trans("admin/performance.Approved successfully!"))
                             ->success()
                             ->send();
 
@@ -124,7 +129,7 @@ class ViewCompanyRecruiterApproval extends ViewRecord
                     ]);
             }else {
                 $actions[] = Actions\Action::make('approve')
-                    ->label('Approve')
+                    ->label(trans('system.form.button.approve'))
                     ->color('primary')
                     ->action(function () {
                     })->extraAttributes([

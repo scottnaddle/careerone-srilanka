@@ -9,8 +9,27 @@ class Company extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'email', 'office_type', 'date_of_establishment', 'name_of_representation', 'hotline', 'number_workers', 'business_registration_number', 'enterprise_id', 'co_business', 'website', 'attachment_details', 'logo', 'district_id', 'slug', 'verified_at', 'verified_by', 'ds_id', 'company_information', 'address','active','sns_channel','reason'];
-
+    protected $fillable = ['name',
+                           'email',
+                           'office_type',
+                           'date_of_establishment',
+                           'name_of_representation',
+                           'hotline',
+                           'number_workers',
+                           'business_registration_number',
+                           'enterprise_id',
+                           'co_business', 'website', 'attachment_details', 'logo',
+                           'district_id', 'slug', 'verified_at',
+                           'verified_by', 'ds_id', 'company_information',
+                           'address','active','sns_channel','reason','is_belongs_to_naita'];
+    protected static function booted()
+    {
+        static::saving(function ($company) {
+            if ($company->name) {
+                $company->slug = \Str::slug($company->name);
+            }
+        });
+    }
     public function jobs()
     {
         // If company is headquarter, see more job of company branches.

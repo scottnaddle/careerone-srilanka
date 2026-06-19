@@ -195,7 +195,7 @@
                 @endforelse
 
             </div>
-            {{--            //cái này gọi tailwind pagination trong vendor ra --}}
+            {{--            // this renders the tailwind pagination from vendor --}}
             {{ $trainees->onEachSide(1)->links() }}
         </div>
     </div>
@@ -809,7 +809,7 @@
             });
 
 
-            // Hàm để làm sạch nội dung modal
+            // Function to clear modal content
             function clearModalContent() {
                 $('#tab-province').empty();
                 $('#tab-district').empty();
@@ -857,7 +857,7 @@
                 });
             }
 
-            // Xử lý khi click vào province
+            // Handle province click
             function handleProvinceClick(provinces, index, url) {
                 toggleSelected($('.province'), $(`#province${index}`));
                 // $('#tab-district').trigger('click');
@@ -993,7 +993,7 @@
                 });
             }
 
-            // Hàm để thêm district vào modal
+            // Function to add a district to the modal
             function appendDistrict(districts, district, index, isSelected, url) {
                 const html = itemOptionSlect('district' + index, 'district', district.name, isSelected,
                     `data-index="${index}" data-district-id="${district.id}"`);
@@ -1033,7 +1033,7 @@
                 url.searchParams.delete('page');
             }
 
-            // Hàm để toggle trạng thái chọn
+            // Function to toggle selected state
             function toggleSelected(allEl, selectedEl) {
                 allEl.find('svg.inline-block').removeClass('inline-block').addClass('hidden');
                 allEl.removeClass('text-[#4984F6] font-semibold dark:text-[#4984F6]').addClass(

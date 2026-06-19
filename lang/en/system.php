@@ -67,6 +67,7 @@ return [
         'tamil' => 'தமிழ்',
     ],
     'form' => [
+        'saved' => 'Saved!',
         'button' => [
             'cancel' => 'Cancel',
             'submit' => 'Submit',

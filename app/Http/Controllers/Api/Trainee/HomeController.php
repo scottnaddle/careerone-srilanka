@@ -33,22 +33,25 @@ class HomeController extends BaseController
 //                    ->where('sort', '!=', 0)
 //                    ->doesntExist(),
 //                function ($query) {
-//                    // Nếu tất cả sort đều là 0
+//                    // If all sort values are 0
 //                    $query->orderBy('id', 'desc')->take(4);
 //                },
 //                function ($query) {
-//                    // Nếu có sort khác 0
+//                    // If there is a sort value other than 0
 //                    $query->orderBy('sort', 'asc')->take(4);
 //                }
 //            )
 //            ->get();
-        $mainEvent = Event::where('status', StatusEnumsManagement::APPROVED->value)
+        $mainEvent = Event::with('attachments')
+            ->where('status', StatusEnumsManagement::APPROVED->value)
             ->where('is_main_event',true)
             ->inRandomOrder()->first();
         if (!$mainEvent) {
-            $mainEvent = Event::where('status', StatusEnumsManagement::APPROVED->value)
+            $mainEvent = Event::with('attachments')
+                ->where('status', StatusEnumsManagement::APPROVED->value)
                 ->latest()->first();
-            $newestEvents = Event::where('status', StatusEnumsManagement::APPROVED->value)
+            $newestEvents = Event::with('attachments')
+                ->where('status', StatusEnumsManagement::APPROVED->value)
                 ->where(function (Builder $query) {
                     $query->where('is_main_event', false)
                         ->orWhereNull('is_main_event');
@@ -57,7 +60,8 @@ class HomeController extends BaseController
                 ->latest('created_at')->take(3)
                 ->get();
         }else {
-            $newestEvents = Event::where('status', StatusEnumsManagement::APPROVED->value)
+            $newestEvents = Event::with('attachments')
+                ->where('status', StatusEnumsManagement::APPROVED->value)
                 ->where(function (Builder $query) {
                     $query->where('is_main_event', false)
                         ->orWhereNull('is_main_event');
@@ -86,7 +90,7 @@ class HomeController extends BaseController
                 }
             }
         }
-        $jobs = Job::query();
+        $jobs = Job::with('company');
         $jobs->where('status', JobStatusEnum::PROGRESS->value);
         $recent_jobs = $jobs->where('status', JobStatusEnum::PROGRESS->value)
             ->whereHas('company', function ($query) {
@@ -103,7 +107,7 @@ class HomeController extends BaseController
         $now = Carbon::now();
         $today = $now->toDateString();
 
-        $popups = Popup::where('status', 'active')
+        $popupsQuery = Popup::where('status', 'active')
             ->where(function ($q) use ($today) {
                 $q->whereNull('start_time')
                     ->orWhereDate('start_time', '<=', $today);
@@ -112,13 +116,22 @@ class HomeController extends BaseController
                 $q->whereNull('end_time')
                     ->orWhereDate('end_time', '>=', $today);
             })
+            ->orderBy('start_time', 'desc')
             ->get();
-        if (count($popups) > 0) {
-            foreach ($popups as $popup) {
-                if ($popup && $popup->image) {
-                    $popup->image = asset('storage/' . $popup->image);
-                }
+
+        $popups = collect();
+        if (env('SHOW_PLATFORM_SUCCESS', false)) {
+            $successPopup = new Popup();
+            $successPopup->id = 0;
+            $successPopup->popup_name = 'Platform Success & CGO Leaderboard Recognition';
+            $successPopup->is_success_recognition = true;
+            $popups->push($successPopup);
+        }
+        foreach ($popupsQuery as $p) {
+            if ($p && $p->image) {
+                $p->image = asset('storage/' . $p->image);
             }
+            $popups->push($p);
         }
 
         $contentCategory = CareerGuidanceCategory::first();

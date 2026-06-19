@@ -9,12 +9,12 @@ use Filament\Resources\Pages\ListRecords;
 class ListComapnyUserLists extends ListRecords
 {
     protected static string $resource = ComapnyUserListResource::class;
-    protected static ?string $breadcrumb = 'Company Recruiter List';
+    protected static ?string $breadcrumb = 'List';
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
+            Actions\CreateAction::make()->visible(fn () => auth('admin')->user()->hasRole('super_admin') || auth('admin')->user()->hasRole('naita_admin')),
         ];
     }
 }

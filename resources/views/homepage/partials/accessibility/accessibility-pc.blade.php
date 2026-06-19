@@ -154,7 +154,7 @@
                 @php
                     $isRead = $notification->read_at !== null;
 
-                    // Kiểm tra an toàn cho message
+                    // Safe check for message
                     $messageData = $notification->data['message'] ?? [];
                     $messageKey = '';
 
@@ -166,12 +166,12 @@
                         $translatedMessage = (string)$messageData;
                     }
 
-                    // Xử lý href an toàn
+                    // Safely handle href
                     $href = is_array($notification->data['message'] ?? null)
                         ? ($notification->data['message']['href'] ?? '#')
                         : '#';
 
-                    // Xử lý icon an toàn
+                    // Safely handle icon
                     $icon = is_array($notification->data['message'] ?? null)
                         ? ($notification->data['message']['icon'] ?? '')
                         : '';

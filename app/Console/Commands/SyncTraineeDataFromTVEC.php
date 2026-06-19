@@ -10,14 +10,14 @@ use Illuminate\Support\Facades\Log;
 class SyncTraineeDataFromTVEC extends Command
 {
     /**
-     * Tên command dùng để chạy.
+     * The command name used to run it.
      *
      * @var string
      */
     protected $signature = 'app:sync-trainee-data-from-tvec';
 
     /**
-     * Mô tả command.
+     * The command description.
      *
      * @var string
      */
@@ -26,7 +26,7 @@ class SyncTraineeDataFromTVEC extends Command
     protected $traineeSyncService;
 
     /**
-     * Khởi tạo command với TraineeTrainingSyncService.
+     * Initialize the command with TraineeTrainingSyncService.
      */
     public function __construct(TraineeTrainingSyncService $traineeSyncService)
     {
@@ -35,39 +35,39 @@ class SyncTraineeDataFromTVEC extends Command
     }
 
     /**
-     * Thực thi command.
+     * Execute the command.
      */
     public function handle()
     {
-        \Log::info('🔄 Starting synchronization from TVEC for trainee...');
+        \Log::channel('sync_trainee')->info('🔄 Starting synchronization from TVEC for trainee...');
         $this->info('🔄 Starting synchronization from TVEC for trainee...');
 
-        // Tăng giới hạn bộ nhớ và thời gian thực thi (nếu cần).
-        ini_set('memory_limit', '-1'); // Không giới hạn bộ nhớ
-        set_time_limit(0);             // Không giới hạn thời gian chạy
+        // Increase the memory and execution time limits (if needed).
+        ini_set('memory_limit', '-1'); // No memory limit
+        set_time_limit(0);             // No execution time limit
 
         $totalUsers = TraineeUser::count();
         $this->info("📊 Total Trainee Users: $totalUsers");
-        \Log::info("📊 Total Trainee Users: $totalUsers");
+        \Log::channel('sync_trainee')->info("📊 Total Trainee Users: $totalUsers");
 
-        // Sử dụng cursor() để duyệt từng bản ghi giúp tối ưu bộ nhớ
-        TraineeUser::select('id', 'nic') // Chỉ lấy các cột cần thiết
+        // Use cursor() to iterate record by record to optimize memory usage
+        TraineeUser::select('id', 'nic') // Only fetch the necessary columns
         ->orderBy('id')
             ->cursor()
             ->each(function ($user) {
                 try {
-                    // Gọi hàm đồng bộ từ TraineeSyncService
+                    // Call the sync method from TraineeSyncService
                     $this->traineeSyncService->syncTraineeTrainingInformation($user);
                     $this->info("✅ Synched successfully: {$user->nic}");
-                    \Log::info("✅ Synched successfully: {$user->nic}");
+                    \Log::channel('sync_trainee')->info("✅ Synched successfully: {$user->nic}");
                 } catch (\Exception $e) {
-                    // Ghi log lỗi chi tiết
-                    Log::error("❌ Error syncing user {$user->id}: " . $e->getMessage());
+                    // Log the detailed error
+                    Log::channel('sync_trainee')->error("❌ Error syncing user {$user->id}: " . $e->getMessage());
                     $this->error("❌ Error syncing user {$user->id}: " . $e->getMessage());
                 }
             });
 
         $this->info('✅ Synchronization from TVEC completed.');
-        \Log::info('✅ Synchronization from TVEC completed.');
+        \Log::channel('sync_trainee')->info('✅ Synchronization from TVEC completed.');
     }
 }

@@ -106,7 +106,7 @@
                     <div id="content-request" class="content-page active">
                         <form method="get" action="{{ route('filament.admin.resources.content-list-rejecteds.index') }}">
                             <div class="flex gap-4">
-                                <!-- Input lớn nhất -->
+                                <!-- Largest input -->
                                 <input type="text" name="search"
                                     class="flex-grow px-4 py-2 border border-gray-300 rounded-lg text-[#91919A] font-medium"
                                     value="{{ request()->query('search') }}" placeholder="Search">

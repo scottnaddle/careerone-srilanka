@@ -15,6 +15,7 @@
         "doctrine/dbal": "3.8",
         "filament/filament": "^3.2",
         "filament/spatie-laravel-media-library-plugin": "^3.2",
+        "google/analytics-data": "^0.24.0",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "2.7",
         "jenssegers/agent": "^2.6",

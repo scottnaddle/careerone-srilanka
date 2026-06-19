@@ -23,7 +23,7 @@ class ContentSeeder extends Seeder
             DB::table('contents')->insert([
                 'title' => $title,
                 'content_type' => 'video',
-                'slug' => Str::slug($title),
+                'slug' => Str::slug($title, '-', 'ta'),
                 'intro' => $faker->paragraph(10),
                 'attachment_details' => json_encode([]),
                 'video_url' => 'https://www.youtube.com/watch?v=u8sIacxJebI',
@@ -42,7 +42,7 @@ class ContentSeeder extends Seeder
             DB::table('contents')->insert([
                 'title' => $title,
                 'content_type' => 'pdf',
-                'slug' => Str::slug($title),
+                'slug' => Str::slug($title, '-', 'ta'),
                 'intro' => $faker->paragraph(10),
                 'attachment_details' => json_encode(['file_name' => $faker->word . '.pdf', 'file_size' => $faker->numberBetween(1000, 10000)]),
                 'video_url' => '',
@@ -62,7 +62,7 @@ class ContentSeeder extends Seeder
             DB::table('contents')->insert([
                 'title' => $title,
                 'content_type' => 'doc',
-                'slug' => Str::slug($title),
+                'slug' => Str::slug($title, '-', 'ta'),
                 'intro' => $faker->paragraph(10),
                 'attachment_details' => json_encode(['file_name' => $faker->word . '.pdf', 'file_size' => $faker->numberBetween(1000, 10000)]),
                 'video_url' => '',

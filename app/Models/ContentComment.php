@@ -41,6 +41,9 @@ class ContentComment extends Model
             case 'trainee':
                 $model = TraineeUser::class;
                 break;
+            case 'schoolkid':
+                $model = SchoolKid::class;
+                break;
         }
         return $this->belongsTo($model, 'answer_by');
     }
@@ -60,6 +63,9 @@ class ContentComment extends Model
                 break;
             case 'trainee':
                 $model = TraineeUser::class;
+                break;
+            case 'schoolkid':
+                $model = SchoolKid::class;
                 break;
             default:
                 return null;

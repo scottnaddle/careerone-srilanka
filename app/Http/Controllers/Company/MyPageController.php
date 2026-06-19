@@ -57,11 +57,11 @@ class MyPageController extends Controller
     public function postCompanyInformation(RegisterCompanyRequest $request)
     {
         $company = Company::find($request->id);
-    
+
         if (!$company) {
             return back()->withErrors(['notfound' => 'Cannot find the company']);
         }
-    
+
         $company->fill([
             'name'                         => $request->name,
             'office_type'                 => $request->office_type,
@@ -82,46 +82,46 @@ class MyPageController extends Controller
             'address'                    => $request->address,
             'headquarter_id'             => $request->office_type == 2 ? $request->headquarter_id : null,
         ]);
-    
-        $companyFolderName = Str::slug($company->name);
-    
+
+        $companyFolderName = Str::slug($company->name, '-', 'ta');
+
         // 📎 Business License Handling
         if ($request->hasFile('attached_file')) {
             $storedFiles = [];
             $folder = "company/business_licenses/{$companyFolderName}";
             $storagePath = storage_path("app/public/{$folder}");
-    
+
             if (!file_exists($storagePath)) {
                 mkdir($storagePath, 0755, true);
             }
-    
+
             foreach ($request->file('attached_file') as $index => $file) {
                 $fileName = $file->getClientOriginalName();
                 $file->move($storagePath, $fileName);
-    
+
                 $storedFiles[] = [
                     'path' => "storage/{$folder}/{$fileName}",
                     'name' => $fileName,
                 ];
             }
-    
+
             $existingAttachments = json_decode($company->attachment_details, true) ?? [];
             $company->attachment_details = json_encode(array_merge($existingAttachments, $storedFiles));
         }
-    
+
         // 🖼️ Logo Handling (convert to WebP)
         if ($request->hasFile('avatar')) {
             $folder = "company/logos/{$companyFolderName}";
             $company->logo = env('APP_URL') . '/' . saveImageAsWebp($request->file('avatar'), $folder);
         }
-    
+
         $company->save();
-    
+
         return redirect()
             ->route('company.my-page.company-information', ['id' => $company->id])
-            ->with('success', 'SAVED!');
+            ->with('success', __('system.form.saved'));
     }
-    
+
 
     public function removeAttachment(Request $request) {
         // validate incoming request
@@ -192,7 +192,7 @@ class MyPageController extends Controller
         if ($user->email != $request->email) {
             return redirect()->route('verification.isnotverified', ['u_type' => 'company', 'token' => base64_encode($user->email)]);
         }
-        return redirect()->route('company.my-page.personal-information')->with('success', 'SAVED!');
+        return redirect()->route('company.my-page.personal-information')->with('success', __('system.form.saved'));
     }
 
     public function deActiveAccount()

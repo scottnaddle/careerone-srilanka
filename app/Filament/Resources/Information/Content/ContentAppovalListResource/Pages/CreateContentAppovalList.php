@@ -21,7 +21,7 @@ class CreateContentAppovalList extends CreateRecord
     protected function getFormSchema(): array
     {
         return [
-            // Các thành phần của form ở đây
+            // The form components go here
             \Filament\Forms\Components\TextInput::make('title')
                 ->label('Title')
                 ->required(),
@@ -30,7 +30,7 @@ class CreateContentAppovalList extends CreateRecord
                 ->label('Details')
                 ->rows(4),
 
-            // Thêm các thành phần khác nếu cần
+            // Add other components if needed
         ];
     }
 

@@ -12,22 +12,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('banner_categories', function (Blueprint $table) {
-            // Sử dụng ULID làm khóa chính
+            // Use ULID as primary key
             $table->ulid('id')->primary();
-            $table->ulid('parent_id')->nullable(); // Khóa ngoại cho parent category
-            $table->string('name'); // Tên danh mục
-            $table->string('slug')->unique(); // Slug cho danh mục
-            $table->longText('description')->nullable(); // Mô tả cho danh mục
-            $table->boolean('is_active')->default(false); // Trạng thái kích hoạt
-            $table->timestamps(); // Thời gian tạo và cập nhật
+            $table->ulid('parent_id')->nullable(); // Foreign key to parent category
+            $table->string('name'); // Category name
+            $table->string('slug')->unique(); // Category slug
+            $table->longText('description')->nullable(); // Category description
+            $table->boolean('is_active')->default(false); // Active status
+            $table->timestamps(); // Created and updated timestamps
         });
 
-        // Thêm ràng buộc ngoại cho trường parent_id
+        // Add foreign key constraint for the parent_id field
         Schema::table('banner_categories', function (Blueprint $table) {
             $table->foreign('parent_id')
                 ->references('id')
                 ->on('banner_categories')
-                ->onDelete('cascade'); // Xóa cascade nếu parent bị xóa
+                ->onDelete('cascade'); // Cascade delete if parent is deleted
         });
     }
 
@@ -37,10 +37,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('banner_categories', function (Blueprint $table) {
-            // Xóa ràng buộc ngoại trước khi xóa bảng
+            // Drop the foreign key constraint before dropping the table
             $table->dropForeign(['parent_id']);
         });
 
-        Schema::dropIfExists('banner_categories'); // Xóa bảng nếu tồn tại
+        Schema::dropIfExists('banner_categories'); // Drop the table if it exists
     }
 };

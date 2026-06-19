@@ -62,7 +62,7 @@ class ListContentVideoApprovalList extends ListRecords
 
             $newContent = new Content();
             $newContent->title = $data['content_name'];
-            $newContent->slug = Str::slug($data['content_name']);
+            $newContent->slug = Str::slug($data['content_name'], '-', 'ta');
             $newContent->intro = $data['intro'];
             $newContent->status = \App\Enums\StatusEnumsManagement::APPROVED;
             $newContent->content_type = 'video';
@@ -80,7 +80,7 @@ class ListContentVideoApprovalList extends ListRecords
             return redirect()->route('filament.admin.resources.information.content.content-lists.index');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            // Xử lý lỗi validation
+            // Handle validation errors
             $errors = $e->validator->errors();
             foreach ($errors->keys() as $field) {
                 Notification::make()
@@ -91,7 +91,7 @@ class ListContentVideoApprovalList extends ListRecords
             }
 
         } catch (\Exception $e) {
-            // Xử lý lỗi chung
+            // Handle general errors
             Notification::make()
                 ->title('Upload Failed: ' . $e->getMessage())
                 ->danger()

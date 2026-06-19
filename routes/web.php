@@ -9,13 +9,15 @@ use App\Http\Controllers\QnaAttachmentController;
 use App\Http\Controllers\QNAController;
 use App\Http\Controllers\RegisterVerificationCodeController;
 use App\Http\Controllers\UploadController;
-use App\Services\ESMSService;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventAttachmentController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\LocaleController;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\Mailer\Messenger\SendEmailMessage;
+use App\Services\ESMSService;
+use Filament\Actions\Exports\Http\Controllers\DownloadExport;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,6 +29,9 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
+Route::get('/filament/exports/{export}/download', DownloadExport::class)
+    ->name('filament.exports.download')
+    ->withoutMiddleware(['auth']);
 Route::get('/', [HomepageController::class, 'index'])->name('homepage');
 Route::get('/about-us', [HomepageController::class, 'aboutUs'])->name('homepage.about-us');
 Route::get('/sitemap.xml', [
@@ -180,28 +185,27 @@ Route::group(['prefix' => 'sector', 'as' => 'sector.'], function () {
     Route::get('/construction', [HomepageController::class, 'getConstructionSector'])->name('construction');
 });
 Route::get('/deploy/run', [\App\Http\Controllers\DeployController::class, 'run']);
-Route::get('/dispatch-portfolios-job', [\App\Http\Controllers\Trainee\PortfolioController::class, 'generatePortfolios']);
 Route::get('/test-sms-simple', function () {
     $smsService = new ESMSService();
 
     try {
-        // Tạo session
+        // Create session
         $session = $smsService->createSession();
 
-        // Thông tin gửi SMS
+        // SMS sending details
         $alias = "TVEC";
         $messageType = "TEXT";
-        $phoneNumber = "+94707940390";
+        $phoneNumber = "+94762766230";
 
-        // Kết quả
+        // Results
         $results = [];
 
-        // Gửi 50 tin nhắn liên tục
-        for ($i = 1; $i <= 100; $i++) {
+        // Send 50 messages in a row
+        for ($i = 1; $i <= 200; $i++) {
             $message = "SMS No. #{$i} - " . date('H:i:s');
 
             try {
-                // Gọi hàm sendMessagesMultiLang với retry (3 lần)
+                // Call sendMessagesMultiLang with retry (3 times)
                 $response = $smsService->sendMessagesMultiLang(
                     $session,
                     $alias,
@@ -220,11 +224,11 @@ Route::get('/test-sms-simple', function () {
                     'time' => date('H:i:s')
                 ];
 
-                // In ra kết quả mỗi tin nhắn
+                // Print the result of each message
                 echo "SMS #{$i}: " . ($response == 200 ? '✓ Thành công' : '✗ Thất bại') .
                     " (Code: {$response}) - " . date('H:i:s') . "<br>";
 
-                // Chờ 100ms giữa các tin nhắn
+                // Wait 100ms between messages
                 usleep(100000);
 
             } catch (\Exception $e) {
@@ -241,10 +245,10 @@ Route::get('/test-sms-simple', function () {
             }
         }
 
-        // Đóng session
+        // Close session
         $smsService->closeSession($session);
 
-        // Tổng kết
+        // Summary
         $successCount = count(array_filter($results, fn($r) => $r['response'] == 200));
         $failCount = 50 - $successCount;
 

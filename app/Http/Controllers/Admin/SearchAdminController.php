@@ -12,6 +12,11 @@ use Illuminate\Http\Request;
 
 class SearchAdminController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('admin.auth');
+    }
+
     public function showDistrict(Request $request, $id)
 {
     $province = Province::findOrFail($id);

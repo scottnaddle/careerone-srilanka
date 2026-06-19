@@ -15,7 +15,7 @@ class SendMonthlyReport extends Command
     protected $signature = 'report:monthly';
     protected $description = 'Generate monthly report and send via email';
 
-    // Biến lưu đường dẫn log file
+    // Variables storing the log file path
     protected $logFile;
     protected $logPath;
 
@@ -23,13 +23,13 @@ class SendMonthlyReport extends Command
     {
         parent::__construct();
 
-        // Tạo thư mục logs nếu chưa có
+        // Create the logs directory if it does not exist
         $this->logPath = storage_path('logs/monthly_reports');
         if (!file_exists($this->logPath)) {
             mkdir($this->logPath, 0755, true);
         }
 
-        // Tạo tên file log theo ngày tháng năm
+        // Build the log file name from the date
         $this->logFile = $this->logPath . '/report_' . now()->format('Y-m-d_H-i-s') . '.log';
     }
 
@@ -37,7 +37,7 @@ class SendMonthlyReport extends Command
     {
         $startTime = microtime(true);
 
-        // Ghi log bắt đầu
+        // Log the start
         $this->writeLog("==========================================");
         $this->writeLog("MONTHLY REPORT CRON JOB STARTED");
         $this->writeLog("Time: " . now()->format('Y-m-d H:i:s'));
@@ -69,7 +69,7 @@ class SendMonthlyReport extends Command
 
             $executionTime = round((microtime(true) - $startTime), 2);
 
-            // Ghi log thành công
+            // Log the success
             $this->writeLog("==========================================");
             $this->writeLog("SUCCESS: Monthly report sent successfully");
             $this->writeLog("Execution time: {$executionTime} seconds");
@@ -78,7 +78,7 @@ class SendMonthlyReport extends Command
 
             $this->info('Monthly report sent successfully!');
 
-            // Xóa log cũ hơn 90 ngày
+            // Delete logs older than 90 days
             $this->cleanOldLogs();
 
             return Command::SUCCESS;
@@ -86,7 +86,7 @@ class SendMonthlyReport extends Command
         } catch (\Exception $e) {
             $executionTime = round((microtime(true) - $startTime), 2);
 
-            // Ghi log lỗi
+            // Log the error
             $this->writeLog("==========================================");
             $this->writeLog("ERROR: Monthly report failed");
             $this->writeLog("Error message: " . $e->getMessage());
@@ -96,7 +96,7 @@ class SendMonthlyReport extends Command
             $this->writeLog("Trace: " . $e->getTraceAsString());
             $this->writeLog("==========================================");
 
-            Log::error('Monthly report failed: ' . $e->getMessage());
+            Log::channel('monthly_report')->error('Monthly report failed: ' . $e->getMessage());
             $this->error('Failed to send report: ' . $e->getMessage());
 
             return Command::FAILURE;
@@ -104,7 +104,7 @@ class SendMonthlyReport extends Command
     }
 
     /**
-     * Ghi log vào file riêng
+     * Write the log to a separate file
      */
     private function writeLog($message, $extraData = [])
     {
@@ -115,15 +115,15 @@ class SendMonthlyReport extends Command
             $logMessage .= " | " . json_encode($extraData, JSON_PRETTY_PRINT);
         }
 
-        // Ghi vào file log riêng
+        // Write to the separate log file
         file_put_contents($this->logFile, $logMessage . PHP_EOL, FILE_APPEND);
 
-        // Nếu muốn ghi cả vào laravel log
+        // If you also want to write to the laravel log
         // Log::channel('daily')->info($message);
     }
 
     /**
-     * Lưu backup nội dung report vào file
+     * Save a backup of the report content to a file
      */
     private function saveReportBackup($reportContent, $reportData)
     {
@@ -139,7 +139,7 @@ class SendMonthlyReport extends Command
     }
 
     /**
-     * Xóa log cũ hơn số ngày quy định
+     * Delete logs older than the specified number of days
      */
     private function cleanOldLogs($daysToKeep = 90)
     {
@@ -159,7 +159,7 @@ class SendMonthlyReport extends Command
             }
         }
 
-        // Xóa file backup cũ
+        // Delete old backup files
         $backupFiles = glob($this->logPath . '/report_content_*.txt');
         foreach ($backupFiles as $file) {
             $fileTime = filemtime($file);
@@ -174,10 +174,10 @@ class SendMonthlyReport extends Command
         $this->writeLog("INFO: Cleaned {$deletedCount} old log files");
     }
 
-    // Các hàm gatherReportData, getMembershipData, etc. giữ nguyên như code trước
+    // The gatherReportData, getMembershipData, etc. methods remain the same as the previous code
     private function gatherReportData()
     {
-        // ... (giữ nguyên code từ previous response)
+        // ... (unchanged from the previous response)
         return [
             'membership' => $this->getMembershipData(),
             'guidance' => $this->getGuidanceData(),
@@ -190,7 +190,7 @@ class SendMonthlyReport extends Command
 
     private function getMembershipData()
     {
-        // ... (giữ nguyên code)
+        // ... (unchanged code)
         return [
             'trainee_users' => DB::table('trainee_users')->count(),
             'cgo_users' => DB::table('cgo_users')->count(),
@@ -215,7 +215,7 @@ class SendMonthlyReport extends Command
 
     private function getGuidanceData()
     {
-        // ... (giữ nguyên code)
+        // ... (unchanged code)
         return [
             'completed_counselings' => DB::table('cgo_counselings')->where('status', 3)->count(),
             'cancelled_counselings' => DB::table('cgo_counselings')->where('status', 4)->count(),
@@ -331,7 +331,7 @@ class SendMonthlyReport extends Command
 
     private function generateReportContent($data)
     {
-        // ... (giữ nguyên generateReportContent từ previous response)
+        // ... (generateReportContent unchanged from the previous response)
         $content = "MONTHLY REPORT - {$data['report_month']}\n";
         $content .= "Generated: {$data['generated_at']}\n";
         $content .= str_repeat("=", 70) . "\n\n";

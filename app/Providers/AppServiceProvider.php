@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\AdminUser;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Contracts\Auth\Authenticatable;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -38,5 +39,6 @@ class AppServiceProvider extends ServiceProvider
             Gate::define('use-translation-manager', function (?AdminUser $user) {
                 return $user !== null && $user->hasRole('super_admin');
             });
+        $this->app->bind(Authenticatable::class, AdminUser::class);
     }
 }

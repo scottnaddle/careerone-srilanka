@@ -1,4 +1,4 @@
-@extends('trainee.auth.layouts.master')
+@extends('auth.layouts.master')
 
 @section('title', 'Sign In')
 
@@ -19,7 +19,7 @@
                     <img src="/images/TVET.svg" alt="TVET Logo" />
                 </a>
                 <div>
-                    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white leading-9">{{trans('auth.welcome_back')}}</h2>
+                    <h1 class="text-2xl font-semibold text-gray-900 dark:text-white leading-9">{{trans('auth.welcome_back')}}</h1>
                     <p class="text-base font-normal text-gray-400 dark:text-white leading-6">{{trans('auth.sign_in_to_continue')}}</p>
                 </div>
                 @if (session()->get('message'))
@@ -37,7 +37,7 @@
                         <label for="email"
                             class="text-normal font-medium text-[#706F81] block mb-1.5 dark:text-gray-300 leading-6">
                             {{trans('system.form.email')}}<span class="text-red-600 p-1 text-center">*</span></label>
-                        <input type="text" name="email" id="email"
+                        <input type="text" name="email" id="email" autocomplete="email"
                             class="bg-gray-50 border border-gray-300 py-2 px-4 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                         @if ($errors->has('email'))
                             <span class="text-red-600 text-xs p-0 m-0">{{ $errors->first('email') }}</span>
@@ -49,14 +49,14 @@
                             {{ trans('system.form.password') }}<span class="text-red-600 p-1 text-center">*</span>
                         </label>
                         <div class="relative">
-                            <input type="password" name="password" id="password"
+                            <input type="password" name="password" id="password" autocomplete="current-password"
                                    class="bg-gray-50 border border-gray-300 py-2 px-4 text-gray-900 sm:text-sm rounded-xl focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                             <span class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer" id="toggle-password">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" id="eye-icon-show">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5" id="eye-icon-show">
                 <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"></path>
                 <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd"></path>
             </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hidden" id="eye-icon-hide">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hidden" id="eye-icon-hide">
                 <path fill-rule="evenodd" d="M3.28 2.22a.75.75 0 0 0-1.06 1.06l14.5 14.5a.75.75 0 1 0 1.06-1.06l-1.745-1.745a10.029 10.029 0 0 0 3.3-4.38 1.651 1.651 0 0 0 0-1.185A10.004 10.004 0 0 0 9.999 3a9.956 9.956 0 0 0-4.744 1.194L3.28 2.22ZM7.752 6.69l1.092 1.092a2.5 2.5 0 0 1 3.374 3.373l1.091 1.092a4 4 0 0 0-5.557-5.557Z" clip-rule="evenodd"></path>
                 <path d="m10.748 13.93 2.523 2.523a9.987 9.987 0 0 1-3.27.547c-4.258 0-7.894-2.66-9.337-6.41a1.651 1.651 0 0 1 0-1.186A10.007 10.007 0 0 1 2.839 6.02L6.07 9.252a4 4 0 0 0 4.678 4.678Z"></path>
             </svg>

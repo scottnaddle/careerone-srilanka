@@ -264,52 +264,84 @@ if (!function_exists('getNewestTrainingInformationOfTrainee')) {
         }
 
         $informations = json_decode($trainingInformations->content);
+        if (empty($informations) || !is_array($informations)) {
+            return '';
+        }
         $nvqInformations = json_decode($trainingInformations->nvq_content);
+        
+        $completedInformations = [];
+
+        // Check which records have matches in $nvqInformations (completed courses with qualifications)
+        if ($nvqInformations != '' && is_array($nvqInformations) && count($nvqInformations) > 0 && is_array($informations)) {
+            foreach ($informations as $information) {
+                foreach ($nvqInformations as $nvqInformation) {
+                    if (isset($information->INSTITUTE->INSTITUTE_REG_NO) && isset($information->NVQ_QUALIFICATION->NCS_CODE) &&
+                        $nvqInformation->INSTITUTE_REG_NO == $information->INSTITUTE->INSTITUTE_REG_NO && 
+                        $nvqInformation->NCS_CODE == $information->NVQ_QUALIFICATION->NCS_CODE) {
+                        $completedInformations[] = $information;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // We want the newest record among those that are completed, otherwise fall back to all records
+        $targetInformations = count($completedInformations) > 0 ? $completedInformations : $informations;
+
         $latestInformation = null;
-        foreach ($informations as $information) {
-            if (!isset($information->COURSE->END_DATE)) {
-                continue;
+        if (is_array($targetInformations)) {
+            foreach ($targetInformations as $information) {
+                if (!isset($information->COURSE->END_DATE)) {
+                    continue;
+                }
+                $endDate = strtotime($information->COURSE->END_DATE);
+                if (!$latestInformation || $endDate > strtotime($latestInformation->COURSE->END_DATE)) {
+                    $latestInformation = $information;
+                }
             }
-            $endDate = strtotime($information->COURSE->END_DATE);
-            if (!$latestInformation || $endDate > strtotime($latestInformation->COURSE->END_DATE)) {
-                $latestInformation = $information;
+            // If no information has a valid END_DATE, pick the first one
+            if (!$latestInformation && count($targetInformations) > 0) {
+                $latestInformation = $targetInformations[0];
             }
         }
-        // If no information has a valid END_DATE, pick the first one
-        if (!$latestInformation && count($informations) > 0) {
-            $latestInformation = $informations[0];
-        }
-        if ($nvqInformations != '' && count($nvqInformations) > 0 && $latestInformation != '') {
+
+        if ($nvqInformations != '' && is_array($nvqInformations) && count($nvqInformations) > 0 && $latestInformation != '') {
+            $hasMatch = false;
             foreach ($nvqInformations as $nvqInformation) {
-                if ($nvqInformation->INSTITUTE_REG_NO == $latestInformation->INSTITUTE->INSTITUTE_REG_NO && $nvqInformation->NCS_CODE == $latestInformation->NVQ_QUALIFICATION->NCS_CODE) {
+                if (isset($latestInformation->INSTITUTE->INSTITUTE_REG_NO) && isset($latestInformation->NVQ_QUALIFICATION->NCS_CODE) &&
+                    $nvqInformation->INSTITUTE_REG_NO == $latestInformation->INSTITUTE->INSTITUTE_REG_NO && 
+                    $nvqInformation->NCS_CODE == $latestInformation->NVQ_QUALIFICATION->NCS_CODE) {
                     $latestInformation->NVQ_QUALIFICATION->QUALIFICATION_CODE = $nvqInformation->QUALIFICATION_CODE;
                     $latestInformation->NVQ_QUALIFICATION->QUALIFICATION_VERSION = $nvqInformation->QUALIFICATION_VERSION;
                     $latestInformation->NVQ_QUALIFICATION->QUALIFICATION_NAME = $nvqInformation->QUALIFICATION_NAME;
                     $latestInformation->NVQ_QUALIFICATION->EFFECTIVE_DATE = $nvqInformation->EFFECTIVE_DATE;
+                    $latestInformation->NVQ_QUALIFICATION->QUALIFICATION_LEVEL = $nvqInformation->QUALIFICATION_LEVEL;
+                    $hasMatch = true;
                 }
             }
             $institute = $latestInformation?->INSTITUTE?->INSTITUTE_NAME;
             $course = $latestInformation?->COURSE?->COURSE_NAME;
-//            $nvqQualification = $latestInformation?->NVQ_QUALIFICATION?->QUALIFICATION_NAME . ' (' . $latestInformation?->NVQ_QUALIFICATION?->QUALIFICATION_LEVEL .'-'. $latestInformation?->NVQ_QUALIFICATION?->EFFECTIVE_DATE . ')';
-            $nvqQualification = $latestInformation?->NVQ_QUALIFICATION?->QUALIFICATION_NAME ?? 'Unknown Qualification';
+            $nvqQualification = $latestInformation?->NVQ_QUALIFICATION?->QUALIFICATION_NAME;
 
-            $level = $latestInformation?->NVQ_QUALIFICATION?->QUALIFICATION_LEVEL ?? '';
-            $effectiveDate = $latestInformation?->NVQ_QUALIFICATION?->EFFECTIVE_DATE ?? '';
+            if ($hasMatch && $nvqQualification) {
+                $level = $latestInformation?->NVQ_QUALIFICATION?->QUALIFICATION_LEVEL ?? '';
+                $effectiveDate = $latestInformation?->NVQ_QUALIFICATION?->EFFECTIVE_DATE ?? '';
 
-            if ($level || $effectiveDate) {
-                $nvqQualification .= ' (' . $level . ($level && $effectiveDate ? '-' : '') . $effectiveDate . ')';
+                if ($level || $effectiveDate) {
+                    $nvqQualification .= ' (' . $level . ($level && $effectiveDate ? '-' : '') . $effectiveDate . ')';
+                }
+                return $institute.' | '.$nvqQualification;
+            } else {
+                return $institute.' | '.$course;
             }
-            return $institute.' | '.$nvqQualification;
-//            return $institute.' | '.$course. ' | '.$nvqQualification;
-        }elseif($latestInformation != '' && $nvqInformations == null) {
+        }elseif($latestInformation != '' && ($nvqInformations == null || count($nvqInformations) == 0)) {
             $institute = $latestInformation?->INSTITUTE?->INSTITUTE_NAME;
             $course = $latestInformation?->COURSE?->COURSE_NAME;
             return $institute.' | '.$course;
         }else {
-            return '<p class="text-sm dark:text-white">No training information found.</p>';
+//            return '<p class="text-sm dark:text-white">No training information found.</p>';
             return '';
         }
-
     }
 }
 
@@ -387,11 +419,15 @@ if (!function_exists('getCodeList')) {
     function getCodeList($module, $language = null) {
         $languageColumn = getLanguageColumn($language);
 
-        // Fetch the records based on the module and the language column
-        return \App\Models\CodeManagement::select('code_id', $languageColumn . ' as code_name')
-            ->whereRaw('LOWER(module) = ?', [strtolower($module)])
-            ->where('status', 1) // Only fetch active codes
-            ->get();
+        // Reference data changes rarely; cache for an hour to avoid re-querying it per row.
+        $cacheKey = 'codelist.' . strtolower($module) . '.' . $languageColumn;
+
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () use ($module, $languageColumn) {
+            return \App\Models\CodeManagement::select('code_id', $languageColumn . ' as code_name')
+                ->whereRaw('LOWER(module) = ?', [strtolower($module)])
+                ->where('status', 1) // Only fetch active codes
+                ->get();
+        });
     }
 }
 
@@ -407,13 +443,17 @@ if (!function_exists('getCodeNameByCodeId')) {
     function getCodeNameByCodeId($module, $code_id, $language = null) {
         $languageColumn = getLanguageColumn($language);
 
-        // Fetch the record based on the module and code_id
-        $result = \App\Models\CodeManagement::select($languageColumn . ' as code_name')
-            ->whereRaw('LOWER(module) = ?', [strtolower($module)])
-            ->where('code_id', $code_id)
-            ->first();
-        // Return the code name or null if not found
-        return $result ? $result->code_name : null;
+        // Cached per (module, code_id, language) — this is called per-row in list views.
+        $cacheKey = 'codename.' . strtolower($module) . '.' . $code_id . '.' . $languageColumn;
+
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () use ($module, $code_id, $languageColumn) {
+            $result = \App\Models\CodeManagement::select($languageColumn . ' as code_name')
+                ->whereRaw('LOWER(module) = ?', [strtolower($module)])
+                ->where('code_id', $code_id)
+                ->first();
+
+            return $result ? $result->code_name : null;
+        });
     }
 }
 
@@ -561,3 +601,21 @@ if (!function_exists('saveImageAsWebp')) {
         return 'storage/' . $folder . '/' . $fileNameToStore;
     }
 }
+
+if (!function_exists('setEnvValue')) {
+    function setEnvValue($key, $value)
+    {
+        $path = base_path('.env');
+        if (file_exists($path)) {
+            $valueStr = $value ? 'true' : 'false';
+            $content = file_get_contents($path);
+            if (preg_match("/^{$key}=.*/m", $content)) {
+                $content = preg_replace("/^{$key}=.*/m", "{$key}={$valueStr}", $content);
+            } else {
+                $content .= "\n{$key}={$valueStr}";
+            }
+            file_put_contents($path, $content);
+        }
+    }
+}
+

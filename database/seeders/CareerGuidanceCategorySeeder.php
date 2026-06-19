@@ -25,7 +25,7 @@ class CareerGuidanceCategorySeeder extends Seeder
         foreach ($categories as $category) {
             CareerGuidanceCategory::create([
                 'name' => $category,
-                'slug' => Str::slug($category)
+                'slug' => Str::slug($category, '-', 'ta')
             ]);
         }
     }

@@ -39,6 +39,7 @@
         "jquery": "^3.7.1",
         "laravel-echo": "^1.16.1",
         "laravel-vue-i18n": "^2.8.0",
+        "leaflet": "^1.9.4",
         "lodash": "^4.17.21",
         "node": "^22.18.0",
         "puppeteer": "^23.4.1",

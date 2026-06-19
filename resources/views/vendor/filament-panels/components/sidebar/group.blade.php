@@ -77,7 +77,7 @@
                     x-bind:aria-expanded="! $store.sidebar.groupIsCollapsed(label)"
                     x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)"
                     class="fi-sidebar-group-collapse-button {{ $colorIconButton }} "
-                    x-bind:class="{ '-rotate-180': $store.sidebar.groupIsCollapsed(label) }"
+                    x-bind:class="{ 'rotate-180': !$store.sidebar.groupIsCollapsed(label) }"
                 />
             @endif
         </div>
@@ -190,7 +190,10 @@
         x-transition:enter-end="opacity-100"
         @endif
         class="fi-sidebar-group-items flex flex-col gap-y-1"
-        @if (isset($items[0]) && !$items[0]->getIcon())
+{{--        @if (isset($items[0]) && !$items[0]->getIcon())--}}
+        @if (isset($items[0]) && $items[0]->getIcon())
+            style="margin-left: 0"
+        @else
             style="margin-left: 35px"
         @endif
     >

@@ -22,16 +22,16 @@ class JobVacancyTableWidget extends BaseWidget
         );
     }
 
-    // --- THÊM ĐOẠN NÀY ---
+    // --- ADDED THIS SECTION ---
     public function rendering($view, $data)
     {
-        // 1. Lấy danh sách các bản ghi (records) đang hiển thị ở trang hiện tại
+        // 1. Get the list of records displayed on the current page
         $records = $this->getTable()->getRecords();
 
-        // 2. Lấy danh sách ID (Primary Key) của các bản ghi này
+        // 2. Get the list of IDs (primary keys) of these records
         $ids = $records->pluck('id')->toArray();
 
-        // 3. Bắn sự kiện sang Chart Widget kèm theo danh sách ID
+        // 3. Dispatch the event to the chart widget along with the list of IDs
         $this->dispatch('update-job-chart', ids: $ids);
     }
     // ---------------------

@@ -278,7 +278,7 @@ class JobSupportController extends BaseController
                     }
                 }
 
-                if ($ojt->is_matched && !$status) { // chỉ gán nếu chưa có status
+                if ($ojt->is_matched && !$status) { // only assign if there is no status yet
                     $traineeMatched = $this->getTraineeMatchedByOJTId($ojt->id);
 
                     if ($traineeMatched) {
@@ -344,7 +344,7 @@ class JobSupportController extends BaseController
                   AND trainee_id = ?
             ) as is_apply', [TypeTraineeApply::APPLY->value, $trainee_id]);
         }
-        // Lọc theo trạng thái job (applied hoặc matched)
+        // Filter by job status (applied or matched)
         if ($statusOjt = $request->query('status_ojt')) {
             match ($statusOjt) {
                 'applied' => $ojts->whereIn('o_j_t_s.id', function ($q) use ($trainee_id) {
@@ -364,7 +364,7 @@ class JobSupportController extends BaseController
         }
 
 
-        // Lọc theo status
+        // Filter by status
         if ($request->filled('status')) {
             $ojts->where('status', $request->query('status'));
         }

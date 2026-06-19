@@ -36,6 +36,16 @@ class JobResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected $jobService = JobService::class;
     public static $totalResults;
+
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        // Eager-load company (used by the company.name column) and count the
+        // applies_type_apply relation up-front to avoid N+1 queries per row.
+        return parent::getEloquentQuery()
+            ->with('company')
+            ->withCount(['appliesTypeApply']);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -181,6 +191,14 @@ class JobResource extends Resource
             //         'status' => request()->query('status', null)
             //     ])
             // )
+            ->modifyQueryUsing(function ($query) {
+                $admin = auth('admin')->user();
+                if ($admin && $admin->hasRole('naita_admin')) {
+                    $query->whereHas('company', function ($q) {
+                        $q->where('is_belongs_to_naita', true);
+                    });
+                }
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('index')
                     ->label(__('admin/dashboard.content.no'))
@@ -231,7 +249,7 @@ class JobResource extends Resource
                 Tables\Columns\TextColumn::make('appliesTypeApply')
                     ->label(__('admin/dashboard.job.applied'))
                     ->alignCenter()
-                    ->getStateUsing(fn($record) => $record->appliesTypeApply()->count()),
+                    ->getStateUsing(fn($record) => $record->applies_type_apply_count),
 
                 Tables\Columns\TextColumn::make('appliesTypeMatch')
                     ->label(__('admin/dashboard.job.matched'))
@@ -247,7 +265,7 @@ class JobResource extends Resource
                     ->label(__('admin/dashboard.job.shortlistee'))
                     ->alignCenter()
                     ->getStateUsing(fn($record) => $record->shortlist()->count()),
-            ])->searchPlaceholder('Job Title')
+            ])->searchPlaceholder(__('admin/dashboard.job.job_title'))
             ->filters([
                 Tables\Filters\Filter::make('advanced')
                     ->form([
@@ -263,9 +281,21 @@ class JobResource extends Resource
                             ->label('Company name')
                             ->options(function (callable $get) {
                                 $district = $get('district');
-                                return $district
-                                    ? Company::where('district_id', $district)->pluck('name', 'id')
-                                    : Company::pluck('name', 'id');
+                                $admin = auth('admin')->user();
+
+                                $query = $district
+                                    ? Company::where('district_id', $district)
+                                    : Company::query();
+
+                                $query->whereNotNull('verified_by')
+                                    ->whereNotNull('verified_at')
+                                    ->where('active', true);
+
+                                if ($admin && $admin->hasRole('naita_admin')) {
+                                    $query->where('is_belongs_to_naita', true);
+                                }
+
+                                return $query->pluck('name', 'id');
                             })
                             ->preload()
                             ->searchable()
@@ -284,7 +314,18 @@ class JobResource extends Resource
 
                 Tables\Filters\SelectFilter::make('sector_id')
                     ->label(__('admin/dashboard.job.sector'))
-                    ->options(Sector::pluck('name', 'id'))
+                    ->options(function () {
+                        $admin = auth('admin')->user();
+                        $sectorQuery = Sector::query();
+
+                        if ($admin && $admin->hasRole('naita_admin')) {
+                            $sectorQuery->whereHas('jobCompanies.company', function ($q) {
+                                $q->where('is_belongs_to_naita', true);
+                            });
+                        }
+
+                        return $sectorQuery->pluck('name', 'id');
+                    })
                     ->searchable(),
 
                 Tables\Filters\SelectFilter::make('status')

@@ -148,12 +148,12 @@
         function clickked(event) {
             const element = event.currentTarget;
 
-            // Sử dụng jQuery để cập nhật nội dung của modal
+            // Use jQuery to update the modal content
             $("#show-video-modal .title").html($(element).data('title'));
             $("#show-video-modal .intro").html($(element).data('intro'));
             $("#show-video-modal iframe").attr('src', getSrc($(element).data('source')));
 
-            // Hiển thị modal nếu cần
+            // Show the modal if needed
             modalEdit.show();
         }
         $(document).ready(function() {

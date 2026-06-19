@@ -47,7 +47,7 @@ class OJTFactory extends Factory
             'required_skills' => $this->faker->words(5, true),
             'application_starttime' => $this->faker->dateTimeBetween('-1 month', '+1 month'),
             'application_endtime' => $this->faker->dateTimeBetween('+1 month', '+2 months'),
-            'slug' => Str::slug($title),
+            'slug' => Str::slug($title, '-', 'ta'),
             'hr_name' => $this->faker->name,
             'hr_email' => $this->faker->email,
             'hr_contact_info' => $this->faker->phoneNumber,

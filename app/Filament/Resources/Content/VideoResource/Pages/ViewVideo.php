@@ -9,6 +9,7 @@ use App\Models\CareerGuidanceCategory;
 use App\Models\CgoUser;
 use App\Models\CompanyRecruiter;
 use App\Models\Content;
+use App\Models\SchoolKid;
 use App\Models\TraineeUser;
 use App\Services\Cgo\NotificationManager as NotificationManagerCgo;
 use Filament\Notifications\Notification;
@@ -193,6 +194,9 @@ class ViewVideo extends ViewRecord
                 break;
             case 'trainee':
                 $user = TraineeUser::where(['id' => $id])->first();
+                break;
+            case 'schoolkid':
+                $user = SchoolKid::where(['id' => $id])->first();
                 break;
         }
         return $user;

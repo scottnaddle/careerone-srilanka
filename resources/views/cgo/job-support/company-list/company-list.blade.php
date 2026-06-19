@@ -124,7 +124,7 @@
                 {{--                        </div> --}}
                 {{--                    @endforeach --}}
                 {{--                </div> --}}
-                {{--                --}}{{--            //cái này gọi tailwind pagination trong vendor ra --}}
+                {{--                --}}{{--            // this renders the tailwind pagination from vendor --}}
                 {{--                {{ $companies->onEachSide(1)->links() }} --}}
                 <div class="relative overflow-x-auto">
                     <table class="w-full text-left rtl:text-right table-auto">
@@ -354,7 +354,7 @@
             const provinceFilter = url.searchParams.get('province');
             appendOptionAll($('#data-tab-1'), provinceFilter === '' || provinceFilter === null, 'province', url);
 
-            // 🧠 GỌI AJAX để lấy provinces
+            // 🧠 CALL AJAX to get provinces
             fetch('/api/get-provinces')
                 .then(response => response.json())
                 .then(result => {
@@ -404,7 +404,7 @@
             $('#data-tab-3').empty();
         }
 
-        // Hàm để thêm province vào modal
+        // Function to add a province to the modal
         function appendProvince(province, index, isSelected) {
             const html = itemOptionSlect('province' + index, 'province', province.name, isSelected,
                 `data-index="${index}"`);
@@ -490,7 +490,7 @@
 
         }
 
-        // Hàm để thêm district vào modal
+        // Function to add a district to the modal
         function appendDistrict(districts, district, index, isSelected, url) {
             const html = itemOptionSlect('district' + index, 'district', district.name, isSelected,
                 `data-index="${index}" data-district-id="${district.id}"`);

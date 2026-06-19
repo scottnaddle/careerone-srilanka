@@ -57,11 +57,12 @@ class ListQAS extends ListRecords
             if (!empty($this->files)) {
                 foreach ($this->files as $file) {
                     $originalFileName = $file->getClientOriginalName();
-                    $filePath = $file->storeAs('admin/qnas/attachment_details/' . Auth::id(), $originalFileName, 'public');
+                    $safeName = \Illuminate\Support\Str::uuid() . '.' . strtolower($file->getClientOriginalExtension());
+                    $filePath = $file->storeAs('admin/qnas/attachment_details/' . Auth::id(), $safeName, 'public');
                     $fileType = $file->getClientMimeType();
                     $fileSize = $file->getSize();
                     $qna->attachments()->create([
-                        'file_name' => $originalFileName,
+                        'file_name' => pathinfo($originalFileName, PATHINFO_FILENAME),
                         'path' => 'storage/' . $filePath,
                         'file_type' => $fileType,
                         'file_size' => $fileSize,

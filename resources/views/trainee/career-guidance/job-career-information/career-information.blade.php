@@ -112,7 +112,7 @@
                 </div>
 
             </div>
-            {{--            //cái này gọi tailwind pagination trong vendor ra --}}
+            {{--            //this pulls out the tailwind pagination from vendor --}}
             {{ $careerExpertInterviews->onEachSide(1)->links() }}
         </div>
     </div>

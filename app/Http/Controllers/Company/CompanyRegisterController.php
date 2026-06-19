@@ -71,7 +71,7 @@ class CompanyRegisterController extends Controller
                 $recruiter->sendSMSVerify($token);
                 break;
         }
-        return redirect()->route('verification.verify', ['u_type' => 'company', 'token' => $token, 'verification_method' => $verification_method])->with('message', 'sended');
+        return redirect()->route('verification.verify', ['u_type' => 'company', 'token' => $token, 'verification_method' => $verification_method])->with('message', 'Verification code has been sent');
     }
 
 }

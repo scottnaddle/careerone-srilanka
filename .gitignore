@@ -17,4 +17,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-/app/Policies
+
+# Never commit secrets / service-account keys
+/storage/app/firebase_credentials.json

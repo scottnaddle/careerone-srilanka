@@ -238,7 +238,7 @@ class EditEventList extends EditRecord
         $event = $this->record;
         \Log::info('Event Updated ID:', ['id' => $event->id]);
     
-        // Xử lý thumbnail
+        // Process thumbnail
         $thumbnailState = $this->getState('thumbnail');
         if (!empty($thumbnailState)) {
             $this->handleFile(
@@ -248,7 +248,7 @@ class EditEventList extends EditRecord
             );
         }
     
-        // Xử lý attachments nếu có
+        // Process attachments if present
         $attachmentState = $this->getState('attachments');
         if (!empty($attachmentState)) {
             $this->handleFile(

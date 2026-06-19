@@ -20,11 +20,11 @@ class AccountMustVerifyByAdmin
         $guard = '';
         if (Auth::guard('admin')->check()) $guard = 'admin';
         if (Auth::guard('cgo')->check()) $guard = 'cgo';
-        if (\Auth::check() && \Auth::user()->email_verified_at == "") {
+        if (\Auth::check() && is_null(\Auth::user()->email_verified_at)) {
             $token = base64_encode(Auth::guard($guard)->user()->email);
             return redirect('/verfication/isnotverified/'.$guard.'/'.$token);
         }
-        if (\Auth::check() && \Auth::user()->verify_at == "") {
+        if (\Auth::check() && is_null(\Auth::user()->verify_at)) {
             return response()->view('admin.auth.account_must_verify');
         }
         return $next($request);

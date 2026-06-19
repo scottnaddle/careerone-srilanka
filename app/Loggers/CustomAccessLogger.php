@@ -10,8 +10,8 @@ use Spatie\Activitylog\ActivityLogStatus;
 class CustomAccessLogger
 {
     /**
-     * Log user login với tùy chỉnh thêm guard
-     * Tự động lưu causer_id và causer_type vào column riêng
+     * Log user login with a custom guard
+     * Automatically saves causer_id and causer_type into their own columns
      */
     public function handle(Login $event)
     {
@@ -29,7 +29,7 @@ class CustomAccessLogger
                 'ip' => request()->ip(),
                 'user_agent' => request()->userAgent(),
                 'guard' => $event->guard
-                // Không cần thêm causer_type ở đây
+                // No need to add causer_type here
             ])
             ->event('Login')
             ->log($description);

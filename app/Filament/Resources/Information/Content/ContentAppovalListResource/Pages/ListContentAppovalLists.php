@@ -121,7 +121,7 @@ class ListContentAppovalLists extends ListRecords
 
             $newContent = new Content();
             $newContent->title = $data['content_name'];
-            $newContent->slug = Str::slug($data['content_name']);
+            $newContent->slug = Str::slug($data['content_name'], '-', 'ta');
             $newContent->intro = $data['contentIntroduction'];
             $newContent->status = \App\Enums\StatusEnumsManagement::APPROVED;
             $newContent->content_type = 'doc';

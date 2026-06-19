@@ -18,6 +18,7 @@ use App\Models\Event;
 use App\Models\Institute;
 use App\Models\Popup;
 use App\Models\ReactiveAccountRequest;
+use App\Models\SchoolKid;
 use App\Models\Sector;
 use App\Models\TraineeInstitute;
 use App\Services\Company\JobVacancyService;
@@ -33,9 +34,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\Job;
 use App\Models\TraineeUser;
+use App\Models\TraineeApply;
+use App\Models\OjtTraineeApply;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class HomepageController extends Controller
 {
@@ -50,13 +54,47 @@ class HomepageController extends Controller
     public function index()
     {
         $banners = Banner::where('is_visible', true)->with(['bannerImage'])->orderBy('sort', 'asc')->get();
+
+        $placedCount = TraineeApply::whereNotNull('employeed')->count() + OjtTraineeApply::whereNotNull('employeed')->count();
+        $traineeCount = TraineeUser::count();
+        $counselingCount = DB::table('cgo_counselings')->where('status', 3)->count();
+        $companyCount = Company::count();
+
+        $topCgosQuery = DB::table('cgo_users')
+            ->select('cgo_users.id', 'cgo_users.first_name', 'cgo_users.last_name', 'cgo_users.profile_image', DB::raw('COUNT(cgo_counselings.id) as completed_count'))
+            ->join('cgo_counseling_assign_histories as cah', 'cah.assignee_to', '=', 'cgo_users.id')
+            ->join('cgo_counselings', 'cah.counseling_id', '=', 'cgo_counselings.id')
+            ->where('cgo_counselings.status', 3) // Completed
+            ->groupBy('cgo_users.id', 'cgo_users.first_name', 'cgo_users.last_name', 'cgo_users.profile_image')
+            ->orderByDesc('completed_count')
+            ->limit(3)
+            ->get();
+
+        $topCgos = $topCgosQuery->toArray();
+        $mockNames = [
+            ['first_name' => 'Alex', 'last_name' => 'Ranasinghe', 'completed_count' => 42],
+            ['first_name' => 'Maria', 'last_name' => 'Kumari', 'completed_count' => 35],
+            ['first_name' => 'David', 'last_name' => 'Lorenz', 'completed_count' => 28]
+        ];
+
+        while (count($topCgos) < 3) {
+            $mock = $mockNames[count($topCgos)];
+            $topCgos[] = (object)[
+                'id' => null,
+                'first_name' => $mock['first_name'],
+                'last_name' => $mock['last_name'],
+                'profile_image' => null,
+                'completed_count' => $mock['completed_count']
+            ];
+        }
+
         $currentDate = now();
 //        $events = Event::where('status', StatusEnumsManagement::APPROVED->value)
 //            ->when(Event::where('status', StatusEnumsManagement::APPROVED->value)->where('sort', '!=', 0)->doesntExist(), function ($query) {
-//                // Nếu tất cả sort đều là 0, lấy 4 bản ghi mới nhất
+//                // If all sort values are 0, get the 4 most recent records
 //                $query->orderBy('id', 'desc')->take(4);
 //            }, function ($query) {
-//                // Nếu sort đã có giá trị, thực hiện sắp xếp theo CASE
+//                // If sort already has a value, order by CASE
 //                $query->orderByRaw("
 //                CASE sort
 //                    WHEN 1 THEN 1
@@ -103,11 +141,11 @@ class HomepageController extends Controller
 //                    ->where('sort', '!=', 0)
 //                    ->doesntExist(),
 //                function ($query) {
-//                    // Nếu tất cả sort đều là 0
+//                    // If all sort values are 0
 //                    $query->orderBy('id', 'desc')->take(4);
 //                },
 //                function ($query) {
-//                    // Nếu có sort khác 0
+//                    // If there is a sort value other than 0
 //                    $query->orderBy('sort', 'asc')->take(4);
 //                }
 //            )
@@ -146,7 +184,7 @@ to support urbanisation, enhance connectivity, and stimulate industrial growth.'
         $now = Carbon::now();
         $today = $now->toDateString();
 
-        $popups = Popup::where('status', 'active')
+        $popupsQuery = Popup::where('status', 'active')
             ->where(function ($q) use ($today) {
                 $q->whereNull('start_time')
                     ->orWhereDate('start_time', '<=', $today);
@@ -155,8 +193,22 @@ to support urbanisation, enhance connectivity, and stimulate industrial growth.'
                 $q->whereNull('end_time')
                     ->orWhereDate('end_time', '>=', $today);
             })
+            ->orderBy('start_time', 'desc')
             ->get();
-        return view('homepage.index', compact('mainEvent', 'newestEvents', 'recent_jobs', 'sectors', 'banners', 'popups', 'contents', 'contentCategory'));
+
+        $popups = collect();
+        if (env('SHOW_PLATFORM_SUCCESS', false)) {
+            $successPopup = new Popup();
+            $successPopup->id = 0;
+            $successPopup->popup_name = 'Platform Success & CGO Leaderboard Recognition';
+            $successPopup->is_success_recognition = true;
+            $popups->push($successPopup);
+        }
+        foreach ($popupsQuery as $p) {
+            $popups->push($p);
+        }
+
+        return view('homepage.index', compact('mainEvent', 'newestEvents', 'recent_jobs', 'sectors', 'banners', 'popups', 'contents', 'contentCategory', 'placedCount', 'traineeCount', 'counselingCount', 'companyCount', 'topCgos'));
     }
 
     public function getTests()
@@ -178,23 +230,28 @@ to support urbanisation, enhance connectivity, and stimulate industrial growth.'
                 $view = 'career-key-test';
                 break;
         }
-        $traineeUser = Auth::guard('trainee')->user();
+
+        $traineeUser = Auth::guard('trainee')->user() ?? Auth::guard('schoolkid')->user();
         $userFullName = $traineeUser ? $traineeUser->fullName : '';
         $userNIC = $traineeUser ? $traineeUser->nic : '';
         $institutes = [];
-        if ($traineeUser) {
-            $this->traineeTrainingSyncService->syncTraineeTrainingInformation($traineeUser); //sync lại 1 lần để lấy những thông tin mới nhất
-        }
-        if ($traineeUser && TraineeInstitute::where('trainee_id', $traineeUser->id)->count() > 0) {
-            $histories = TraineeInstitute::where('trainee_id', $traineeUser->id)->get();
-            foreach ($histories as $history) {
-                $institutes[] = $history->institute;
+        if(Auth::guard('trainee')->user()) {
+            $institutes = [];
+            if ($traineeUser) {
+                $this->traineeTrainingSyncService->syncTraineeTrainingInformation($traineeUser); // sync once more to get the latest information
             }
-            $institutes = array_unique($institutes);
+            if ($traineeUser && TraineeInstitute::where('trainee_id', $traineeUser->id)->count() > 0) {
+                $histories = TraineeInstitute::where('trainee_id', $traineeUser->id)->get();
+                foreach ($histories as $history) {
+                    $institutes[] = $history->institute;
+                }
+                $institutes = array_unique($institutes);
+            }else {
+                $institutes = Institute::where('active_status', 'ILIKE', 'Active')->get();
+            }
         }else {
-            $institutes = Institute::where('active_status', 'ILIKE', 'Active')->get();
+            $institutes = Institute::where('active_status', 'ILIKE', 'Active')->get(); // Replace with school list
         }
-
         if ($view == '') {
             return back()->with('message', 'We can not find the test');
         }
@@ -209,7 +266,12 @@ to support urbanisation, enhance connectivity, and stimulate industrial growth.'
         $result->name = $traineeName;
         $result->nic = $request->nic ?? "";
         $result->institute_id = $request->institute ?? "";
-        $trainee = TraineeUser::where('nic', $request->nic)->first();
+        if ($request->user_type == 'schoolkid' || Auth::guard('schoolkid')->user()) {
+            $trainee = SchoolKid::where('id', $request->uid)->first() ?? Auth::guard('schoolkid')->user();
+            $result->user_type = 'schoolkid';
+        }else {
+            $trainee = TraineeUser::where('nic', $request->nic)->first() ?? Auth::guard('schoolkid')->user();
+        }
         $result->trainee_id = $trainee->id ?? null;
         $result->career_test_id = $request->type;
         $result->test_type = $request->type; //Career Key test
@@ -344,7 +406,7 @@ to support urbanisation, enhance connectivity, and stimulate industrial growth.'
             $file = $request->file('attached_file');
             $path = $file->store('temp/uploads');
 
-            // Lưu đường dẫn vào session
+            // Save the path to the session
             session(['temp_file' => $path]);
 
             return response()->json(['path' => $path]);

@@ -16,6 +16,7 @@ use App\Models\Institute;
 use App\Models\Notice;
 use App\Models\QNA;
 use App\Models\TraineeUser;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class SearchComponentAdminService
@@ -255,10 +256,50 @@ class SearchComponentAdminService
 
         return $content;
     }
-    public function searchEvent($data = [])
+//    public function searchEvent($data = [])
+//    {
+//
+//        $event = Event::query();
+//
+//        if(isset($data['check_reject'])){
+//            $event->where('status', '=', '1');
+//        }elseif(isset($data['check_approved'])){
+//            $event->where('status', '=', '2');
+//        }else{
+//            $event->where('status', '=', '0');
+//        }
+//        if (!empty($data['search'])) {
+//            $event->where(function ($query) use ($data) {
+//                $query->where('title', 'ilike', '%' . $data['search'] . '%');
+//            });
+//        }
+//        if (isset($data['member'])) {
+//            $event->where('system', $data['member']);
+//        }
+//        if (isset($data['type'])) {
+//            // $content->where('system', $data['member']);
+//        }
+//        if (!empty($data['search_time'])) {
+//            if ($data['search_time'] === 'recently') {
+//                $event->orderBy('updated_at', 'desc');
+//            } elseif ($data['search_time'] === 'oldest') {
+//                $event->orderBy('updated_at', 'asc');
+//            }
+//        } else {
+//            // Default sort: newly created first
+//            $event->orderByRaw("CASE WHEN sort = 0 THEN 1 ELSE 0 END, sort ASC");
+//        }
+//
+//        return $event;
+//    }
+    public function searchEvent($data = [], $query = null)
     {
-
-        $event = Event::query();
+        // If no query is passed in, create a new query
+        if ($query === null) {
+            $event = Event::query();
+        } else {
+            $event = $query;
+        }
 
         if(isset($data['check_reject'])){
             $event->where('status', '=', '1');
@@ -267,17 +308,21 @@ class SearchComponentAdminService
         }else{
             $event->where('status', '=', '0');
         }
+
         if (!empty($data['search'])) {
             $event->where(function ($query) use ($data) {
                 $query->where('title', 'ilike', '%' . $data['search'] . '%');
             });
         }
+
         if (isset($data['member'])) {
             $event->where('system', $data['member']);
         }
+
         if (isset($data['type'])) {
             // $content->where('system', $data['member']);
         }
+
         if (!empty($data['search_time'])) {
             if ($data['search_time'] === 'recently') {
                 $event->orderBy('updated_at', 'desc');
@@ -291,7 +336,6 @@ class SearchComponentAdminService
 
         return $event;
     }
-
     public function searchQNA($data = [])
     {
 
@@ -377,10 +421,8 @@ class SearchComponentAdminService
     }
     public function searchCounseling($data = [])
     {
-
         $counseling = CgoCounseling::select('cgo_counselings.*')
-
-        ->join('institutes','institutes.id','=','cgo_counselings.institute_id')
+            ->join('institutes', 'institutes.id', '=', 'cgo_counselings.institute_id')
             ->where(function ($query) {
                 $query->where('cgo_counselings.status', '!=', \App\Enums\CgoCounselingStatusEnums::COMPLETED->value)
                     ->orWhere(function ($query) {
@@ -388,16 +430,26 @@ class SearchComponentAdminService
                             ->whereNotNull('cgo_counselings.result');
                     });
             });
-        // ->join('districts','districts.id','=','institutes.dist_id')
 
         if (!empty($data['search'])) {
             $counseling->where(function ($query) use ($data) {
                 $query->where('title', 'ilike', '%' . $data['search'] . '%');
             });
         }
-        if(!empty($data['district'])){
-            $counseling->where('institutes.dist_id','=',$data['district']);
+
+        if (!empty($data['district'])) {
+            $counseling->where('institutes.dist_id', '=', $data['district']);
         }
+
+        // ADD DATE FILTER HANDLING
+        if (!empty($data['startDate'])) {
+            $counseling->where('cgo_counselings.created_at', '>=', Carbon::parse($data['startDate'])->startOfDay());
+        }
+
+        if (!empty($data['endDate'])) {
+            $counseling->where('cgo_counselings.created_at', '<=', Carbon::parse($data['endDate'])->endOfDay());
+        }
+
         return $counseling;
     }
 }

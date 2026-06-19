@@ -101,7 +101,7 @@
                                         </a>
                                     @endif
 
-                                    <!-- Hiển thị thông báo matched nếu có -->
+                                    <!-- Show the matched label if present -->
                                     @if ($groupInfo['matched'])
                                         <span class="text-[#464559] dark:text-white">|</span>
                                         <span class="text-sm px-2.5 py-1 rounded shadow-xs text-white bg-primary">
@@ -110,7 +110,7 @@
                                         </span>
                                     @endif
 
-                                    <!-- Hiển thị thông báo apply nếu có -->
+                                    <!-- Show the applied label if present -->
                                     @if ($groupInfo['apply'])
                                         <span class="text-[#464559] dark:text-white">|</span>
                                         <span class="text-sm px-2.5 py-1 rounded shadow-xs text-white bg-primary">

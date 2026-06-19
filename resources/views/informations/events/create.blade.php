@@ -646,7 +646,7 @@
             const previewImage = document.getElementById('thumbnail-preview');
             const removeThumbnailBtn = document.getElementById('remove-thumbnail');
 
-            // Hàm hiển thị preview
+            // Function to show the preview
             function previewThumbnail(file) {
                 if (file) {
                     const reader = new FileReader();
@@ -658,11 +658,11 @@
                 }
             }
 
-            // Xử lý khi chọn file
+            // Handle when a file is selected
             thumbnailInput.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (file) {
-                    // Kiểm tra định dạng file
+                    // Check the file format
                     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
                     if (!allowedTypes.includes(file.type)) {
                         Toastify({
@@ -677,7 +677,7 @@
                         return;
                     }
 
-                    // Kiểm tra kích thước file (ví dụ: giới hạn 5MB)
+                    // Check the file size (e.g. 5MB limit)
                     const maxSize = 5 * 1024 * 1024; // 5MB
                     if (file.size > maxSize) {
                         Toastify({
@@ -699,21 +699,21 @@
                 }
             });
 
-            // Xử lý khi nhấn nút xóa preview
+            // Handle when the remove preview button is clicked
             removeThumbnailBtn.addEventListener('click', function() {
                 thumbnailInput.value = '';
                 previewContainer.classList.add('hidden');
                 previewImage.src = '';
 
-                // Trigger change event để clear error messages
+                // Trigger change event to clear error messages
                 const event = new Event('change', { bubbles: true });
                 thumbnailInput.dispatchEvent(event);
             });
 
-            // Nếu có thumbnail cũ từ validation error (edit mode)
+            // If there is an old thumbnail from a validation error (edit mode)
             const oldThumbnail = "{{ old('thumbnail') }}";
             if (oldThumbnail && oldThumbnail !== '') {
-                // Chỉ áp dụng nếu đang ở chế độ edit (nếu có)
+                // Only apply if in edit mode (if any)
                 previewContainer.classList.add('hidden');
             }
         });

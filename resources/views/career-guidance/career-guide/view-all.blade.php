@@ -116,14 +116,14 @@
     </script>
     <script>
         function clickked(event) {
-            const element = event.currentTarget; // Lấy phần tử HTML mà sự kiện xảy ra
+            const element = event.currentTarget; // Get the HTML element on which the event occurred
 
-            // Sử dụng jQuery để cập nhật nội dung của modal
+            // Use jQuery to update the modal content
             $("#show-video-modal .title").html($(element).data('title'));
             $("#show-video-modal .intro").html($(element).data('intro'));
             $("#show-video-modal iframe").attr('src', getSrc($(element).data('source')));
 
-            // Hiển thị modal nếu cần
+            // Show the modal if needed
             modalEdit.show();
         }
         $(document).ready(function() {

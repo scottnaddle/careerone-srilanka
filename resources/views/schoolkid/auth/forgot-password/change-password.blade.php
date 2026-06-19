@@ -1,4 +1,4 @@
-@extends('schoolkid.auth.layouts.master')
+@extends('auth.layouts.master')
 
 @section('title', 'Sign In')
 

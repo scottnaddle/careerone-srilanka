@@ -16,6 +16,7 @@ use App\Models\NVQLevel;
 use App\Models\OJT;
 use App\Models\OjtTraineeApply;
 use App\Models\Province;
+use App\Models\ReqCourse;
 use App\Models\Sector;
 use App\Models\TraineeApply;
 use App\Models\TraineeInstitute;
@@ -56,13 +57,13 @@ class JobSupportController extends Controller
     public function traineeUserFilter(Request $request, $matched = null, $ojt_id = null)
     {
         $query = TraineeUser::query();
-        //Chỉ lấy trainee có nhu cầu tìm việc
+        // Only get trainees who are looking for work
 //        if(!auth('cgo')->check()){
             $query->where('active', true);
 //            ->where('open_to_work', 1);
 //        }
 
-        // Nếu có ojt_id, lọc theo điều kiện có liên kết với ojtMatches
+        // If ojt_id is provided, filter by trainees linked to ojtMatches
         if ($ojt_id) {
             $query->whereHas('ojtMatches', function ($query) use ($ojt_id) {
                 $query->where('ojt_id', $ojt_id);
@@ -70,7 +71,7 @@ class JobSupportController extends Controller
             });
         }
 
-        // Tìm kiếm dựa trên các trường username, first_name, và last_name
+        // Search across the username, first_name and last_name fields
         if ($request->has('search') && $request->query('search') != '') {
             $searchTerm = '%' . $request->query('search') . '%';
             $query->where(function ($query) use ($searchTerm) {
@@ -105,7 +106,21 @@ class JobSupportController extends Controller
 
         }
 
-        // Lọc theo loại trainee
+        // Filter by completed courses (retrieved from trainee_training_histories JSON content)
+        if ($request->has('reg_course') && $request->query('reg_course') != '' && $request->query('reg_course') != 'all') {
+            $regCourseName = trim($request->query('reg_course'));
+            $query->whereIn('id', function ($subQuery) use ($regCourseName) {
+                $subQuery->select('trainee_id')
+                    ->from('trainee_training_histories')
+                    ->whereRaw("exists (
+                        select 1
+                        from json_array_elements(content) as c
+                        where trim(c->'COURSE'->>'COURSE_NAME') = ?
+                    )", [$regCourseName]);
+            });
+        }
+
+        // Filter by trainee type
         if ($request->has('trainee_type') && $request->query('trainee_type') != 'all') {
             $traineeType = $request->query('trainee_type');
             if ($traineeType == 'keep') {
@@ -117,7 +132,7 @@ class JobSupportController extends Controller
             }
         }
 
-        // Sắp xếp theo first_name
+        // Sort by first_name
         return $query->orderBy('full_name', 'asc');
     }
 
@@ -125,7 +140,7 @@ class JobSupportController extends Controller
     {
         $ojt = OJT::where('id', $id)->firstOrFail();
 
-        $companyList = Company::whereNotNull('verified_by')->whereNotNull('verified_by')->where('active',true)->get();
+        $companyList = Company::whereNotNull('verified_at')->whereNotNull('verified_by')->where('active',true)->get();
         return view('cgo.job-support.ojt-list.ojt-details')->with(['ojt' => $ojt, 'companyList' => $companyList]);
     }
     public function jobFilter(Request $request, $traineeId = null)
@@ -342,7 +357,7 @@ class JobSupportController extends Controller
     {
         $export = new TraineeListExportCgo(
             $request,
-            fn($req) => $this->traineeUserFilter($req) // truyền callback filter
+            fn($req) => $this->traineeUserFilter($req) // pass the filter callback
         );
 
         return Excel::download($export, 'Trainee List.xlsx');
@@ -528,7 +543,28 @@ class JobSupportController extends Controller
         $query->whereIn('id', $list_trainee_ids);
         $trainees = $query->paginate(10);
         $trainees->appends($request->all());
-        return view('cgo.job-support.ojt-list.trainee-match')->with(['ojt' => $ojt, 'trainees' => $trainees]);
+
+        // Get all unique course names from trainee training histories
+        $courseNames = [];
+        $histories = \App\Models\TraineeTrainingHistory::whereNotNull('content')->get(['content']);
+        foreach ($histories as $history) {
+            $courses = json_decode($history->content);
+            if (is_array($courses)) {
+                foreach ($courses as $c) {
+                    if (isset($c->COURSE->COURSE_NAME) && trim($c->COURSE->COURSE_NAME) !== '') {
+                        $courseNames[] = trim($c->COURSE->COURSE_NAME);
+                    }
+                }
+            }
+        }
+        $courseNames = array_unique($courseNames);
+        sort($courseNames);
+
+        $regCourses = collect($courseNames)->map(function ($name) {
+            return (object) ['course_name' => $name];
+        });
+
+        return view('cgo.job-support.ojt-list.trainee-match')->with(['ojt' => $ojt, 'trainees' => $trainees, 'regCourses' => $regCourses]);
     }
 
     public function jobTraineeMatch(Request $request, $slug)
@@ -599,7 +635,7 @@ class JobSupportController extends Controller
             $data['registration_date'] = now();
             $data['application_starttime'] = $data['application_starttime'] != '' ? Carbon::parse($data['application_starttime'])->format('Y-m-d') : null;
             $data['application_endtime'] = $data['application_endtime'] != '' ? Carbon::parse($data['application_endtime'])->format('Y-m-d') : null;
-            $data['slug'] = Str::slug($data['title']);
+            $data['slug'] = Str::slug($data['title'], '-', 'ta');
             $data['created_by'] = Auth::guard(activeGuard())->user()->id;
             $data['system'] = activeGuard();
             if (!isset($data['age_limitation'])) {
@@ -669,19 +705,19 @@ class JobSupportController extends Controller
     {
         $query = TraineeUser::query();
         $query->where('active', true);
-        //Chỉ lấy trainee có nhu cầu tìm việc
+        // Only get trainees who are looking for work
 //        if(!auth('cgo')->check()) {
 //            $query->where('open_to_work', 1);
 //        }
 
-        // Nếu có job_id, lọc theo điều kiện có liên kết với job matched
+        // If job_id is provided, filter by trainees linked to matched jobs
         if ($job_id) {
             $query->whereHas('jobMatches', function ($query) use ($job_id) {
                 $query->where('job_id', $job_id);
             });
         }
 
-        // Tìm kiếm dựa trên các trường username, first_name, và last_name
+        // Search across the username, first_name and last_name fields
         if ($request->has('search') && $request->query('search') != '') {
             $searchTerm = '%' . $request->query('search') . '%';
             $query->where(function ($query) use ($searchTerm) {
@@ -693,7 +729,7 @@ class JobSupportController extends Controller
             });
         }
 
-        // Lọc theo loại trainee
+        // Filter by trainee type
         if ($request->has('trainee_type') && $request->query('trainee_type') != 'all') {
             $traineeType = $request->query('trainee_type');
             if ($traineeType == 'keep') {
@@ -705,7 +741,7 @@ class JobSupportController extends Controller
             }
         }
 
-        // Sắp xếp theo first_name
+        // Sort by first_name
         return $query->orderBy('full_name', 'asc');
     }
 
@@ -714,14 +750,14 @@ class JobSupportController extends Controller
         $query = TraineeUser::query();
         $query->where('active', true);
 
-        // Nếu có job_id, lọc theo điều kiện có liên kết với job applied
+        // If job_id is provided, filter by trainees linked to applied jobs
         if ($job_id) {
             $query->whereHas('jobApplies', function ($query) use ($job_id) {
                 $query->where('job_id', $job_id);
             });
         }
 
-        // Tìm kiếm dựa trên các trường username, first_name, và last_name
+        // Search across the username, first_name and last_name fields
         if ($request->has('search') && $request->query('search') != '') {
             $searchTerm = '%' . $request->query('search') . '%';
             $query->where(function ($query) use ($searchTerm) {
@@ -733,7 +769,7 @@ class JobSupportController extends Controller
             });
         }
 
-        // Lọc theo loại trainee
+        // Filter by trainee type
         if ($request->has('trainee_type') && $request->query('trainee_type') != 'all') {
             $traineeType = $request->query('trainee_type');
             if ($traineeType == 'keep') {
@@ -745,7 +781,7 @@ class JobSupportController extends Controller
             }
         }
 
-        // Sắp xếp theo first_name
+        // Sort by first_name
         return $query->orderBy('full_name', 'asc');
     }
 

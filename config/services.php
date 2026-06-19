@@ -31,4 +31,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'google_analytics' => [
+        'property_id' => env('GA_PROPERTY_ID'),
+        'credentials_json_path' => env('GA_CREDENTIALS_JSON_PATH'),
+        'credentials_json' => env('GA_CREDENTIALS_JSON'),
+        'ssl_verify' => env('GA_SSL_VERIFY', true),
+    ],
+
 ];
