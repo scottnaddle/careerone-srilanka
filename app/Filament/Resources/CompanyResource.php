@@ -458,6 +458,7 @@ class CompanyResource extends Resource
 
             ])
             ->paginated([10, 25, 50, 100])
+            ->striped()
             ->defaultSort('updated_at', 'desc')
             ->preserveScroll();
     }

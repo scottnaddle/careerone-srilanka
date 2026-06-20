@@ -197,6 +197,7 @@ class CGOResource extends Resource
                     //->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
             ])
             ->filters($filters)
+            ->striped()
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
             ->preserveScroll()

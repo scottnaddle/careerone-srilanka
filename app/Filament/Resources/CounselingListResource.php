@@ -183,6 +183,7 @@ class CounselingListResource extends Resource
                     ->button(),
             ])
             ->actions([])
+            ->striped()
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
             ->bulkActions([]);

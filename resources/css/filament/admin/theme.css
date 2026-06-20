@@ -89,3 +89,17 @@ section:has(button.action-btn-bottom) {
 /*        background-color: #1f2937; !* Tailwind gray-800 *!*/
 /*    }*/
 /*}*/
+
+/* Full-width content */
+.fi-main-ctn,
+.fi-content {
+    max-width: none !important;
+}
+
+/* Sidebar active item color */
+.fi-sidebar-item-active .fi-sidebar-item-label {
+    color: #4984F6 !important;
+}
+.fi-sidebar-item-active .fi-sidebar-item-icon {
+    color: #4984F6 !important;
+}

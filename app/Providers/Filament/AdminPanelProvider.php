@@ -6,6 +6,7 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
 use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\EmergencyUserReset;
+use App\Filament\Pages\PdmDashboard;
 use App\Filament\Resources\JobResource;
 use App\Http\Middleware\AccountMustVerifyByAdmin;
 use App\Http\Middleware\LocalizationMiddleware;
@@ -19,6 +20,7 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -60,10 +62,10 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
             ])
             ->pages([
                 EmergencyUserReset::class,
+                PdmDashboard::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -87,6 +89,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo(asset('images/careerone-logo.webp'))
             ->homeUrl(url('/admin/overview'))
             ->brandLogoHeight('3rem')
+            ->favicon(asset('favicon.ico'))
             ->passwordReset(RequestPasswordReset::class)
             ->authPasswordBroker('admin_users')
             ->middleware(['account_must_verified_by_admin'])
@@ -190,7 +193,7 @@ class AdminPanelProvider extends PanelProvider
             )
             ->sidebarCollapsibleOnDesktop()
             ->userMenuItems([
-                'profile' => MenuItem::make()->label('My page'),
+                'profile' => MenuItem::make()->label('Edit Profile'),
                 MenuItem::make()
                     ->label(__('admin/dashboard.download_user_manual'))
                     ->icon('heroicon-o-arrow-down')
@@ -199,6 +202,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->unsavedChangesAlerts()
             ->darkMode(true)
-            ->globalSearch(true);
+            ->globalSearch(true)
+            ->maxContentWidth(MaxWidth::Full);
     }
 }
