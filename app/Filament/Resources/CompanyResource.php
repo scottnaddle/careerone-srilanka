@@ -458,7 +458,8 @@ class CompanyResource extends Resource
 
             ])
             ->paginated([10, 25, 50, 100])
-            ->defaultSort('updated_at', 'desc');
+            ->defaultSort('updated_at', 'desc')
+            ->preserveScroll();
     }
 
     public static function getRelations(): array

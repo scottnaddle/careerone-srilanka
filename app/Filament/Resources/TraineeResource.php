@@ -281,6 +281,7 @@ class TraineeResource extends Resource
             ])
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
+            ->preserveScroll()
             ->filters([
                 Tables\Filters\Filter::make('search')
                     ->form([

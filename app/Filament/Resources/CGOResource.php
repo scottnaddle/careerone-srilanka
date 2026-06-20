@@ -199,6 +199,7 @@ class CGOResource extends Resource
             ->filters($filters)
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
+            ->preserveScroll()
             ->headerActions([
                 Action::make('export')
                     ->label('Export')

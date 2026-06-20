@@ -83,9 +83,10 @@ class AdminPanelProvider extends PanelProvider
             ->authGuard('admin')
             ->login(Login::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
-            ->brandLogo(asset('images/careerone-logo.png'))
+            ->brandName('CareerOne Admin')
+            ->brandLogo(asset('images/careerone-logo.webp'))
             ->homeUrl(url('/admin/overview'))
-            ->brandLogoHeight('2rem')
+            ->brandLogoHeight('3rem')
             ->passwordReset(RequestPasswordReset::class)
             ->authPasswordBroker('admin_users')
             ->middleware(['account_must_verified_by_admin'])
@@ -196,7 +197,8 @@ class AdminPanelProvider extends PanelProvider
                     ->url('/admin/download-user-manual')
                     ->openUrlInNewTab(),
             ])
-            ->darkMode(false)
-            ->globalSearch(false);
+            ->unsavedChangesAlerts()
+            ->darkMode(true)
+            ->globalSearch(true);
     }
 }
