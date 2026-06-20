@@ -293,8 +293,10 @@ class AdministratorResource extends Resource
                     ->hidden(fn ($record) => $record->active === true)
                     ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
             ])
+            ->striped()
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
+            ->preserveScroll()
             ->paginated([10, 25, 50, 100])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -37,7 +37,6 @@ Route::group(['prefix' => 'trainee', 'as' => 'trainee.'], function () {
         Route::get('/signin', [TraineeLoginController::class, 'login'])->name('login');
         Route::post('/signin', [TraineeLoginController::class, 'postLogin'])->name('postLogin');
         Route::get('/signup', [TraineeRegisterController::class, 'register'])->name('register');
-        Route::get('/signup?manual=1', [TraineeRegisterController::class, 'register'])->name('register-manual');
         Route::post('/signup', [TraineeRegisterController::class, 'postRegister'])->name('postRegister');
         Route::get('forget-password', [ForgotPasswordController::class, 'showForgetPasswordForm'])->name('forgotPassword');
         Route::post('forget-password', [ForgotPasswordController::class, 'submitForgetPasswordForm'])->name('postForgotPassword');

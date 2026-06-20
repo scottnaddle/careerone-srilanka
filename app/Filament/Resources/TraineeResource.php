@@ -279,8 +279,10 @@ class TraineeResource extends Resource
                 ->hidden(fn ($record) => $record->active === true),
 //                ->visible(fn () => auth('admin')->user()->hasRole('super_admin')),
             ])
+            ->striped()
             ->defaultSort('updated_at', 'desc')
             ->reorderable('updated_at')
+            ->preserveScroll()
             ->filters([
                 Tables\Filters\Filter::make('search')
                     ->form([
