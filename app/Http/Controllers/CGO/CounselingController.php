@@ -65,8 +65,9 @@ class CounselingController extends Controller
         if ($counseling->status == getCodeIdByStringEn('counselling_status', 'confirm')) {
             $CGOList = CgoUser::where('institute_id', Auth::guard('cgo')->user()->institute_id)->where('id', '!=', Auth::guard('cgo')->id())->get();
         }
-        $objectCounselingList=    $counseling->cgoCounselingAssignHistory ;
-        $assigneeToId=$objectCounselingList[0]->assignee_to;
+        $objectCounselingList = $counseling->cgoCounselingAssignHistory;
+        $firstAssign = $objectCounselingList->first();
+        $assigneeToId = $firstAssign ? $firstAssign->assignee_to : null;
         $currentUserId = Auth::guard('cgo')->user()->id;
         $rejectCount = DB::table('user_actions')
         ->where('cgo_user_id', $currentUserId)

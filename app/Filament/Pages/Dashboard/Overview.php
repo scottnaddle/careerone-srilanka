@@ -35,7 +35,8 @@ class Overview extends Page
 
     public function __construct()
     {
-        if (auth('admin')->user()->hasRole('super_admin')) {
+        $user = auth('admin')->user();
+        if ($user && $user->hasRole('super_admin')) {
             $this->heading = __('admin/dashboard.weekly_task');
         }
 
@@ -43,7 +44,11 @@ class Overview extends Page
 
     protected function getHeaderWidgets(): array
     {
-        if (auth('admin')->user()->hasRole('super_admin')) {
+        $user = auth('admin')->user();
+        if (!$user) {
+            return [];
+        }
+        if ($user->hasRole('super_admin')) {
             return [
                 OverviewWidgets::class,
                 MemberSignupTableWidget::class,
@@ -56,7 +61,7 @@ class Overview extends Page
                 QuestionsAndAnswersTableWidget::class,
                 QuestionAndAnswersChartWidget::class,
             ];
-        }elseif(auth('admin')->user()->hasRole('admin')) {
+        }elseif($user->hasRole('admin')) {
             return [
                 OverviewWidgets::class,
                 MemberSignupTableWidget::class,

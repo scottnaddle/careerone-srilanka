@@ -34,7 +34,6 @@ class QuestionAndAnswerController extends Controller
 
     public function destroy($id)
     {
-        // dd($id);
         $qNA = QNA::where('id', $id)->first();
         if (!$qNA) {
             return redirect()->route('filament.admin.resources.information.q-as.index')->withErrors('Q&A not found or already deleted.');

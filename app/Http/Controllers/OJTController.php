@@ -24,6 +24,7 @@ class OJTController extends Controller
     protected $notificationManager;
     public function __construct( NotificationManager $notificationManager)
     {
+        $this->middleware('company.auth')->except(['show']);
         $this->notificationManager = $notificationManager;
     }
     /**

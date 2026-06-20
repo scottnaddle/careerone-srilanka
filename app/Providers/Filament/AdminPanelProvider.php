@@ -60,7 +60,6 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
             ])
             ->pages([
                 EmergencyUserReset::class,
@@ -195,8 +194,6 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-arrow-down')
                     ->url('/admin/download-user-manual')
                     ->openUrlInNewTab(),
-            ])
-            ->darkMode(false)
-            ->globalSearch(false);
+            ]);
     }
 }

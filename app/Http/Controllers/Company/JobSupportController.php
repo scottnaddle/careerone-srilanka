@@ -48,7 +48,7 @@ class JobSupportController extends Controller
      */
     public function __construct(JobVacancyService $jobVacancyService, NotificationManager $notificationManager, TraineeJobService $traineeJobService, ProvincesDistrictsService $provincesDistrictsService)
     {
-        $this->middleware('company.auth')->except(['downloadFile', 'getCVOfTrainee']);
+        $this->middleware('company.auth')->except(['downloadFile']);
         $this->jobVacancyService = $jobVacancyService;
         $this->traineeJobService = $traineeJobService;
         $this->provincesDistrictsService = $provincesDistrictsService;

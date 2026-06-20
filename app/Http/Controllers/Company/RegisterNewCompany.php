@@ -65,7 +65,6 @@ class RegisterNewCompany extends Controller
     }
     public function postRegister(RegisterCompanyRequest $request)
     {
-//        dd($request->all());
         // Determine the company name based on the enterprise type
         $companyName = $request->company_information == 1 ? $request->ministry_name : $request->name;
 

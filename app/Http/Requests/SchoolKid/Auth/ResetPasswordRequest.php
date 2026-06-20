@@ -22,7 +22,7 @@ class ResetPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email|exists:schoolkids',
+            'email' => 'required|email|exists:school_kids',
             'password' => 'required',
         ];
     }

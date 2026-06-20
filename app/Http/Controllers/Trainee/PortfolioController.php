@@ -300,6 +300,11 @@ class PortfolioController extends Controller
         $id = $request->pid;
         $portfolio = Portfolio::where('id', $id)->first();
         if ($portfolio) {
+            $isOwner = Auth::guard('trainee')->check() && (int) Auth::guard('trainee')->id() === (int) $portfolio->trainee_id;
+            $isPublic = $portfolio->trainee && (int) $portfolio->trainee->public_portfolio === 1;
+            if (!$isOwner && !$isPublic) {
+                return back()->withErrors("You are not authorized to view this portfolio.");
+            }
             $portfolioDatas = $portfolio->data;
             if (is_string($portfolioDatas)) {
                 $portfolioDatas = json_decode($portfolioDatas, true);
