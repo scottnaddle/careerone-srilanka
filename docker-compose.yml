@@ -1,0 +1,66 @@
+# docker-compose for local dev (CareerOne / TVET)
+# Standard ports (3306/6379/1025/8025) avoided to prevent conflicts with other local projects
+# Host → Container mapping:
+#   13306 → 3306 (MySQL)
+#   16379 → 6379 (Redis)
+#   11025 → 1025 (Mailpit SMTP)
+#   18025 → 8025 (Mailpit Web UI)
+# App itself runs on host: php artisan serve --port=18000
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: careerone-mysql
+    restart: unless-stopped
+    ports:
+      - "13306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: careerone
+      MYSQL_USER: careerone
+      MYSQL_PASSWORD: careerone_pass
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+      - --sql-mode=NO_ENGINE_SUBSTITUTION
+      - --explicit_defaults_for_timestamp=1
+      - --innodb_strict_mode=0
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: careerone-redis
+    restart: unless-stopped
+    ports:
+      - "16379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: careerone-mailpit
+    restart: unless-stopped
+    ports:
+      - "11025:1025"   # SMTP
+      - "18025:8025"   # Web UI
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+volumes:
+  mysql_data:
+  redis_data:
